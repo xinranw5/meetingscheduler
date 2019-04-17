@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Gooseberry</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <!-- <script type="text/javascript" src="/static/script/tabs.js"></script> -->
+  <script>
+  function delcon(fid,fname){
+    $.ajax({
+      type: "GET",
+      url: "/delcon/",
+      data: {id:fid},
+      cache: false,
+      success: function() {
+        document.getElementById(fid).innerHTML = "";
+        $("li[id='"+fid+"']").append("<font size='4'>"+fname+"</font><button style='float:right' type='button' onclick=\"addcon('"+fid+"','"+fname+"')\" class='btn btn-info'>+ Add  </button></br><font size='2' color='grey'> "+fid+"</font>");
+      }
+    });
+  }
+  function addcon(fid,fname){
+    $.ajax({
+      type: "GET",
+      url: "/addcon/",
+      data: {
+        id:fid,
+        name:fname,
+      },
+      cache: false,
+      success: function() {
+        document.getElementById(fid).innerHTML = "";
+        $("li[id='"+fid+"']").append("<font size='4'>"+fname+"</font><font size='1' color='grey'>  备注：<input style='border:1px;border-bottom-style:none;border-top-style:none;border-left-style:none;border-right-style:none;' type='text' name='nickname' id='nick"+fid+"' value=''></input></font><button style='float:right' type='button' onclick=\"delcon('"+fid+"','"+fname+"')\" class='btn btn-error'>Delete</button></br><font size='2' color='grey'> "+fid+"</font>");
+      }
+    });
+  }
+  $(document).ready(function(){
+    $('#searchFriendBtn').click(function(){
+      var searchText = $('#searchFriendText').val();
+      $.ajax({
+        type: "POST",
+        url: "/searchpeople/",
+        cache: false,
+        data: {ids:searchText},
+        dataType:'json',
+        success: function(data) {
+          var list= document.getElementById("searchResult");
+          var $list = $('#searchResult');
+          list.innerHTML = "";
+          var wrList = data['wrong'];
+          var frList = data['friends'];
+          var stList = data['strangers'];
+          for(n in stList){
+            s = "<li class='list-group-item' id='"+stList[n][0]+"'><font size='4'>"+stList[n][1]+"</font><button style='float:right' type='button' onclick=\"addcon('"+stList[n][0]+"','"+stList[n][1]+"')\" class='btn btn-info'>+ Add  </button></br><font size='2' color='grey'> "+stList[n][0]+"</font></li>";
+            $list.append(s);
+          }
+          for(n in wrList){
+            $list.append("<li class='list-group-item list-group-item-danger'><font size='4'>"+wrList[n]+"</font></br><font size='2' color='grey'> no such user </font></li>");
+          }
+          for(n in frList){
+            s="<li class='list-group-item' id='"+frList[n][0]+"'><font size='4'>"+frList[n][1]+"</font><font size='1' color='grey'>  备注：<input style='border:1px;border-bottom-style:none;border-top-style:none;border-left-style:none;border-right-style:none;' type='text' name='nickname' id='nick"+frList[n][0]+"' value='"+frList[n][2]+"'></input></font><button style='float:right' type='button' onclick=\"delcon('"+frList[n][0]+"','"+frList[n][1]+"')\" class='btn btn-error'>Delete</button></br><font size='2' color='grey'> "+frList[n][0]+"</font></li>";
+            $list.append(s);
+          }
+          $("input[name='nickname']").keydown(function(e){
+            var key= e.which;
+            if (key==13){
+              this.blur();
+            }
+          });
+          $("input[name='nickname']").blur(function(){
+            $.ajax({
+              type: "GET",
+              url: "/setnickname/",
+              data: {
+                id:this.id,
+                nickname:this.value,
+              },
+              success: function(data) {
+                if(data=="error"){
+                  alert("Error. Try english nickname.");
+                }
+              }
+            });
+          });
+        }
+      });
+    });
+  });
+  function getInv(){
+    $.ajax({
+      type: "POST",
+      url: "/getinv/",
+      cache: false,
+      success: function(data) {
+        document.getElementById("invTbody").innerHTML = "";
+        var obj = JSON.parse(data);
+        for ( str in obj ){
+          var status="unknown";
+          if(obj[str][2]=='v'){
+            status="voting";
+          }
+          else if (obj[str][2]=='f'){
+            status="finished";
+          }
+          $('#invTbody').append("<tr><td><a href=\"{{url_for('invitation',inv_id='"+obj[str][0]+"',host='true')}}\">"+obj[str][1]+"</a></td><td>"+status+"</td><td>"+obj[str][3]+"</td></tr>");
+        }
+      }
+    });
+    return true;
+  }
+  function getEve(){
+    $.ajax({
+      type: "POST",
+      url: "/geteve/",
+      cache: false,
+      dataType: "json",
+      success: function(data) {
+        document.getElementById("eveTbody").innerHTML = "";
+        for ( n in data ){
+          var status="unknown";
+          if(data[n][2]=='v'){
+            status="voting";
+          }
+          else if (data[n][2]=='f'){
+            status="finished";
+          }
+          $('#eveTbody').append("<tr><td><a href=\"{{url_for('invitation',inv_id='"+data[n][0]+"',host='true')}}\">"+data[n][1]+"</a></td><td>"+status+"</td><td>"+data[n][3]+"</td><td>"+data[n][4]+"</td></tr>");
+        }
+      }
+    });
+    return true;
+  }
+  function getCon(){
+	
+    $.ajax({
+      type: "POST",
+      url: "/getcon/",
+      cache: false,
+      success: function(data) {
+        document.getElementById("contactList").innerHTML = "";
+        var friendList = JSON.parse(data);
+        for ( str in friendList ){
+          uid = friendList[str][0];
+          uname = friendList[str][2];
+          if(uname==''){
+            uname = friendList[str][1];
+          }
+          $('#contactList').append("<label><input type=\"checkbox\" name=\"usercheckbox\" value="+uid+"> "+uname+" </label><br>");
+        }
+      }
+    });
+    return true;
+  }
+  </script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a href="#" class="navbar-brand"> Gooseberry </a>
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+    <li>
+      <a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"> Log Out </span></a>
+    </li>
+    <li>
+      <a href="#"><span class="glyphicon glyphicon-user"> {{uname}}</span></a>
+    </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#calendar">Calendar</a></li>
+    <li><a data-toggle="tab" href="#invitations" onclick="getInv()">Invitations</a></li>
+    <li><a data-toggle="tab" href="#events" onclick="getEve()">Events</a></li>
+    <li><a data-toggle="tab" href="#goose" onclick="getCon()">Goose</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <div id="calendar" class="tab-pane fade in active">
+
+      <div class="container">
+	  <style type="text/css">
+		td{ border:solid 1px #C0C0C0;
+			height:25px;
+			width:100px;}
+	</style>
+	<table border="1"  bordercolor="#909090" class="pos_abs">
+		<h3>This week : {{ date }}</h3>
+		<tr>
+		<td class="timeunit1"></td><td class="timeunit1"></td><td class="timeunit1"></td><td class="timeunit1"></td><td class="timeunit1"></td><td class="timeunit1"></td><td class="timeunit1"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr><tr>
+		<td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td><td height="15" width="100" class="timeunit1"></td>
+		</tr>
+	</table>
+	</div>
+	<!-- button type="button" id="save_btn" class="btn btn-primary" style="height:32px;vertical-align:center" onclick="save_schedule()">Save Schedule</button -->
+	<button type="button" id="add_btn" class="btn btn-info" style="height:32px;vertical-align:center" onclick="add_activity()">Add Activity</button>
+	<button type="button" id="del_btn" class="btn btn-danger" style="height:32px;vertical-align:center" onclick="delete_activity()">Delete Activity</button>
+	<button type="button" id="clear_btn" class="btn btn-danger" style="height:32px;vertical-align:center" onclick="clear_schedule()">Clear</button>
+    
+	</div>
+    <div id="invitations" class="tab-pane fade">
+      <h3>Invitations I started</h3>
+      <!--p>to be filled.</p-->
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>State</th>
+            <th>Votes</th>
+          </tr>
+        </thead>
+        <tbody id="invTbody">
+        </tbody>
+      </table>
+    </div>
+    <div id="events" class="tab-pane fade">
+      <h3>Events I Joined</h3>
+      <!--p>to be filled.</p-->
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>State</th>
+            <th>Votes</th>
+            <th>Creator</th>
+          </tr>
+        </thead>
+        <tbody id="eveTbody">
+        </tbody>
+      </table>
+    </div>
+    <div id="goose" class="tab-pane fade">
+      <h3>Contacts</h3>
+      
+	  <div class="container">
+	  <div class="col-md-8">
+	<table border="1" class="pos_abs">
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+		<tr>
+		<td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td><td height="15" width="100" class="timeunit2"></td>
+		</tr>
+	</table>
+	</div>
+	</div>
+	<div class="col-md-2">
+	  <div style="overflow-y:auto;overflow-x:hidden;height:160px">
+	  <p>Friend list</p>
+		<ul id="intervieweelist" style="list-style-type:circle;height:auto">
+			{% for i in friendlist %}
+              <label><input type="checkbox" name="usercheckbox" value={{i.id}}> {{i.id}} </label>
+			  <br>
+			{% endfor %}
+		</ul>
+	  </div>
+	  <button type="button" id="superimpose_btn" class="btn btn-primary" style="height:32px;vertical-align:center" onclick="superimpose_schedule()">Superimpose</button>
+	  </div>
+
+      <ul id="contactList" style="list-style-type:circle;height:auto">
+      </ul>
+
+	
+	
+
+      <p>aperiam.</p>
+      <div class="col-sm-3">
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addFriendModal">+ Add Friend</button>
+        <ul id="contactList" style="list-style-type:circle;height:auto">
+        </ul>
+        <button type="button" class="btn btn-danger" >x Delete</button>
+      </div>
+
+    </div>
+  </div>
+  
+  <!-- Form for the activity's information -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	 <div class="modal-dialog" role="document">
+	  <div class="modal-content">
+	  <div class="modal-header">
+	   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+	   <h4 class="modal-title" id="myModalLabel">新增活动</h4>
+	  </div>
+	  <div class="modal-body">
+	 
+	   <div class="form-group">
+	   <label for="txt_statu">描述</label>
+	   <input type="text" name="tag_txt" class="form-control" id="tag_text" placeholder="内容">
+	   </div>
+	  </div>
+	  <div class="modal-footer">
+	   <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+	   <button type="button" id="btn_submit" class="btn btn-primary" data-dismiss="modal" onclick="save_activity()"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存</button>
+	  </div>
+	  </div>
+	 </div>
+ </div>
+
+</div>
+
+<!-- Modal -->
+<div id="addFriendModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Search Friend with Email or ID</h4>
+      </div>
+      <div class="modal-body" id="friendSearchResult">
+        <div class="row">
+            <div class="form-group col-sm-10">
+              <input id="searchFriendText" type="text" class="form-control" name="id" placeholder="Enter email or id, seperate with ';' ">
+            </div>
+            <div class="form-group col-sm-2">
+              <button id="searchFriendBtn" style="float:right" class="btn btn-default">Search</button>
+            </div>
+        </div>
+        </br>
+        <ul class="list-group" id="searchResult">
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+	<script language="javascript" type="text/javascript">
+	
+	//Be cautious with the space in front of the numbers!!!
+	var colorlist = ["rgb(255, 255, 255)","rgb(230, 202, 255)","rgb(202, 142, 255)","rgb(177, 91, 255)"];
+	//Will be changed
+	var linenum = 24;
+	
+	var tds = $(".timeunit1");
+	var impose_tds = $(".timeunit2");
+	
+	    for(var i = 0; i < impose_tds.length; i++){
+        impose_tds[i].index = i;
+		}
+	var multi_flag = false;
+	var start_index = -1;
+	
+	var table_data0 = '{{table_data|tojson}}';
+	table_data0=table_data0.substr(1,table_data0.length-2);
+	var table_data=JSON.parse(table_data0);
+	console.log(table_data);
+	
+	
+	function render_table_data(){
+		for(var i = 0; i < tds.length; i++){
+			tds[i].style.backgroundColor = colorlist[0];
+			tds[i].innerText = '';
+		}
+		for(var i = 0; i < table_data.time.length; i++){
+			var act = table_data.time[i];
+			console.log("act: "+JSON.stringify(act));
+			for(var j = act.start; j <= act.end; j++){
+				//console.log(j)
+				var t_index = myid_to_id(j);
+				//console.log(t_index)
+				tds[t_index].innerText = act.title;
+				tds[t_index].style.backgroundColor = colorlist[1];
+			}
+		}
+		set_color_by_selectedlist();
+	}
+	
+	function myid_to_id(tmp){
+		var num = (tmp%linenum)*7+(parseInt(tmp/linenum));
+		return num;
+	}
+	
+	function id_to_myid(tmp){
+		var num = (tmp%7)*linenum+(parseInt(tmp/7));
+		return num;
+	}
+	//num are myid!!!
+	var selectedlist = [];
+	//num is in selectedlist
+	function index_in_selectedlist(num){
+		for(var i = 0; i < selectedlist.length; i++){
+			if(num == selectedlist[i]){
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+    for(var i = 0; i < tds.length; i++){
+        tds[i].index = i;
+        tds[i].onclick = function (e) {
+		//Add the function of multichoice
+			console.log(e.shiftKey);
+		    if(e.shiftKey && start_index != -1){
+			    //Judge which is bigger
+				if(start_index % 7 > this.index % 7 || (start_index % 7 == this.index % 7 &&  parseInt(start_index / 7)>parseInt(this.index / 7)))
+				{
+					var x1=start_index % 7,y1=parseInt(start_index / 7),x0= this.index % 7,y0 = parseInt(this.index / 7);
+				}
+				else{
+					var x0=start_index % 7,y0=parseInt(start_index / 7),x1= this.index % 7,y1 = parseInt(this.index / 7);
+				}
+				console.log(x0+" "+y0+" "+x1+" "+y1);
+				var count = (x1*linenum+y1)-(x0*linenum+y0);
+				console.log("count:"+count);
+				for(var i =0;i<=count; i++){
+					var tmp = (x0*linenum+y0+i);
+					//console.log("tmp:"+tmp);
+					//var t_index = (tmp%linenum)*7+(parseInt(tmp/linenum));
+					var t_index = myid_to_id(tmp);
+					//console.log("t_index:"+t_index);
+					if(tds[start_index].style.backgroundColor == colorlist[0]){
+						//tds[t_index].style.backgroundColor = colorlist[0];
+						var tt = index_in_selectedlist(tmp)
+						if(tt != -1){
+							selectedlist.splice(tt,1);
+						}
+						render_table_data();
+						
+					}
+					else {
+						tds[t_index].style.backgroundColor = colorlist[3];
+						var tt = index_in_selectedlist(tmp)
+						if(tt == -1){
+							selectedlist.push(tmp);
+						}
+						render_table_data();
+					}
+				}
+			}
+			//Not pressing shift
+			else{
+				if(tds[this.index].style.backgroundColor == colorlist[3]){
+					console.log("switch to white!");
+					//tds[this.index].style.backgroundColor = colorlist[0];
+					start_index = this.index;
+					var tmp = index_in_selectedlist(id_to_myid(this.index))
+					if(tmp != -1){
+						selectedlist.splice(tmp,1);
+					}
+					render_table_data();
+				}
+				else {
+					console.log("switch to purple!");
+					//tds[this.index].style.backgroundColor = colorlist[3];
+					start_index = this.index;
+					var tmp = index_in_selectedlist(id_to_myid(this.index))
+					if(tmp == -1){
+						selectedlist.push(id_to_myid(this.index));
+					}
+					render_table_data();
+				}
+			}
+            
+        }
+    }
+	
+	render_table_data();
+	
+	
+	
+	function set_color_by_selectedlist(){
+		for(var i = 0; i < selectedlist.length; i++){
+			tds[myid_to_id(selectedlist[i])].style.backgroundColor = colorlist[3];
+		}
+	}
+	
+	function clear_timetable(){
+		for(var i = 0; i < tds.length; i++){
+			tds[i].style.backgroundColor = colorlist[0];
+			tds[i].innerText = '';
+		}
+	}
+	function save_schedule(){
+		
+		var save_data={"id":[]};
+		for(var i = 0; i < tds.length; i++){
+			tds[i].index = i;
+			if(tds[i].style.backgroundColor == colorlist[3])
+			{
+				save_data.id.push(i);
+			}
+		}
+		save_data_json = JSON.stringify(save_data);
+		console.log(save_data_json);
+		
+		
+		//send the data
+		$.ajax({
+			type: 'POST',
+			url: "/save_time/",
+			data: JSON.stringify(save_data_json), 
+			contentType: 'application/json; charset=UTF-8',
+			dataType: 'json', 
+			success: function(data) { 
+				console.log("sent")
+				console.log(data)
+			},
+			error: function(e) {
+			}
+		});
+	}
+	
+	function clear_schedule(){
+		console.log("clear");
+		var tds = document.getElementsByTagName('td');
+		for(var i = 0; i < tds.length; i++){
+			tds[i].style.backgroundColor = colorlist[0];
+		}
+		selectedlist=[];
+		render_table_data();
+		//clear the table data?
+		//todo
+	}
+	
+	function add_activity(){
+		$('#myModal').modal();
+	}
+	
+	function save_activity(){
+		var tag_text = $('#tag_text').val();
+		selectedlist.sort(function(a,b){
+      return a-b});
+		console.log("selectedlist:"+selectedlist);
+		//for(var i = 0; i < selectedlist.length; i++){
+		//	tds[selectedlist[i]].innerText = tag_text;
+		//}
+		//not empty
+		if(selectedlist.length > 0){
+			var new_act = {"title":tag_text,"start":selectedlist[0],"end":selectedlist[selectedlist.length-1]};
+			var new_act_json = JSON.stringify(new_act);
+			
+			//clear the selectedlist
+			selectedlist=[];
+			//update table data
+			table_data.time.push(new_act);
+			render_table_data();
+			
+			//send the data
+			$.ajax({
+				type: 'POST',
+				url: "/save_activity/",
+				data: JSON.stringify(new_act_json), 
+				contentType: 'application/json; charset=UTF-8',
+				dataType: 'json', 
+				success: function(data) { 
+					console.log("sent")
+					console.log(data)
+				},
+				error: function(e) {
+				console.log(e)
+				}
+			});
+			
+			
+		}
+		
+	}
+	
+	//Find a timeunit if in activities
+	function index_in_activity(num){
+		for(var i = 0; i < table_data.time.length; i++){
+			var act = table_data.time[i];
+			if(num >= act.start && num <= act.end){
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	function delete_activity(){
+		for(var i = 0; i < selectedlist.length; i++){
+			var num = selectedlist[i];
+			var tmp = index_in_activity(num);
+			if(tmp != -1){
+				var del_act = table_data.time[tmp];
+				var del_act_json = JSON.stringify(del_act);
+				
+				table_data.time.splice(tmp,1);
+				
+				//send the data
+				$.ajax({
+					type: 'POST',
+					url: "/delete_activity/",
+					data: JSON.stringify(del_act_json), 
+					contentType: 'application/json; charset=UTF-8',
+					dataType: 'json', 
+					success: function(data) { 
+						console.log("sent")
+						console.log(data)
+					},
+					error: function(e) {
+					console.log(e)
+					}
+				});
+				
+				//clear the selectedlist
+				selectedlist=[];		
+				render_table_data();
+			}
+		}
+		
+		
+	}
+	
+	
+	var bkdata0='{{bgcolor|tojson}}';
+	//console.log(bkdata0);
+	bkdata0=bkdata0.substr(1,bkdata0.length-2);
+	var bkdata=JSON.parse(bkdata0);
+	console.log(bkdata);
+	
+	function set_color(){
+		for(var i = 0;i<bkdata.color1.length; i++){
+			impose_tds[bkdata.color1[i]].style.backgroundColor = colorlist[1];
+		}
+		for(var i = 0;i<bkdata.color2.length; i++){
+			impose_tds[bkdata.color2[i]].style.backgroundColor = colorlist[2];
+		}
+		for(var i = 0;i<bkdata.color3.length; i++){
+			impose_tds[bkdata.color3[i]].style.backgroundColor = colorlist[3];
+		}
+	}
+	
+	function superimpose_schedule(){
+	    var usrdata ={"id":[]};
+		$("input[name='usercheckbox']:checked").each(function(){
+		  usrdata.id.push($(this).val());
+		});
+		user_data_json = JSON.stringify(usrdata);
+		$.ajax({
+			type: 'POST',
+			url: "/get_color/",
+			data: JSON.stringify(user_data_json), 
+			contentType: 'application/json; charset=UTF-8',
+			dataType: 'json', 
+			success: function(data) { 
+				console.log(data);
+				set_color(data);
+			},
+			error: function(e) {
+			}
+		});
+	}
+	</script>
+</html>

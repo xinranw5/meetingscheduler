@@ -1,0 +1,14 @@
+Success（正常传送）
+{
+	“status” : “success”,
+	“data” : {
+		“users” : [
+			{ 
+				“id” : 1, “username” : “user1”, 
+				“time” : [{"title":" ","start":"1701010500","end":"1701010530"}] 
+			},
+		],
+		
+	}
+}
+
