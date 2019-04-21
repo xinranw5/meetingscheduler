@@ -1,6 +1,8 @@
 from flask import Flask
 from flask import abort, redirect, url_for, render_template
 from flask import request, session
+import pymysql
+pymysql.install_as_MySQLdb()
 import database
 import json
 from flask import jsonify
