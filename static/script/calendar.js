@@ -6,7 +6,7 @@ var current_event = 0;
 var total_events = []
 var willingness = 0;
 var tag = false,ox = 0,left = 0,bgleft = 0,bar_length = 300,clickable = false;
-
+var start_day_timestamp = 0, end_day_timestamp = 0,start_timestamp = 0, end_timestamp = 0;
 // get color darken or lighter
 function shadeColor(color, percent) {
 
@@ -124,7 +124,12 @@ $(document).ready(function(){
     event_start_hour = Math.floor(event_start_time)
     event_start_minute = Math.floor((event_start_time - event_start_hour) * 60);
     // console.log("start_minute",event_start_minute)
-    event_start_day = new Date($(this).parent()[0].attributes[1].nodeValue * 1000).getDay();
+    start_day_timestamp = $(this).parent()[0].attributes[1].nodeValue
+    start_timestamp = new Date(start_day_timestamp * 1000)
+    start_timestamp.setHours(event_start_hour)
+    start_timestamp.setMinutes(event_start_minute)
+    console.log("new start date",start_timestamp)
+    event_start_day = new Date(start_timestamp * 1000).getDay();
     // console.log("mousedown",percent,event_start_day,event_start_time,event_start_hour,event_start_minute);
   });
 
@@ -140,8 +145,15 @@ $(document).ready(function(){
     event_end_time = start_hour+ (end_hour - start_hour) * percent;
     event_end_hour = Math.floor(event_end_time)
     event_end_minute = Math.floor((event_end_time - event_end_hour) * 60);
-    event_end_day = new Date($(this).parent()[0].attributes[1].nodeValue * 1000).getDay();
-    // console.log("mouseup_day",$(".calendar-events-day > ul").parent())
+    
+    event_end_day = new Date(end_timestamp * 1000).getDay();
+    end_day_timestamp = $(this).parent()[0].attributes[1].nodeValue;
+    end_timestamp = new Date(end_day_timestamp * 1000)
+    end_timestamp.setHours(event_end_hour)
+    end_timestamp.setMinutes(event_end_minute)
+    console.log("new end date",end_timestamp)
+
+    console.log("mouseup_day",$(this).parent()[0].dataset)
     // console.log("mouseup",percent,event_end_day,event_end_time,event_end_hour,event_end_minute);
 
 
@@ -149,13 +161,14 @@ $(document).ready(function(){
       return;
      var new_event = [
       {
-       start: now.startOf('week').add(event_start_day, 'days').add(event_start_hour, 'h').add(event_start_minute, 'm').format('X'),
-       end: now.startOf('week').add(event_end_day, 'days').add(event_end_hour, 'h').add(event_end_minute, 'm').format('X'),
+       start: moment(start_timestamp).format('X'),
+       end: moment(end_timestamp).format('X'),
        title: 'testclick',
        content: 'test',
        category:'Private',
        willingness:0
      }];
+     console.log("new event",new_event)
 
      total_events.push(new_event[0]);
 
@@ -226,6 +239,11 @@ $(document).ready(function(){
       willingness = current_event["willingness"]
 
       event.stopPropagation();
+      start_day_timestamp = $(this).parent().parent()[0].attributes[1].nodeValue;
+      end_day_timestamp = $(this).parent().parent()[0].attributes[1].nodeValue;
+      console.log("parent data",parent)
+      start_timestamp = current_event["start"];
+      end_timestamp = current_event["end"];
       var sd = new Date(current_event["start"]*1000);
       var ed = new Date(current_event["end"]*1000);
       var sd_hour = ("0" + sd.getHours()).slice(-2);
@@ -313,8 +331,8 @@ $(document).ready(function(){
       });
       // find the current event and delete it
       // add new event;
-      moment.locale('en');
-      var now = moment();
+      // moment.locale('en');
+      // var now = moment();
       current_event["title"] = $(".input-title").val();
       current_event["content"] = $(".input-context").val();
       current_event["category"] = $(".btn-dropdown").data("category");
@@ -325,8 +343,15 @@ $(document).ready(function(){
       em = parseInt($(".end-minute").val(),10)
       sd = (new Date(current_event["start"] * 1000) ).getDay()
       // console.log(sh,sm,eh,em)
-      st = now.startOf('week').add(sd, 'days').add(sh, 'h').add(sm, 'm').format('X')
-      et = now.startOf('week').add(sd, 'days').add(eh, 'h').add(em, 'm').format('X')
+      start_timestamp = new Date(start_day_timestamp * 1000)
+      start_timestamp.setHours(sh)
+      start_timestamp.setMinutes(sm)
+      end_timestamp = new Date(end_day_timestamp * 1000)
+      end_timestamp.setHours(eh)
+      end_timestamp.setMinutes(em)
+
+      st = moment(start_timestamp).format('X')
+      et = moment(end_timestamp).format('X')
       // console.log(new Date(st * 1000),new Date(et * 1000))
       current_event["start"] = st
       current_event["end"] = et
@@ -371,7 +396,7 @@ $(document).ready(function(){
       calendar.init();
       $('#ModalCenter').modal('hide');
   });
-
+  // slider part
   $(document).on('mousedown','.progress_btn',function(e) {
       if(clickable){
         ox = e.pageX - left;
