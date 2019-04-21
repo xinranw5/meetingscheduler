@@ -39,7 +39,7 @@ $(document).ready(function(){
   var events = [
    {
      start: now.startOf('week').add(1, 'days').add(1, 'h').add(30, 'm').format('X'),
-     end: now.startOf('week').add(1, 'days').add(3, 'h').format('X'),
+     end: now.startOf('week').add(3, 'days').add(3, 'h').format('X'),
      title: '28',
      content: 'Hello World! <br> <p>Foo Bar</p>',
      category:'Private'
@@ -62,7 +62,7 @@ $(document).ready(function(){
   /**
    * Init the calendar
    */
-  var calendar = $('#calendar').Calendar({
+  var calendar = $("#calendar").Calendar({
     locale: 'en',
     weekday: {
       timeline: {
