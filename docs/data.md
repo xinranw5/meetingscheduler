@@ -42,3 +42,6 @@ fbid, uid, iid, attendence, score, review
 
 ## invitations
 iid, host, participants, start, end, title, description, status(upcoming/)
+
+
+create table users (id int, name varchar(255), pwd varchar(255), invitations varchar(255), timezone varchar(255));
