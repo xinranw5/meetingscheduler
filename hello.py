@@ -16,24 +16,24 @@ def update_user_calendar(usr,time_unit_list):
         usr.user_week_time_table.add_time_unit(cur_date,i,1,'default')
 
 #Make some data to use
-time_amount = 7*24
-cur_date = 20170101
+# time_amount = 7*24
+# cur_date = 20170101
 user1 = user(1)
-user2 = user(2)
-user3 = user(3)
+# user2 = user(2)
+# user3 = user(3)
 cur_user = user1
-total_user = [user1,user2,user3]
-default_bkdata = {"color1":[],"color2":[],"color3":[5,17,25,64,100]}
+# total_user = [user1,user2,user3]
+# default_bkdata = {"color1":[],"color2":[],"color3":[5,17,25,64,100]}
 
-user1.friendlist.append(user2)
-user1.friendlist.append(user3)
-list1=[5,17,25,64,100]
-list2=[5,22,64,80]
-list3=[5,20,25,90]
+# user1.friendlist.append(user2)
+# user1.friendlist.append(user3)
+# list1=[5,17,25,64,100]
+# list2=[5,22,64,80]
+# list3=[5,20,25,90]
 
-update_user_calendar(user1,list1)
-update_user_calendar(user2,list2)
-update_user_calendar(user3,list3)
+# update_user_calendar(user1,list1)
+# update_user_calendar(user2,list2)
+# update_user_calendar(user3,list3)
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -41,22 +41,12 @@ def index():
     if request.method == 'POST':
         uid = request.form['uid']
         udata = database.findUser("uid,uname",uid)
-    usrlist = [cur_user.id]
+    # usrlist = [cur_user.id]
 
-    print(usrlist)
-    bkdata= json.dumps(cal_color(usrlist));
-    #bkdata= json.dumps(default_bkdata)
-    table_data = json.dumps(get_table_info_by_usr(cur_user))
-    print(table_data)
- #       if(len(udata)!=0):
- #           session['uid'] = udata[0][0]
- #           session['username'] = udata[0][1]
- #           render_template("index.html", uname=session['username'])
- #      else:
- #           render_template("hello.html", msg="No Such User")
- #   if 'uid' in session:
-    return render_template("index.html", uname='username',bgcolor = bkdata,table_data=table_data,friendlist=cur_user.friendlist)
-#    return render_template("hello.html")
+    # bkdata= json.dumps(cal_color(usrlist));
+    # table_data = json.dumps(get_table_info_by_usr(cur_user))
+ 
+    return render_template("index.html", uname='username')
 
 ###############################
 #Comment out things with session
@@ -68,6 +58,25 @@ def signup():
     if request.method == 'POST':
         database.addUser(request.form['id'],request.form['psw'],request.form['name'],8)
         return render_template("hello.html", msg="Sign Up Succeed!")
+
+@app.route("/login",methods = ['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        # Login and validate the user.
+        # user should be an instance of your `User` class
+        login_user(user)
+
+        flask.flash('Logged in successfully.')
+
+        next = flask.request.args.get('next')
+        # is_safe_url should check if the url is safe for redirects.
+        # See http://flask.pocoo.org/snippets/62/ for an example.
+        if not is_safe_url(next):
+            return flask.abort(400)
+
+        return redirect(next or url_for('index'))
+    return render_template('login.html', form=form)
 
 @app.route('/logout')
 def logout():
@@ -320,7 +329,7 @@ def timetable():
 		data = request.get_json()
 	else:
 		data = {}
-	return render_template("timetable_test.html",data=data)
+	return render_template("calendar.html",data=data)
 
 @app.route("/tablesuperimposition/")
 def tablesuperimposition():
