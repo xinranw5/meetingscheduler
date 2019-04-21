@@ -38,15 +38,21 @@ cur_user = user1
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':
-        uid = request.form['uid']
-        udata = database.findUser("uid,uname",uid)
+    username = ''
+    if 'uid' in session:
+        uid = session['uid']
+        username = session['username']
+        user = User(uid)
+        user.set_username(username)
+    # if request.method == 'POST':
+    #     uid = request.form['uid']
+    #     udata = database.findUser("uid,uname",uid)
     # usrlist = [cur_user.id]
 
     # bkdata= json.dumps(cal_color(usrlist));
     # table_data = json.dumps(get_table_info_by_usr(cur_user))
  
-    return render_template("index.html", uname='username')
+    return render_template("index.html", uname=username)
 
 ###############################
 #Comment out things with session
@@ -61,22 +67,10 @@ def signup():
 
 @app.route("/login",methods = ['GET', 'POST'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        # Login and validate the user.
-        # user should be an instance of your `User` class
-        login_user(user)
-
-        flask.flash('Logged in successfully.')
-
-        next = flask.request.args.get('next')
-        # is_safe_url should check if the url is safe for redirects.
-        # See http://flask.pocoo.org/snippets/62/ for an example.
-        if not is_safe_url(next):
-            return flask.abort(400)
-
-        return redirect(next or url_for('index'))
-    return render_template('login.html', form=form)
+    if request.method == 'POST':
+      session['username'] = request.form['username']
+      return redirect(url_for('/'))
+    return ''
 
 @app.route('/logout')
 def logout():
