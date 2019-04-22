@@ -1,0 +1,32 @@
+<div id="goose" class="tab-pane fade">
+      <h3>Contacts</h3>
+      
+  	  <div class="container">
+        <div class="col-md-8">
+          <div id="supCalendar" class="calendar"></div> 
+        </div>
+
+        <div class="col-md-2">
+          <div style="overflow-y:auto;overflow-x:hidden;height:160px">
+           <p>Friend list</p>
+            <ul id="intervieweelist" style="list-style-type:circle;height:auto">
+              {% for i in friendlist %}
+                      <label><input type="checkbox" name="usercheckbox" value={{i.id}}> {{i.id}} </label>
+                <br>
+              {% endfor %}
+            </ul>
+          </div>
+          <button type="button" id="superimpose_btn" class="btn btn-primary" style="height:32px;vertical-align:center" onclick="superimpose_schedule()">Superimpose</button>
+        </div>
+
+        <ul id="contactList" style="list-style-type:circle;height:auto">
+        </ul>
+
+        <div class="col-sm-3">
+          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addFriendModal">+ Add Friend</button>
+          <ul id="contactList" style="list-style-type:circle;height:auto">
+          </ul>
+          <button type="button" class="btn btn-danger" >x Delete</button>
+        </div>
+      </div>
+</div>
