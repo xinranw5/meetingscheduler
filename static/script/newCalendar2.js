@@ -5,6 +5,7 @@ $(document).ready(function(){
   var willingness = 0;
   var tag = false,ox = 0,left = 0,bgleft = 0,bar_length = 200,clickable = true;
   var total_events = [];
+  var category_color = {Private:"#FF8F00",Professional:"#AD1457",Fun:"#BA0F90",Family:"#AF8C00"};
   $(document).on('mousedown','.progress_btn',function(e) {
       if(clickable){
         ox = e.pageX - left;
