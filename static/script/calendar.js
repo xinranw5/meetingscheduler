@@ -85,6 +85,22 @@ $(document).ready(function(){
   calendar.setEventCategoriesColors([{category:"Private", color: "#FF8F00"}, {category:"Professional", color:"#AD1457"}, {category:"Fun", color: "#BA0F90"}, {category:"Family", color: "#AF8C00"}]);
   calendar.init();
   console.log("calendar first",calendar)
+  var calendar2 = $('#supCalendar').Calendar({
+    locale: 'en',
+    weekday: {
+      timeline: {
+        intervalMinutes: 30,
+        fromHour: start_hour,
+        toHour:23
+      }
+    },
+    events: events,
+    daynotes: daynotes,
+    colors:{
+      random: false
+    }
+  });
+  calendar2.init()
   /**
    * Listening for events
    */

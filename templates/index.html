@@ -1,22 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Gooseberry</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  
-  
-  <script src="../static/script/jquery-calendar.min.js"></script>
-  <script src="../static/script/jquery.touchSwipe.min.js"></script>
-  <link rel="stylesheet" href="../static/css/jquery-calendar.min.css">
-  <link rel="stylesheet" href="../static/css/calendar.css">
-  <link rel="stylesheet" href="../static/css/fontawesome.css">
-  <link rel="stylesheet" href="../static/css/fa-solid.css">
-  <script src="../static/script/moment-with-locales.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+  <title>Meeting scheduler</title>
+  {% include 'header.html' %}
   <!-- <script type="text/javascript" src="/static/script/tabs.js"></script> -->
   <link href="http://cdn.alloyui.com/2.5.0/aui-css/css/bootstrap.min.css" rel="stylesheet"/>
 <script src="http://cdn.alloyui.com/2.5.0/aui/aui-min.js"></script>
@@ -303,6 +289,7 @@
       <button type="button" id="del_btn" class="btn btn-danger" style="height:32px;vertical-align:center" onclick="delete_activity()">Delete Activity</button>
       <button type="button" id="clear_btn" class="btn btn-danger" style="height:32px;vertical-align:center" onclick="clear_schedule()">Clear</button>
     </div>
+    {% include 'userCalendarPane.html' %}
 	
     <div id="invitations" class="tab-pane fade">
       <h3>Invitations I started</h3>
@@ -372,13 +359,15 @@
         </div>
       </div>
     </div>
+    {% include 'supCalendarPane.html' %}
+    
 	  
 	</div>
 
 
   
   <!-- Form for the activity's information -->
-  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <!--div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	 <div class="modal-dialog" role="document">
 	  <div class="modal-content">
 	  <div class="modal-header">
@@ -398,12 +387,8 @@
 	  </div>
 	  </div>
 	 </div>
- </div>
+ </div-->
 
-
-</div>
-
-<!-- Modal -->
 <div id="addFriendModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
@@ -422,7 +407,7 @@
               <button id="searchFriendBtn" style="float:right" class="btn btn-default">Search</button>
             </div>
         </div>
-        </br>
+        
         <ul class="list-group" id="searchResult">
         </ul>
       </div>
@@ -431,9 +416,15 @@
   </div>
 </div>
 
-</body>
+
   <script src="../static/script/newCalendar.js"></script>
   <script src="../static/script/newCalendar2.js"></script>
+</div>
+
+<!-- Modal -->
+
+
+  
 	<script language="javascript" type="text/javascript">
 	
 	//Be cautious with the space in front of the numbers!!!
@@ -753,5 +744,6 @@
 		});
 	}
 	</script>
+</body>
 
 </html>

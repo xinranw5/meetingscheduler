@@ -20,10 +20,10 @@ def update_user_calendar(usr,time_unit_list):
 #Make some data to use
 # time_amount = 7*24
 # cur_date = 20170101
-user1 = user(1)
+# user1 = user(1)
 # user2 = user(2)
 # user3 = user(3)
-cur_user = user1
+# cur_user = user1
 # total_user = [user1,user2,user3]
 # default_bkdata = {"color1":[],"color2":[],"color3":[5,17,25,64,100]}
 
@@ -38,22 +38,19 @@ cur_user = user1
 # update_user_calendar(user3,list3)
 
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/")
+def rootpage():
+    username = ''
+    return render_template("index.html", uname=username)
+
+@app.route("/index", methods=['GET', 'POST'])
 def index():
     username = ''
-    if 'uid' in session:
-        uid = session['uid']
+    if 'username' in session:
+        # uid = session['uid']
         username = session['username']
-        user = User(uid)
-        user.set_username(username)
-    # if request.method == 'POST':
-    #     uid = request.form['uid']
-    #     udata = database.findUser("uid,uname",uid)
-    # usrlist = [cur_user.id]
-
-    # bkdata= json.dumps(cal_color(usrlist));
-    # table_data = json.dumps(get_table_info_by_usr(cur_user))
- 
+        # user = User(uid)
+        # user.set_username(username)
     return render_template("index.html", uname=username)
 
 ###############################
@@ -67,12 +64,16 @@ def signup():
         database.addUser(request.form['id'],request.form['psw'],request.form['name'],8)
         return render_template("hello.html", msg="Sign Up Succeed!")
 
+
 @app.route("/login",methods = ['GET', 'POST'])
 def login():
     if request.method == 'POST':
-      session['username'] = request.form['username']
-      return redirect(url_for('/'))
-    return ''
+        username = request.form['username']
+        session['username'] = username
+        session['uid'] = database.getUidByUname(username)
+        return redirect(url_for('index'))
+    return render_template("loginpage.html")
+
 
 @app.route('/logout')
 def logout():
@@ -181,11 +182,6 @@ def get_table_info_by_usr(usr):
 	#todo
 	return table_data
 
-def find_user_by_id(id):
-    for i in total_user:
-        if(i.id == id):
-            return i
-    return None
 
 def cal_color(usrlist):
     color_data ={"color1":[],"color2":[],"color3":[]}
@@ -245,45 +241,50 @@ def user():
         print(bkdata)
         return render_template("user.html",bgcolor = bkdata,friendlist=cur_user.friendlist)
 
-@app.route("/save_time/",methods=['POST','GET'])
-def save_time():
-        if request.method == 'POST':
-            data = json.loads(request.get_json().encode("utf-8"))
-            default_bkdata['color3']=data['id']
-			#save to the user
-            update_user_calendar(cur_user,default_bkdata['color3'])
-        bkdata= json.dumps(default_bkdata);
-        return bkdata
+# @app.route("/save_time/",methods=['POST','GET'])
+# def save_time():
+#         if request.method == 'POST':
+#             data = json.loads(request.get_json().encode("utf-8"))
+#             default_bkdata['color3']=data['id']
+# 			#save to the user
+#             update_user_calendar(cur_user,default_bkdata['color3'])
+#         bkdata= json.dumps(default_bkdata);
+#         return bkdata
 
 @app.route("/save_activity/",methods=['POST','GET'])
 def save_activity():
-		new_act = json.dumps({"title":'',"start":0,"end":0})
-		if request.method == 'POST':
-			print(request.get_json())
-			new_act = request.get_json();
-			print("new act!!")
-			print(new_act)
+        new_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "content":""})
+        if request.method == 'POST':
+            new_act = request.get_json()
+            #save to the database
+            if 'username' not in session:
+                return "error"
+            database.addActivity(session['uid'], new_act["title"],new_act["start"],new_act["end"],new_act["willingness"],new_act["category"],new_act["content"])
+        return json.dumps(new_act)
 
-			#update user data
-			
-			#save to the database
-			#todo
-			#database.addTime()
-		return json.dumps(new_act)
-		
 @app.route("/delete_activity/",methods=['POST','GET'])
 def delete_activity():
-		delete_act = json.dumps({"title":'',"start":0,"end":0})
-		if request.method == 'POST':
-			del_act = request.get_json()
-			print("del act!!")
-			print(del_act)
-			#update user data
-			
-			#save to the database
-			#todo
-			#database.deleteTime()
-		return json.dumps(del_act)
+        del_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "content":""})
+        if request.method == 'POST':
+            del_act = request.get_json()
+            if 'username' not in session:
+                return "error"
+            eid = database.findActivity(session['uid'], new_act["title"],new_act["start"],new_act["end"])
+            database.deleteActivity(eid)
+        return json.dumps(del_act)
+
+@app.route("/update_activity/",methods=['POST','GET'])
+def update_activity():
+        update_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "content":""})
+        if request.method == 'POST':
+            update_act = request.get_json()
+            #save to the database
+            if 'username' not in session:
+                return "error"
+            eid = database.findActivity(session['uid'], update_act["title"],update_act["start"],update_act["end"])
+            database.updateActivity(eid, session['uid'], update_act["title"],update_act["start"],update_act["end"],update_act["willingness"],update_act["category"],update_act["content"])
+        return json.dumps(update_act)
+
 
 @app.route("/get_color/",methods=['POST','GET'])
 def get_color():
@@ -291,7 +292,7 @@ def get_color():
         if request.method == 'POST':
             print(type(request.get_json()))
             #usrdata = request.get_json()
-            usrdata = json.loads(request.get_json().encode("utf-8"))
+            usrdata = json.loads(request.get_json())
             usrlist = usrdata['id']
             usrlist.append(cur_user.id)
 

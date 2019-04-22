@@ -1,0 +1,99 @@
+<div id="myCalendar" class="tab-pane fade in active">
+
+    <div class="container">
+      <div id="userCalendar" class="calendar"></div>
+
+      <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="ModalLongTitle"></h5>
+
+              <div class="input-group mb-3 input-title-area">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputGroup-sizing-default">Title</span>
+                </div>
+                <input type="text" class="form-control input-title" aria-label="Default" aria-describedby="inputGroup-sizing-default" placeholder="add tile" >
+              </div>
+              
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                 <span aria-hidden="true">&times;</span>
+              </button>
+
+            </div>
+            <div class="modal-body">
+              <div class="modal-input-time">
+                <input type="text" class="form-control start-hour" aria-label="Default" aria-describedby="inputGroup-sizing-default" >
+                <span>:</span>
+                <input type="text" class="form-control start-minute" aria-label="Default" aria-describedby="inputGroup-sizing-default" >
+                 <span>-</span>
+                <input type="text" class="form-control end-hour" aria-label="Default" aria-describedby="inputGroup-sizing-default" >
+                 <span>:</span>
+                <input type="text" class="form-control end-minute" aria-label="Default" aria-describedby="inputGroup-sizing-default" >
+              </div>
+              <div class="modal-time"></div>
+              <br>
+              <div class="modal-text"></div>
+              <div class="willingness">
+                <h3>Willingness for scheduling event</h3>
+                <div class="text">0%</div>
+                <div class="progress">
+                  <div class="progress_bg">
+                      <div class="progress_bar"></div>
+                  </div>
+                  <div class="progress_btn"></div>
+                  
+                </div>
+              </div>
+              <div class="input-group input-context-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Description</span>
+                </div>
+                <textarea class="form-control input-context" aria-label="With textarea" placeholder="add description"></textarea>
+              </div>
+
+    
+             
+              <div class="current-category">
+                <i class="fas fa-square select-color"></i><span></span>
+              </div>
+              
+              <div class="dropdown select-category">
+
+                <button class="btn btn-secondary dropdown-toggle btn-dropdown" data-category="" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fas fa-square select-color"> </i><span></span>
+                </button>
+
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item private-option" data-category="Private" href="#">
+                    <i class="fas fa-square private-color"> </i><span> Private</span>
+                  </a>
+                  <a class="dropdown-item professional-option" data-category="Professional" href="#">
+                     <i class="fas fa-square professional-color"></i><span> Professional</span>
+                  </a>
+                  <a class="dropdown-item fun-option" data-category="Fun" href="#">
+                    <i class="fas fa-square fun-color"> </i><span> Fun</span>
+                  </a>
+                  <a class="dropdown-item Family-option" data-category="Family" href="#">
+                    <i class="fas fa-square family-color"> </i><span> Family</span>
+                  </a>
+                </div>
+
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger btn-delete" data-dismiss="modal">Delete</button>
+              <button type="button" class="btn btn-primary btn-edit">Edit</button>
+              <button type="button" class="btn btn-success btn-submit">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Calendar modal finished-->
+
+    </div>
+    
+    <button type="button" id="add_btn" class="btn btn-info" style="height:32px;vertical-align:center" onclick="add_activity()">Add Activity</button>
+    <button type="button" id="del_btn" class="btn btn-danger" style="height:32px;vertical-align:center" onclick="delete_activity()">Delete Activity</button>
+    <button type="button" id="clear_btn" class="btn btn-danger" style="height:32px;vertical-align:center" onclick="clear_schedule()">Clear</button>
+</div>
