@@ -1,12 +1,4 @@
-var start_hour = 1;
-var end_hour = 24;
-var event_start_time = 0, event_start_day=0, event_start_hour = 0, event_start_minute = 0;
-var event_end_time = 0, event_end_day=0, event_end_hour = 0, event_end_minute = 0;
-var current_event = 0;
-var total_events = []
-var willingness = 0;
-var tag = false,ox = 0,left = 0,bgleft = 0,bar_length = 300,clickable = false;
-var start_day_timestamp = 0, end_day_timestamp = 0,start_timestamp = 0, end_timestamp = 0;
+
 // get color darken or lighter
 function shadeColor(color, percent) {
 
@@ -30,9 +22,18 @@ function shadeColor(color, percent) {
 }
 
 $(document).ready(function(){
+  var start_hour = 1;
+  var end_hour = 24;
+  var event_start_time = 0, event_start_day=0, event_start_hour = 0, event_start_minute = 0;
+  var event_end_time = 0, event_end_day=0, event_end_hour = 0, event_end_minute = 0;
+  var current_event = 0;
+  var total_events = []
+  var willingness = 0;
+  var tag = false,ox = 0,left = 0,bgleft = 0,bar_length = 300,clickable = false;
+  var start_day_timestamp = 0, end_day_timestamp = 0,start_timestamp = 0, end_timestamp = 0;
   moment.locale('en');
   var now = moment();
-
+  var edit = 0; // 1 is edit mode
   /**
    * Many events
    */
@@ -63,7 +64,7 @@ $(document).ready(function(){
    * Init the calendar
    */
 
-  var calendar = $('.calendar').Calendar({
+  var calendar = $('#userCalendar').Calendar({
     locale: 'en',
     weekday: {
       timeline: {
@@ -78,6 +79,7 @@ $(document).ready(function(){
       random: false
     }
   });
+ 
   var category_color = {Private:"#FF8F00",Professional:"#AD1457",Fun:"#BA0F90",Family:"#AF8C00"};
   var revise_info = {title:"",content:"",category:""};
   calendar.setEventCategoriesColors([{category:"Private", color: "#FF8F00"}, {category:"Professional", color:"#AD1457"}, {category:"Fun", color: "#BA0F90"}, {category:"Family", color: "#AF8C00"}]);
@@ -311,6 +313,7 @@ $(document).ready(function(){
   // go to edit page
   $(document).on('click','.btn-edit',function(e){
       // hide the btn-edit, show btn-submit
+      edit = 1;
       $(".btn-edit").hide()
       $(".btn-submit").show();
       // replace the original text area as input block, set the default number to be the original word
@@ -385,6 +388,40 @@ $(document).ready(function(){
       clickable = false;
       $(".calendar-event[data-start='"+current_event["start"]+"'][data-end='"+current_event["end"]+"']").css('background', current_event["color"]);
       console.log($(".calendar-event[data-start='"+current_event["start"]+"'][data-end='"+current_event["end"]+"']"))
+      console.log(JSON.stringify(current_event))
+      // post data to database
+      if(edit ==0){
+          $.ajax({
+          url: '/save_activity/',
+          type: 'POST',
+          data: JSON.stringify(current_event), 
+          contentType: 'application/json; charset=UTF-8',
+          dataType: 'json', 
+          success: function(data) { 
+            console.log("sent")
+            console.log(data)
+          },
+          error: function(e) {
+          console.log(e)
+          }
+        });
+      }else{
+        edit = 0;
+        $.ajax({
+          url: '/update_activity/',
+          type: 'POST',
+          data: JSON.stringify(current_event), 
+          contentType: 'application/json; charset=UTF-8',
+          dataType: 'json', 
+          success: function(data) { 
+            console.log("sent")
+            console.log(data)
+          },
+          error: function(e) {
+          console.log(e)
+          }
+        });
+      }
   });
 
   // select other category
@@ -412,6 +449,21 @@ $(document).ready(function(){
       calendar.setEvents(new_events);
       calendar.init();
       $('#ModalCenter').modal('hide');
+
+      $.ajax({
+        url: '/delete_activity/',
+        type: 'POST',
+        data: JSON.stringify(current_event), 
+        contentType: 'application/json; charset=UTF-8',
+        dataType: 'json', 
+        success: function(data) { 
+          console.log("delete")
+          console.log(data)
+        },
+        error: function(e) {
+          console.log(e)
+        }
+      });
   });
   // slider part
   $(document).on('mousedown','.progress_btn',function(e) {

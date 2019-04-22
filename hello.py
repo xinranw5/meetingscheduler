@@ -283,6 +283,7 @@ def update_activity():
             database.updateActivity(eid, session['uid'], update_act["title"],update_act["start"],update_act["end"],update_act["willingness"],update_act["category"],update_act["content"])
         return json.dumps(update_act)
 
+
 @app.route("/get_color/",methods=['POST','GET'])
 def get_color():
         usrlist = [cur_user.id]
