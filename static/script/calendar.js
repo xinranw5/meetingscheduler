@@ -62,7 +62,8 @@ $(document).ready(function(){
   /**
    * Init the calendar
    */
-  var calendar = $("#calendar").Calendar({
+
+  var calendar = $('.calendar').Calendar({
     locale: 'en',
     weekday: {
       timeline: {

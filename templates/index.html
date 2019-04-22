@@ -173,12 +173,21 @@
       <a href="#" class="navbar-brand"> Gooseberry </a>
     </div>
     <ul class="nav navbar-nav navbar-right">
-    <li>
-      <a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"> Log Out </span></a>
-    </li>
-    <li>
-      <a href="#"><span class="glyphicon glyphicon-user"> {{uname}}</span></a>
-    </li>
+      {% if uname|length >0 %}
+        <li>
+          <a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"> Log Out </span></a>
+        </li>
+        <li>
+          <a href="#"><span class="glyphicon glyphicon-user"> {{uname}}</span></a>
+        </li>
+      {% else %}
+        <li>
+          <a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"> Log in </span></a>
+        </li>
+        <li>
+          <a href="{{ url_for('signup') }}"><span class="glyphicon glyphicon-sign-up"> Sign up </span></a>
+        </li>
+      {% endif %}
     </ul>
   </div>
 </nav>
@@ -195,7 +204,7 @@
     <div id="myCalendar" class="tab-pane fade in active">
 
       <div class="container">
-        <div id="calendar" class="calendar"></div>
+        <div id="userCalendar" class="calendar"></div>
 
         <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered" role="document">
