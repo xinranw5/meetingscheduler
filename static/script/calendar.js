@@ -77,6 +77,7 @@ $(document).ready(function(){
       random: false
     }
   });
+ 
   var category_color = {Private:"#FF8F00",Professional:"#AD1457",Fun:"#BA0F90",Family:"#AF8C00"};
   var revise_info = {title:"",content:"",category:""};
   calendar.setEventCategoriesColors([{category:"Private", color: "#FF8F00"}, {category:"Professional", color:"#AD1457"}, {category:"Fun", color: "#BA0F90"}, {category:"Family", color: "#AF8C00"}]);
@@ -368,6 +369,23 @@ $(document).ready(function(){
       clickable = false;
       $(".calendar-event[data-start='"+current_event["start"]+"'][data-end='"+current_event["end"]+"']").css('background', current_event["color"]);
       console.log($(".calendar-event[data-start='"+current_event["start"]+"'][data-end='"+current_event["end"]+"']"))
+      console.log(JSON.stringify(current_event))
+      // post data to database
+      $.ajax({
+        url: '/save_activity/',
+        type: 'POST',
+        data: JSON.stringify(current_event), 
+        contentType: 'application/json; charset=UTF-8',
+        dataType: 'json', 
+        success: function(data) { 
+          console.log("sent")
+          console.log(data)
+        },
+        error: function(e) {
+        console.log(e)
+        }
+      });
+
   });
 
   // select other category
@@ -395,6 +413,21 @@ $(document).ready(function(){
       calendar.setEvents(new_events);
       calendar.init();
       $('#ModalCenter').modal('hide');
+
+      $.ajax({
+        url: '/delete_activity/',
+        type: 'POST',
+        data: JSON.stringify(current_event), 
+        contentType: 'application/json; charset=UTF-8',
+        dataType: 'json', 
+        success: function(data) { 
+          console.log("sent")
+          console.log(data)
+        },
+        error: function(e) {
+        console.log(e)
+        }
+      });
   });
   // slider part
   $(document).on('mousedown','.progress_btn',function(e) {
