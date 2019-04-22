@@ -124,7 +124,7 @@ $(document).ready(function(){
       }
   });
 
-  YUI().use('aui-button', 'aui-scheduler', 'event-custom-base', function (Y) {
+  YUI().use('aui-button','event', 'aui-scheduler', 'event-custom-base', function (Y) {
 
     // var eventRecorder = new Y.SchedulerEventRecorder();
     var weekView = new Y.SchedulerWeekView();
@@ -138,7 +138,7 @@ $(document).ready(function(){
           var new_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
           willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
 
-          console.log(this,this.getTemplateData(),new_event)
+          console.log("prepare data",this,this.getTemplateData(),new_event)
 
           // send to server
           $.ajax({
@@ -195,6 +195,7 @@ $(document).ready(function(){
         items: [],
         views: [weekView]
     }).render();
+    var click_event = $
 
     var editButton;
     const bar = `<div class="willingness">
@@ -245,7 +246,6 @@ $(document).ready(function(){
          $(".professional-color").css('color',category_color["Professional"]);
          $(".fun-color").css('color',category_color["Fun"]);
          $(".family-color").css('color',category_color["Family"]);
-         console.log("category value",this.get("category"))
 
         editButton = new Y.Button({
             // label: 'Edit',
