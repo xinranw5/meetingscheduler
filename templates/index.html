@@ -4,6 +4,8 @@
   <title>Meeting scheduler</title>
   {% include 'header.html' %}
   <!-- <script type="text/javascript" src="/static/script/tabs.js"></script> -->
+  <link href="http://cdn.alloyui.com/2.5.0/aui-css/css/bootstrap.min.css" rel="stylesheet"/>
+<script src="http://cdn.alloyui.com/2.5.0/aui/aui-min.js"></script>
   <script>
   function delcon(fid,fname){
     $.ajax({
@@ -187,6 +189,106 @@
   </ul>
 
   <div class="tab-content">
+    <div id="myCalendar" class="tab-pane fade in active">
+
+      <div class="container">
+        <!-- <div id="userCalendar" class="calendar"></div> -->
+        <div id="wrapper">
+          <div id="mySchedule"></div>
+        </div>
+        <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="ModalLongTitle"></h5>
+
+                <div class="input-group mb-3 input-title-area">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Title</span>
+                  </div>
+                  <input type="text" class="form-control input-title" aria-label="Default" aria-describedby="inputGroup-sizing-default" placeholder="add tile" >
+                </div>
+                
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                   <span aria-hidden="true">&times;</span>
+                </button>
+
+              </div>
+              <div class="modal-body">
+                <div class="modal-input-time">
+                  <input type="text" class="form-control start-hour" aria-label="Default" aria-describedby="inputGroup-sizing-default" >
+                  <span>:</span>
+                  <input type="text" class="form-control start-minute" aria-label="Default" aria-describedby="inputGroup-sizing-default" >
+                   <span>-</span>
+                  <input type="text" class="form-control end-hour" aria-label="Default" aria-describedby="inputGroup-sizing-default" >
+                   <span>:</span>
+                  <input type="text" class="form-control end-minute" aria-label="Default" aria-describedby="inputGroup-sizing-default" >
+                </div>
+                <div class="modal-time"></div>
+                <br>
+                <div class="modal-text"></div>
+                <div class="willingness">
+                  <h3>Willingness for scheduling event</h3>
+                  <div class="text">0%</div>
+                  <div class="progress">
+                    <div class="progress_bg">
+                        <div class="progress_bar"></div>
+                    </div>
+                    <div class="progress_btn"></div>
+                    
+                  </div>
+                </div>
+                <div class="input-group input-context-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Description</span>
+                  </div>
+                  <textarea class="form-control input-context" aria-label="With textarea" placeholder="add description"></textarea>
+                </div>
+
+      
+               
+                <div class="current-category">
+                  <i class="fas fa-square select-color"></i><span></span>
+                </div>
+                
+                <div class="dropdown select-category">
+
+                  <button class="btn btn-secondary dropdown-toggle btn-dropdown" data-category="" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-square select-color"> </i><span></span>
+                  </button>
+
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item private-option" data-category="Private" href="#">
+                      <i class="fas fa-square private-color"> </i><span> Private</span>
+                    </a>
+                    <a class="dropdown-item professional-option" data-category="Professional" href="#">
+                       <i class="fas fa-square professional-color"></i><span> Professional</span>
+                    </a>
+                    <a class="dropdown-item fun-option" data-category="Fun" href="#">
+                      <i class="fas fa-square fun-color"> </i><span> Fun</span>
+                    </a>
+                    <a class="dropdown-item Family-option" data-category="Family" href="#">
+                      <i class="fas fa-square family-color"> </i><span> Family</span>
+                    </a>
+                  </div>
+
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-delete" data-dismiss="modal">Delete</button>
+                <button type="button" class="btn btn-primary btn-edit">Edit</button>
+                <button type="button" class="btn btn-success btn-submit">Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Calendar modal finished-->
+
+      </div>
+      <button type="button" id="add_btn" class="btn btn-info" style="height:32px;vertical-align:center" onclick="add_activity()">Add Activity</button>
+      <button type="button" id="del_btn" class="btn btn-danger" style="height:32px;vertical-align:center" onclick="delete_activity()">Delete Activity</button>
+      <button type="button" id="clear_btn" class="btn btn-danger" style="height:32px;vertical-align:center" onclick="clear_schedule()">Clear</button>
+    </div>
     {% include 'userCalendarPane.html' %}
 	
     <div id="invitations" class="tab-pane fade">
@@ -222,6 +324,41 @@
       </table>
     </div>
 
+    <div id="goose" class="tab-pane fade">
+      <h3>Contacts</h3>
+      
+  	  <div class="container">
+        <!-- <div class="col-md-8">
+          <div id="supCalendar" class="calendar"></div> 
+        </div> -->
+        <div id="wrapper">
+          <div id="mySchedule2"></div>
+        </div>
+
+        <div class="col-md-2">
+          <div style="overflow-y:auto;overflow-x:hidden;height:160px">
+           <p>Friend list</p>
+            <ul id="intervieweelist" style="list-style-type:circle;height:auto">
+              {% for i in friendlist %}
+                      <label><input type="checkbox" name="usercheckbox" value={{i.id}}> {{i.id}} </label>
+                <br>
+              {% endfor %}
+            </ul>
+          </div>
+          <button type="button" id="superimpose_btn" class="btn btn-primary" style="height:32px;vertical-align:center" onclick="superimpose_schedule()">Superimpose</button>
+        </div>
+
+        <ul id="contactList" style="list-style-type:circle;height:auto">
+        </ul>
+
+        <div class="col-sm-3">
+          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addFriendModal">+ Add Friend</button>
+          <ul id="contactList" style="list-style-type:circle;height:auto">
+          </ul>
+          <button type="button" class="btn btn-danger" >x Delete</button>
+        </div>
+      </div>
+    </div>
     {% include 'supCalendarPane.html' %}
     
 	  
@@ -279,11 +416,13 @@
   </div>
 </div>
 
+
+  <script src="../static/script/newCalendar.js"></script>
+  <script src="../static/script/newCalendar2.js"></script>
 </div>
 
 <!-- Modal -->
 
-<script src="../static/script/calendar.js"></script>
 
   
 	<script language="javascript" type="text/javascript">

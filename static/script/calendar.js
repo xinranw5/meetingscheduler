@@ -409,21 +409,22 @@ $(document).ready(function(){
         });
       }else{
         edit = 0;
-        $.ajax({
-          url: '/update_activity/',
-          type: 'POST',
-          data: JSON.stringify(current_event), 
-          contentType: 'application/json; charset=UTF-8',
-          dataType: 'json', 
-          success: function(data) { 
-            console.log("sent")
-            console.log(data)
-          },
-          error: function(e) {
-          console.log(e)
-          }
-        });
+        // $.ajax({
+        //   url: '/update_activity/',
+        //   type: 'POST',
+        //   data: JSON.stringify(current_event), 
+        //   contentType: 'application/json; charset=UTF-8',
+        //   dataType: 'json', 
+        //   success: function(data) { 
+        //     console.log("sent")
+        //     console.log(data)
+        //   },
+        //   error: function(e) {
+        //   console.log(e)
+        //   }
+        // });
       }
+      console.log("submit done")
   });
 
   // select other category
@@ -452,20 +453,20 @@ $(document).ready(function(){
       calendar.init();
       $('#ModalCenter').modal('hide');
 
-      $.ajax({
-        url: '/delete_activity/',
-        type: 'POST',
-        data: JSON.stringify(current_event), 
-        contentType: 'application/json; charset=UTF-8',
-        dataType: 'json', 
-        success: function(data) { 
-          console.log("delete")
-          console.log(data)
-        },
-        error: function(e) {
-          console.log(e)
-        }
-      });
+      // $.ajax({
+      //   url: '/delete_activity/',
+      //   type: 'POST',
+      //   data: JSON.stringify(current_event), 
+      //   contentType: 'application/json; charset=UTF-8',
+      //   dataType: 'json', 
+      //   success: function(data) { 
+      //     console.log("delete")
+      //     console.log(data)
+      //   },
+      //   error: function(e) {
+      //     console.log(e)
+      //   }
+      // });
   });
   // slider part
   $(document).on('mousedown','.progress_btn',function(e) {
