@@ -257,9 +257,10 @@ def save_activity():
         if request.method == 'POST':
             new_act = request.get_json()
             #save to the database
+            print(new_act)
             if 'username' not in session:
                 return "error"
-            database.addActivity(session['uid'], new_act["title"],new_act["start"],new_act["end"],new_act["willingness"],new_act["category"],new_act["content"])
+            database.addActivity(session['uid'], new_act["title"],new_act["start"],new_act["end"],new_act["willingness"],new_act["category"],new_act["description"])
         return json.dumps(new_act)
 
 @app.route("/delete_activity/",methods=['POST','GET'])
@@ -269,7 +270,7 @@ def delete_activity():
             del_act = request.get_json()
             if 'username' not in session:
                 return "error"
-            eid = database.findActivity(session['uid'], new_act["title"],new_act["start"],new_act["end"])
+            eid = database.findActivity(session['uid'], del_act["title"], del_act["start"], del_act["end"])
             database.deleteActivity(eid)
         return json.dumps(del_act)
 

@@ -27,7 +27,7 @@ def findUser(goal,uid):
     return exe(sql)
 
 def getUidByUname(username):
-    sql = "select %s from %s where username='%s'" % (uid,userPage,username)
+    sql = "select uid from %s where username='%s'" % (userPage,username)
     return exe(sql)
 
 def updateUser(goal,val,uid):
@@ -134,7 +134,7 @@ def invAddMember(inv, uid):
 def exe(sql):
     # print "[sql] ",
     # print sql
-    db = MySQLdb.connect(host='127.0.0.1',port = 3306,user='root', passwd='',db =db_schedule)
+    db = MySQLdb.connect(host='127.0.0.1',port = 3306,user='root', passwd='12345678',db =db_schedule)
     cursor = db.cursor()
     results = []
     try:

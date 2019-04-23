@@ -105,22 +105,22 @@ $(document).ready(function(){
    * Listening for events
    */
   
-  $(document).on('Calendar.init','#calendar', function(event, instance, before, current, after){
-    console.log('event : Calendar.init is call');
-  });
-  $(document).on('Calendar.daynote-mouseenter', '#calendar',function(event, instance, elem){
-  });
-  $(document).on('Calendar.daynote-mouseleave','#calendar', function(event, instance, elem){
+  // $(document).on('Calendar.init','#calendar', function(event, instance, before, current, after){
+  //   console.log('event : Calendar.init is call');
+  // });
+  // $(document).on('Calendar.daynote-mouseenter', '#calendar',function(event, instance, elem){
+  // });
+  // $(document).on('Calendar.daynote-mouseleave','#calendar', function(event, instance, elem){
     
-  });
-  $(document).on('Calendar.event-mouseenter','#calendar', function(event, instance, elem){
+  // });
+  // $(document).on('Calendar.event-mouseenter','#calendar', function(event, instance, elem){
     
-  });
-  $(document).on('Calendar.event-mouseleave','#calendar', function(event, instance, elem){
+  // });
+  // $(document).on('Calendar.event-mouseleave','#calendar', function(event, instance, elem){
     
-  });
-  $(document).on('Calendar.daynote-click','#calendar', function(event, instance, elem, evt){   
-  });
+  // });
+  // $(document).on('Calendar.daynote-click','#calendar', function(event, instance, elem, evt){   
+  // });
  
   
   // if there is an event, don't create new event
@@ -144,6 +144,8 @@ $(document).ready(function(){
     event_start_minute = Math.floor((event_start_time - event_start_hour) * 60);
     // console.log("start_minute",event_start_minute)
     start_day_timestamp = $(this).parent()[0].attributes[1].nodeValue
+    console.log("parent",$(this).parent())
+    console.log("start_day_timestamp", start_day_timestamp)
     start_timestamp = new Date(start_day_timestamp * 1000)
     start_timestamp.setHours(event_start_hour)
     start_timestamp.setMinutes(event_start_minute)
