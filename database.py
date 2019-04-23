@@ -9,7 +9,7 @@ db_schedule = "scheduler"
 userPage = "users"
 invitationPage = "invitations"
 contactPage = "contacts"
-timePage = "activities"
+timePage = "calendar"
 
 InvIdLength = 10
 calendarW = 7
@@ -27,7 +27,8 @@ def findUser(goal,uid):
     return exe(sql)
 
 def getUidByUname(username):
-    sql = "select uid from %s where username='%s'" % (userPage,username)
+    sql = "select id from %s where name='%s'" % (userPage,username)
+    print(sql)
     return exe(sql)
 
 def updateUser(goal,val,uid):
@@ -74,12 +75,12 @@ def relation(uid,fid):
 
 #time, activity 
 def addActivity(uid,title,start,end,willingness,acttype,descrption):
-    sql = "insert into %s (uid, title, start, end, willingness, type, descrption) values ('%s','%s','%s','%s','%s','%s','%s' )"% (timePage,uid,title,start,end,willingness,acttype,descrption)
+    sql = "insert into %s (uid, title, start, end, willingness, type, descrption) values (%s, '%s', %s, %s, %s,'%s','%s' )"% (timePage,uid,title,start,end,willingness,acttype,descrption)
     print(sql)
     exe(sql)
 
 def deleteActivity(eid):
-    sql = "delete from %s where eid='%s'" % (timePage,eid)
+    sql = "delete from %s where eid=%s" % (timePage,eid)
     print(sql)
     exe(sql)
 
@@ -90,6 +91,11 @@ def updateActivity(eid,uid,title,start,end,willingness,acttype,descrption):
 
 def findActivity(uid, title, start, end):
     sql = "select eid from %s where uid='%s' and start='%s' and end='%s' and title='%s'" % (timePage, uid, start, end, title)
+    print(sql)
+    return exe(sql)
+
+def findActivitiesByUser(uid):
+    sql = "select * from %s where uid='%s'" % (timePage, uid)
     print(sql)
     return exe(sql)
 

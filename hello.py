@@ -47,10 +47,10 @@ def rootpage():
 def index():
     username = ''
     if 'username' in session:
-        # uid = session['uid']
         username = session['username']
-        # user = User(uid)
-        # user.set_username(username)
+        uid = session['uid']
+        activities = database.findActivitiesByUser(uid)
+        print("activity", activities)
     return render_template("index.html", uname=username)
 
 ###############################
@@ -70,7 +70,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         session['username'] = username
-        session['uid'] = database.getUidByUname(username)
+        session['uid'] = database.getUidByUname(username)[0][0]
         return redirect(url_for('index'))
     return render_template("loginpage.html")
 
@@ -260,7 +260,7 @@ def save_activity():
             print(new_act)
             if 'username' not in session:
                 return "error"
-            database.addActivity(session['uid'], new_act["title"],new_act["start"],new_act["end"],new_act["willingness"],new_act["category"],new_act["description"])
+            database.addActivity(session['uid'], new_act["title"],int(new_act["start"]),int(new_act["end"]),float(new_act["willingness"]),new_act["category"],new_act["description"])
         return json.dumps(new_act)
 
 @app.route("/delete_activity/",methods=['POST','GET'])
