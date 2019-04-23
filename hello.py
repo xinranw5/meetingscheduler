@@ -1,8 +1,8 @@
 from flask import Flask
 from flask import abort, redirect, url_for, render_template
 from flask import request, session
-import pymysql
-pymysql.install_as_MySQLdb()
+# import pymysql
+# pymysql.install_as_MySQLdb()
 import database
 import json
 from flask import jsonify
@@ -51,7 +51,17 @@ def index():
         uid = session['uid']
         activities = database.findActivitiesByUser(uid)
         print("activity", activities)
-    return render_template("index.html", uname=username)
+        actList=[]
+        for activity in activities:
+            act={}
+            act["title"] = activity[2]
+            act["start"] = activity[3]
+            act["end"] = activity[4]
+            act["willingness"] = activity[5]
+            act["description"] = activity[6]
+            actList.append(act)
+        print("actList", actList)
+    return render_template("index.html", uname=username, actList=actList)
 
 ###############################
 #Comment out things with session
@@ -253,7 +263,7 @@ def user():
 
 @app.route("/save_activity/",methods=['POST','GET'])
 def save_activity():
-        new_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "content":""})
+        new_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "description":""})
         if request.method == 'POST':
             new_act = request.get_json()
             #save to the database
@@ -265,25 +275,25 @@ def save_activity():
 
 @app.route("/delete_activity/",methods=['POST','GET'])
 def delete_activity():
-        del_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "content":""})
+        del_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "description":""})
         if request.method == 'POST':
             del_act = request.get_json()
             if 'username' not in session:
                 return "error"
-            eid = database.findActivity(session['uid'], del_act["title"], del_act["start"], del_act["end"])
+            eid = int(database.findActivity(session['uid'], del_act["title"], del_act["start"], del_act["end"])[0][0])
             database.deleteActivity(eid)
         return json.dumps(del_act)
 
 @app.route("/update_activity/",methods=['POST','GET'])
 def update_activity():
-        update_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "content":""})
+        update_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "description":""})
         if request.method == 'POST':
             update_act = request.get_json()
             #save to the database
             if 'username' not in session:
                 return "error"
-            eid = database.findActivity(session['uid'], update_act["title"],update_act["start"],update_act["end"])
-            database.updateActivity(eid, session['uid'], update_act["title"],update_act["start"],update_act["end"],update_act["willingness"],update_act["category"],update_act["content"])
+            eid = int(database.findActivity(session['uid'], update_act["title"], int(update_act["start"]),int(update_act["end"]))[0][0])
+            database.updateActivity(eid, session['uid'], update_act["title"],update_act["start"],update_act["end"],update_act["willingness"],update_act["category"],update_act["description"])
         return json.dumps(update_act)
 
 

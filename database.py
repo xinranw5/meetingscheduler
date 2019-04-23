@@ -85,17 +85,17 @@ def deleteActivity(eid):
     exe(sql)
 
 def updateActivity(eid,uid,title,start,end,willingness,acttype,descrption):
-    sql = "update %s set uid='%s', title='%s', start='%s', end='%s', willingness='%s', type='%s', descrption='%s' where eid='%s'"% (timePage,uid,title,start,end,willingness,acttype,descrption,eid)
+    sql = "update %s set uid=%s, title='%s', start=%s, end=%s, willingness=%s, type='%s', descrption='%s' where eid=%s"% (timePage,uid,title,start,end,willingness,acttype,descrption,eid)
     print(sql)
     exe(sql)
 
 def findActivity(uid, title, start, end):
-    sql = "select eid from %s where uid='%s' and start='%s' and end='%s' and title='%s'" % (timePage, uid, start, end, title)
+    sql = "select eid from %s where uid=%s and start=%s and end=%s and title='%s'" % (timePage, uid, start, end, title)
     print(sql)
     return exe(sql)
 
 def findActivitiesByUser(uid):
-    sql = "select * from %s where uid='%s'" % (timePage, uid)
+    sql = "select * from %s where uid=%s" % (timePage, uid)
     print(sql)
     return exe(sql)
 

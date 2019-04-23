@@ -49,7 +49,7 @@ create table users(id INT NOT NULL AUTO_INCREMENT, name VARCHAR(40), pwd VARCHAR
 
 create table contact(uid INT, fid INT, fname VARCHAR(100),PRIMARY KEY(uid));
 
-create table calendar(eid INT NOT NULL AUTO_INCREMENT, uid INT, title VARCHAR(100), start INT, end INT, willingness FLOAT(10,6), type VARCHAR(100), descrption VARCHAR(250), PRIMARY KEY(eid));
+create table calendar(eid INT NOT NULL AUTO_INCREMENT, uid INT, title VARCHAR(100), start BIGINT, end BIGINT, willingness FLOAT(10,6), type VARCHAR(100), descrption VARCHAR(250), PRIMARY KEY(eid));
 
 create table feedback(fbid INT, uid INT, iid INT, attendence BOOLEAN, score double,  review VARCHAR(400),PRIMARY KEY(fbid));
 
