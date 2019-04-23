@@ -124,18 +124,16 @@ $(document).ready(function(){
       }
   });
 
-  YUI().use('aui-button','event', 'aui-scheduler', 'event-custom-base', function (Y) {
+  YUI().use('aui-button', 'aui-scheduler', 'event-custom-base', function (Y) {
 
     // var eventRecorder = new Y.SchedulerEventRecorder();
     var scheduler;
     var weekView = new Y.SchedulerWeekView();
     var eventRecorder = new Y.SchedulerEventRecorder({
-      on: {
+      after: {
         save: function(event) {
-          // var es = scheduler.getEvents();
-          // if(es.length > 0)
-          //   console.log(scheduler.getEvents()[0])
-          // console.log("save category",$(".btn-dropdown").data("category"))
+          console.log("now ", this)
+          this.set("content",$(".scheduler-event-recorder-content").val())
           this.set("category",$(".btn-dropdown").data("category"))
           this.set("willingness", willingness)
           this.set("description",$(".input-context").val())
@@ -143,7 +141,7 @@ $(document).ready(function(){
           var new_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
           willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
 
-          console.log("prepare data",this,this.getTemplateData(),new_event)
+          console.log("prepare data",this.getTemplateData(),new_event)
 
           // send to server
           $.ajax({
@@ -163,7 +161,8 @@ $(document).ready(function(){
 
         },
         edit: function(event) {
-          alert('Edit Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
+          // alert('Edit Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
+          this.set("content",$(".scheduler-event-recorder-content").val())
           this.set("category",$(".btn-dropdown").data("category"))
           this.set("willingness", willingness)
           this.set("description",$(".input-context").val())
