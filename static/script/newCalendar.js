@@ -14,50 +14,7 @@
      
 //     ];
 
-//     var agendaView = new Y.SchedulerAgendaView();
-//     var dayView = new Y.SchedulerDayView();
-//     var eventRecorder = new Y.SchedulerEventRecorder();
-//     var monthView = new Y.SchedulerMonthView();
-//     var weekView = new Y.SchedulerWeekView();
-// //     var eventRecorder = new Y.SchedulerEventRecorder({
-// //     on: {
-// //       save: function(event) {
-// //         console.log(this.get("name"))
-// //         alert('Save Event:'  + this.isNew() + ' --- ' + this.getContentNode().val());
-// //       },
-// //       edit: function(event) {
-// //         alert('Edit Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
-// //       },
-// //       delete: function(event) {
-// //         alert('Delete Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
-// // // Note: The cancel event seems to be buggy and occurs at the wrong times, so I commented it out.
-// // //      },
-// // //      cancel: function(event) {
-// // //        alert('Cancel Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
-// //       }
-// //     }
-//   // });
-//     var scheduler = new Y.Scheduler(
-//       {
-//         activeView: weekView,
-//         boundingBox: '#myScheduler',
-//         date: new Date(2013, 1, 4),
-//         eventRecorder: eventRecorder,
-//         items: events,
-//         render: true,
-//         views: [dayView, weekView, monthView, agendaView]
-//       }
-//     );
-//     var a = scheduler.getEvent("456");
-//     console.log(scheduler.getEvents(),eventRecorder)
-//     Y.Do.after(function() {
-//         // Assuming that the boundingBox of your Scheduler has an id of "bb":
-//         var toolbarBtnGroup = Y.one('#myScheduler .yui3-widget-stdmod');
-//         console.log(toolbarBtnGroup)
-//         toolbarBtnGroup.appendChild('<button id="editdd" type="button">Editdd</button>');
-//     }, eventRecorder, 'showPopover');
 
-//   }
 // );
 // });
 //      
@@ -97,7 +54,7 @@ $(document).ready(function(){
 
   });
   $(document).on('mousemove','.progress',function(e) {//mouse move
-      if (tag && clickable) {
+      if (tag) {
           left = e.pageX - ox;
           if (left <= 0) {
               left = 0;
@@ -110,7 +67,7 @@ $(document).ready(function(){
       }
   });
   $(document).on('click','.progress_bg',function(e) {// mouse click
-      if (!tag && clickable) {
+      if (!tag) {
           bgleft = $('.progress_bg').offset().left;
           left = e.pageX - bgleft;
           if (left <= 0) {
@@ -130,13 +87,28 @@ $(document).ready(function(){
     var scheduler;
     var weekView = new Y.SchedulerWeekView();
     var eventRecorder = new Y.SchedulerEventRecorder({
+      after :{
+        save: function(event){
+          var current_color = category_color[this.get("category")];
+          if (current_color!=undefined)
+            this.set("color",current_color)
+            // console.log("after save change color", current_color)
+
+        }
+      },
       on: {
         save: function(event) {
-          console.log("now ", $(".scheduler-event-recorder-content").val())
+          // console.log("now ", $(".scheduler-event-recorder-content").val())
+          
           this.set("content",$(".scheduler-event-recorder-content").val())
           this.set("category",$(".btn-dropdown").data("category"))
           this.set("willingness", willingness)
           this.set("description",$(".input-context").val())
+          var current_color = category_color[this.get("category")];
+          if (current_color!=undefined)
+            this.set("color",current_color)
+            console.log("change color", current_color)
+
           data = this.getTemplateData();
           var new_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
           willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
@@ -162,10 +134,12 @@ $(document).ready(function(){
         },
         edit: function(event) {
           // alert('Edit Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
+
           this.set("content",$(".scheduler-event-recorder-content").val())
           this.set("category",$(".btn-dropdown").data("category"))
           this.set("willingness", willingness)
           this.set("description",$(".input-context").val())
+
           data = this.getTemplateData();
           var edit_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
           willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
@@ -189,7 +163,6 @@ $(document).ready(function(){
           });
         },
         delete: function(event) {
-          // alert('Delete Event:' + this.isNew() + ' --- ' + this.getContentNode().val())
           data = this.getTemplateData();
           var old_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
           willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
@@ -263,17 +236,24 @@ $(document).ready(function(){
                 </div>`
 
     Y.Do.after(function() {
+        // add additional elements
         var addPlace = Y.one("#mySchedule .popover-content");
-        var toolbarBtnGroup = Y.one('#mySchedule .toolbar .btn-group');
-        toolbarBtnGroup.appendChild('<button id="edit" type="button">Edit</button>');
         addPlace.appendChild(bar);
         addPlace.appendChild(description);
         addPlace.appendChild(select_bar);
-        // var evt = this.getData('scheduler-event');
         var current_category = this.get("category")
-        // menu for category
-        $(".btn-dropdown > i").css('color',category_color[current_category]);
-        $(".btn-dropdown > span").text(current_category)
+        
+        // bar
+        if(this.get("willingness")!=undefined){
+          willingness = this.get("willingness");
+          console.log("current willingness",willingness)
+          left = willingness * bar_length;
+          $('.progress_btn').css('left', left);
+          $('.progress_bar').animate({width:left},bar_length);
+          $('.text').html(parseInt((left/bar_length)*100) + '%');
+
+        }
+        
         console.log("evt",current_category)
          // other option color
          $(".private-color").css('color',category_color["Private"]);
@@ -285,24 +265,38 @@ $(document).ready(function(){
          $(".professional-color").data('category',"Professional");
          $(".fun-color").data('category',"Fun");
          $(".family-color").data('category',"Family");
+         // menu for category
+         $(".btn-dropdown > i").css('color',category_color[current_category]);
+         $(".btn-dropdown > span").text(current_category)
+         $(".btn-dropdown").data("category",current_category)
+         // set bar
+         console.log("willingness",this.get("willingness"))
+         // if(this.get("willingness")!=undefined)
+         //   willingness = this.get("willingness");
+         //   left = willingness * bar_length
+         //   console.log("left",left)
+         //   $('.progress_btn').css('left', left);
+         //   $('.progress_bar').width(left);
+         //   $('.text').html(parseInt(willingness*100) + '%');
 
-        editButton = new Y.Button({
-            // label: 'Edit',
-            srcNode: '#edit',
-        }).render();
+        
 
-        editButton.on('click', function(event) {
-            alert('Edit clicked!');
-            eventRecorder.hidePopover();
-        });
+        
     }, eventRecorder, 'showPopover');
     
     Y.Do.after(function() {
-        
+
+      // var current_category = this.get("category")
+      // // menu for category
+      // $(".btn-dropdown > i").css('color',category_color[current_category]);
+      // $(".btn-dropdown > span").text(current_category)
+      console.log("after hide popover",this.get("color"),this.get("category"))
         // Make sure that the editButton is destroyed to avoid a memory leak.
-        if (editButton) {
-            editButton.destroy();
-        }
+      // var current_color = category_color[this.get("category")];
+      
+
+        // console.log("change",$(".scheduler-event").css("background-color"))
+      
     }, eventRecorder, 'hidePopover');
 });
 
