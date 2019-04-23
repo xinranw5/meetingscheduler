@@ -46,12 +46,12 @@ def rootpage():
 @app.route("/index", methods=['GET', 'POST'])
 def index():
     username = ''
+    actList = []
     if 'username' in session:
         username = session['username']
         uid = session['uid']
         activities = database.findActivitiesByUser(uid)
         print("activity", activities)
-        actList=[]
         for activity in activities:
             act={}
             act["title"] = activity[2]
@@ -90,6 +90,10 @@ def logout():
     session.pop('uid', None)
     session.pop('username', None)
     return redirect(url_for('index'))
+
+@app.route('/supCalendarPage')
+def supCalendarPage():
+    return render_template("supCalendarPage.html")
 
 #
 @app.route("/searchpeople/",methods=['GET','POST'])
