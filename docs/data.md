@@ -45,17 +45,17 @@ iid, host, participants, start, end, title, description, status(upcoming/)
 
 
 ## sql create
-create table user(id INT NOT NULL AUTO_INCREMENT, name VARCHAR(40), pwd VARCHAR(100), invitations VARCHAR(400), timezone DATE, PRIMARY KEY(id));
+create table users(id INT NOT NULL AUTO_INCREMENT, name VARCHAR(40), pwd VARCHAR(100), invitations VARCHAR(400), timezone VARCHAR(40), PRIMARY KEY(id));
 
 create table contact(uid INT, fid INT, fname VARCHAR(100),PRIMARY KEY(uid));
 
-create table calendar(eid INT NOT NULL AUTO_INCREMENT, uid INT, title VARCHAR(100), start DATETIME,end DATETIME, willingness INT, type VARCHAR(100),descrption VARCHAR(250), PRIMARY KEY(eid));
+create table calendar(eid INT NOT NULL AUTO_INCREMENT, uid INT, title VARCHAR(100), start BIGINT, end BIGINT, willingness FLOAT(10,6), type VARCHAR(100), descrption VARCHAR(250), PRIMARY KEY(eid));
 
 create table feedback(fbid INT, uid INT, iid INT, attendence BOOLEAN, score double,  review VARCHAR(400),PRIMARY KEY(fbid));
 
 create table invitations(iid INT, host INT, participants VARCHAR(400), start DATETIME, end DATETIME, title VARCHAR(100), description VARCHAR(400), statue VARCHAR(100));
 
-
+insert into users (name, pwd, invitations, timezone) values ("w", "1", "", "");
 
 
 

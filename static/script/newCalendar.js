@@ -191,7 +191,7 @@ $(document).ready(function(){
 
     scheduler = new Y.Scheduler({
         boundingBox: '#mySchedule',
-        date: new Date(2014, 8, 28),
+        date: new Date(2019, 4, 24),
         eventRecorder: eventRecorder,
         items: [],
         views: [weekView]

@@ -1,8 +1,8 @@
 from flask import Flask
 from flask import abort, redirect, url_for, render_template
 from flask import request, session
-import pymysql
-pymysql.install_as_MySQLdb()
+# import pymysql
+# pymysql.install_as_MySQLdb()
 import database
 import json
 from flask import jsonify
@@ -46,12 +46,22 @@ def rootpage():
 @app.route("/index", methods=['GET', 'POST'])
 def index():
     username = ''
+    actList = []
     if 'username' in session:
-        # uid = session['uid']
         username = session['username']
-        # user = User(uid)
-        # user.set_username(username)
-    return render_template("index.html", uname=username)
+        uid = session['uid']
+        activities = database.findActivitiesByUser(uid)
+        print("activity", activities)
+        for activity in activities:
+            act={}
+            act["title"] = activity[2]
+            act["start"] = activity[3]
+            act["end"] = activity[4]
+            act["willingness"] = activity[5]
+            act["description"] = activity[6]
+            actList.append(act)
+        print("actList", actList)
+    return render_template("index.html", uname=username, actList=actList)
 
 ###############################
 #Comment out things with session
@@ -70,7 +80,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         session['username'] = username
-        session['uid'] = database.getUidByUname(username)
+        session['uid'] = database.getUidByUname(username)[0][0]
         return redirect(url_for('index'))
     return render_template("loginpage.html")
 
@@ -80,6 +90,10 @@ def logout():
     session.pop('uid', None)
     session.pop('username', None)
     return redirect(url_for('index'))
+
+@app.route('/supCalendarPage')
+def supCalendarPage():
+    return render_template("supCalendarPage.html")
 
 #
 @app.route("/searchpeople/",methods=['GET','POST'])
@@ -253,37 +267,37 @@ def user():
 
 @app.route("/save_activity/",methods=['POST','GET'])
 def save_activity():
-        new_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "content":""})
+        new_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "description":""})
         if request.method == 'POST':
             new_act = request.get_json()
             #save to the database
             print(new_act)
             if 'username' not in session:
                 return "error"
-            database.addActivity(session['uid'], new_act["title"],new_act["start"],new_act["end"],new_act["willingness"],new_act["category"],new_act["description"])
+            database.addActivity(session['uid'], new_act["title"],int(new_act["start"]),int(new_act["end"]),float(new_act["willingness"]),new_act["category"],new_act["description"])
         return json.dumps(new_act)
 
 @app.route("/delete_activity/",methods=['POST','GET'])
 def delete_activity():
-        del_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "content":""})
+        del_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "description":""})
         if request.method == 'POST':
             del_act = request.get_json()
             if 'username' not in session:
                 return "error"
-            eid = database.findActivity(session['uid'], del_act["title"], del_act["start"], del_act["end"])
+            eid = int(database.findActivity(session['uid'], del_act["title"], del_act["start"], del_act["end"])[0][0])
             database.deleteActivity(eid)
         return json.dumps(del_act)
 
 @app.route("/update_activity/",methods=['POST','GET'])
 def update_activity():
-        update_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "content":""})
+        update_act = json.dumps({"title":'',"start":0,"end":0, "willingness":0, "category":"", "description":""})
         if request.method == 'POST':
             update_act = request.get_json()
             #save to the database
             if 'username' not in session:
                 return "error"
-            eid = database.findActivity(session['uid'], update_act["title"],update_act["start"],update_act["end"])
-            database.updateActivity(eid, session['uid'], update_act["title"],update_act["start"],update_act["end"],update_act["willingness"],update_act["category"],update_act["content"])
+            eid = int(database.findActivity(session['uid'], update_act["title"], int(update_act["start"]),int(update_act["end"]))[0][0])
+            database.updateActivity(eid, session['uid'], update_act["title"],update_act["start"],update_act["end"],update_act["willingness"],update_act["category"],update_act["description"])
         return json.dumps(update_act)
 
 
