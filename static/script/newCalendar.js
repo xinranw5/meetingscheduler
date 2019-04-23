@@ -127,10 +127,15 @@ $(document).ready(function(){
   YUI().use('aui-button','event', 'aui-scheduler', 'event-custom-base', function (Y) {
 
     // var eventRecorder = new Y.SchedulerEventRecorder();
+    var scheduler;
     var weekView = new Y.SchedulerWeekView();
     var eventRecorder = new Y.SchedulerEventRecorder({
       on: {
         save: function(event) {
+          // var es = scheduler.getEvents();
+          // if(es.length > 0)
+          //   console.log(scheduler.getEvents()[0])
+          // console.log("save category",$(".btn-dropdown").data("category"))
           this.set("category",$(".btn-dropdown").data("category"))
           this.set("willingness", willingness)
           this.set("description",$(".input-context").val())
@@ -159,6 +164,30 @@ $(document).ready(function(){
         },
         edit: function(event) {
           alert('Edit Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
+          this.set("category",$(".btn-dropdown").data("category"))
+          this.set("willingness", willingness)
+          this.set("description",$(".input-context").val())
+          data = this.getTemplateData();
+          var edit_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
+          willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
+
+          console.log("prepare data",this,this.getTemplateData(),edit_event)
+
+          // send to server
+          $.ajax({
+            url: '/update_activity/',
+            type: 'POST',
+            data: JSON.stringify(edit_event), 
+            contentType: 'application/json; charset=UTF-8',
+            dataType: 'json', 
+            success: function(data) { 
+              console.log("sent")
+              console.log(data)
+            },
+            error: function(e) {
+            console.log(e)
+            }
+          });
         },
         delete: function(event) {
           // alert('Delete Event:' + this.isNew() + ' --- ' + this.getContentNode().val())
@@ -188,14 +217,14 @@ $(document).ready(function(){
       }
     });
 
-    new Y.Scheduler({
+    scheduler = new Y.Scheduler({
         boundingBox: '#mySchedule',
         date: new Date(2014, 8, 28),
         eventRecorder: eventRecorder,
         items: [],
         views: [weekView]
     }).render();
-    var click_event = $
+    // var click_event = $
 
     var editButton;
     const bar = `<div class="willingness">
@@ -241,11 +270,22 @@ $(document).ready(function(){
         addPlace.appendChild(bar);
         addPlace.appendChild(description);
         addPlace.appendChild(select_bar);
+        // var evt = this.getData('scheduler-event');
+        var current_category = this.get("category")
+        // menu for category
+        $(".btn-dropdown > i").css('color',category_color[current_category]);
+        $(".btn-dropdown > span").text(current_category)
+        console.log("evt",current_category)
          // other option color
          $(".private-color").css('color',category_color["Private"]);
          $(".professional-color").css('color',category_color["Professional"]);
          $(".fun-color").css('color',category_color["Fun"]);
          $(".family-color").css('color',category_color["Family"]);
+
+         $(".private-color").data('category',"Private");
+         $(".professional-color").data('category',"Professional");
+         $(".fun-color").data('category',"Fun");
+         $(".family-color").data('category',"Family");
 
         editButton = new Y.Button({
             // label: 'Edit',
