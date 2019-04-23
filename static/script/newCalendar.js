@@ -130,9 +130,9 @@ $(document).ready(function(){
     var scheduler;
     var weekView = new Y.SchedulerWeekView();
     var eventRecorder = new Y.SchedulerEventRecorder({
-      after: {
+      on: {
         save: function(event) {
-          console.log("now ", this)
+          console.log("now ", $(".scheduler-event-recorder-content").val())
           this.set("content",$(".scheduler-event-recorder-content").val())
           this.set("category",$(".btn-dropdown").data("category"))
           this.set("willingness", willingness)
