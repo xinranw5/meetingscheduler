@@ -3,7 +3,9 @@
 <head>
   {% include 'header.html' %}
   <script src="../static/script/newCalendar2.js"></script>
-  
+  <script type="text/javascript">
+    var data_list = '{{actList|tojson}}';
+  </script>
       <h3>Contacts</h3>
       
       <div class="container">

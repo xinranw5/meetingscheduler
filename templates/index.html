@@ -3,9 +3,11 @@
 <head>
   {% include 'header.html' %}
   <script src="../static/script/newCalendar.js"></script>
-  <!--script src="../static/script/newCalendar2.js"></script-->
-  
+
   <script>
+
+  var table_data0 = '{{actList|tojson}}'
+  // console.log(table_data0)
   function delcon(fid,fname){
     $.ajax({
       type: "GET",
@@ -283,7 +285,11 @@
 </div>
 
 
+<<<<<<< HEAD
   <!-- <script src="../static/script/newCalendar2.js"></script> -->
+=======
+  
+>>>>>>> bb04944aea9e6467ba21db5b57897968ed73b487
 
 </div>
 
