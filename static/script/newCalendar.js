@@ -2,22 +2,43 @@
 //  YUI().use(
 //   'aui-scheduler',
 //   function(Y) {
-//     var events = [
-//       {
-//         content: 'AllDay',
-//         endDate: new Date(2013, 1, 5, 23, 59),
-//         startDate: new Date(2013, 1, 5, 0),
-//         color: '#000000',
-//         id: "123",
-//         name: "456"
-//       },
+    // var events = [
+    //   {
+    //     content: 'AllDay',
+    //     endDate: new Date(2013, 1, 5, 23, 59),
+    //     startDate: new Date(2013, 1, 5, 0),
+    //     color: '#000000',
+    //     id: "123",
+    //     name: "456"
+    //   },
      
-//     ];
+    // ];
 
 
 // );
 // });
 //      
+// var table_data0 = '{{actList|tojson}}'
+function shadeColor(color, percent) {
+
+    var R = parseInt(color.substring(1,3),16);
+    var G = parseInt(color.substring(3,5),16);
+    var B = parseInt(color.substring(5,7),16);
+
+    R = parseInt(R * (100 + percent) / 100);
+    G = parseInt(G * (100 + percent) / 100);
+    B = parseInt(B * (100 + percent) / 100);
+
+    R = (R<255)?R:255;  
+    G = (G<255)?G:255;  
+    B = (B<255)?B:255;  
+
+    var RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
+    var GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
+    var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
+
+    return "#"+RR+GG+BB;
+}
 
 $(document).ready(function(){
   // slider part
@@ -25,8 +46,41 @@ $(document).ready(function(){
   var tag = false,ox = 0,left = 0,bgleft = 0,bar_length = 200,clickable = true;
   var total_events = [];
   var category_color = {Private:"#FF8F00",Professional:"#AD1457",Fun:"#BA0F90",Family:"#AF8C00"};
+  console.log("js",table_data0)
+  var data_json = JSON.parse(table_data0)
+  var events = []
+  for(var i = 0; i<data_json.length; i++){
+      var data = {}
+      data["content"] = data_json[i]["title"]
+      data["description"] = data_json[i]["description"]
+      data["startDate"] = new Date(data_json[i]["start"] * 1000);
+      data["endDate"] = new Date(data_json[i]["end"] * 1000);
+      data["category"] = data_json[i]["category"];
+      data["willingness"] = data_json[i]["willingness"];
+      data["color"] = shadeColor(category_color[data_json[i]["category"]], data["willingness"] * 100 -50);
 
- 
+      events.push(data);
+  }
+  console.log("initial data",events)
+  // console.log("table",table_data0)
+  // var events =  [{
+  //           content: 'AllDay',
+  //           endDate: new Date(2019, 4, 23, 23, 59),
+  //           startDate: new Date(2019, 4, 23, 12, 59),
+  //           color: '#AD1457',
+  //           category: "Professional",
+  //   },
+  //   {
+  //           content: 'AllDay',
+  //           endDate: new Date(2019, 4, 23, 23, 59),
+  //           startDate: new Date(2019, 4, 23, 12, 59),
+  //           color: '#FF8F00',
+  //           category: "Private",
+  //   }
+  // ];
+
+
+
 
 
   // select other category
@@ -87,19 +141,19 @@ $(document).ready(function(){
     var scheduler;
     var weekView = new Y.SchedulerWeekView();
     var eventRecorder = new Y.SchedulerEventRecorder({
-      after :{
-        save: function(event){
-          var current_color = category_color[this.get("category")];
-          if (current_color!=undefined)
-            this.set("color",current_color)
-            // console.log("after save change color", current_color)
-
-        }
-      },
       on: {
         save: function(event) {
-          // console.log("now ", $(".scheduler-event-recorder-content").val())
+          // console.log("currrent save ");
+          // this.get('scheduler').addEvents(event.newSchedulerEvent);
+          // scheduler.
+          // this._defSaveEventFn(event)
           
+          // console.log("on save event",event)
+          // event["currentTarget"].set('color','#000000')
+          // console.log("new event",event,event["currentTarget"].get('endDate'))
+          // this.syncUI()
+          // console.log("node",this.get('node'))
+         
           this.set("content",$(".scheduler-event-recorder-content").val())
           this.set("category",$(".btn-dropdown").data("category"))
           this.set("willingness", willingness)
@@ -107,13 +161,12 @@ $(document).ready(function(){
           var current_color = category_color[this.get("category")];
           if (current_color!=undefined)
             this.set("color",current_color)
-            console.log("change color", current_color)
 
           data = this.getTemplateData();
           var new_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
           willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
 
-          console.log("prepare data",this.getTemplateData(),new_event)
+          // console.log("prepare data",this.getTemplateData(),new_event)
 
           // send to server
           $.ajax({
@@ -135,16 +188,18 @@ $(document).ready(function(){
         edit: function(event) {
           // alert('Edit Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
 
-          this.set("content",$(".scheduler-event-recorder-content").val())
-          this.set("category",$(".btn-dropdown").data("category"))
-          this.set("willingness", willingness)
-          this.set("description",$(".input-context").val())
-
-          data = this.getTemplateData();
+          eventRecorder.set("content",$(".scheduler-event-recorder-content").val())
+          eventRecorder.set("category",$(".btn-dropdown").data("category"))
+          eventRecorder.set("willingness", willingness)
+          eventRecorder.set("description",$(".input-context").val())
+          var current_color = category_color[eventRecorder.get("category")];
+          if (current_color!=undefined)
+            eventRecorder.set("color",current_color)
+          data = eventRecorder.getTemplateData();
           var edit_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
-          willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
+          willingness:eventRecorder.get("willingness"),description:eventRecorder.get("description"),category:eventRecorder.get("category")}
 
-          console.log("prepare data",this,this.getTemplateData(),edit_event)
+          // console.log("prepare edit data",eventRecorder,edit_event)
 
           // send to server
           $.ajax({
@@ -167,7 +222,7 @@ $(document).ready(function(){
           var old_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
           willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
 
-          console.log(this,this.getTemplateData(),old_event)
+          // console.log(this,this.getTemplateData(),old_event)
 
           // send to server
           $.ajax({
@@ -188,15 +243,17 @@ $(document).ready(function(){
         }
       }
     });
-
+    
     scheduler = new Y.Scheduler({
         boundingBox: '#mySchedule',
-        date: new Date(2019, 4, 24),
+        date: new Date(),
         eventRecorder: eventRecorder,
-        items: [],
+        items: events,
         views: [weekView]
     }).render();
     // var click_event = $
+   
+    // scheduler.addEvents([event1])
 
     var editButton;
     const bar = `<div class="willingness">
@@ -234,19 +291,19 @@ $(document).ready(function(){
                     </a>
                   </div>
                 </div>`
-
+    var addPlace;
     Y.Do.after(function() {
         // add additional elements
-        var addPlace = Y.one("#mySchedule .popover-content");
+        addPlace = Y.one("#mySchedule .popover-content");
         addPlace.appendChild(bar);
         addPlace.appendChild(description);
         addPlace.appendChild(select_bar);
         var current_category = this.get("category")
-        
+
         // bar
         if(this.get("willingness")!=undefined){
           willingness = this.get("willingness");
-          console.log("current willingness",willingness)
+          // console.log("current willingness",willingness)
           left = willingness * bar_length;
           $('.progress_btn').css('left', left);
           $('.progress_bar').animate({width:left},bar_length);
@@ -254,7 +311,7 @@ $(document).ready(function(){
 
         }
         
-        console.log("evt",current_category)
+        // console.log("current click category",this)
          // other option color
          $(".private-color").css('color',category_color["Private"]);
          $(".professional-color").css('color',category_color["Professional"]);
@@ -270,14 +327,9 @@ $(document).ready(function(){
          $(".btn-dropdown > span").text(current_category)
          $(".btn-dropdown").data("category",current_category)
          // set bar
-         console.log("willingness",this.get("willingness"))
-         // if(this.get("willingness")!=undefined)
-         //   willingness = this.get("willingness");
-         //   left = willingness * bar_length
-         //   console.log("left",left)
-         //   $('.progress_btn').css('left', left);
-         //   $('.progress_bar').width(left);
-         //   $('.text').html(parseInt(willingness*100) + '%');
+         // console.log("willingness",this.get("willingness"))
+         var area = Y.all('.scheduler-event')
+         // console.log("area",area)
 
         
 
@@ -290,10 +342,15 @@ $(document).ready(function(){
       // // menu for category
       // $(".btn-dropdown > i").css('color',category_color[current_category]);
       // $(".btn-dropdown > span").text(current_category)
-      console.log("after hide popover",this.get("color"),this.get("category"))
+      // console.log("after hide popover",this.get("color"),this.get("category"))
+     
+      
+      var current_color = category_color[this.get("category")];
+      // this.setStyle({"color":current_color})
+      // this.set("color",current_color);
+      // console.log("change event",this);
         // Make sure that the editButton is destroyed to avoid a memory leak.
       // var current_color = category_color[this.get("category")];
-      
 
         // console.log("change",$(".scheduler-event").css("background-color"))
       

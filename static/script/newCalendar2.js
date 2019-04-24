@@ -1,11 +1,107 @@
+function shadeColor(color, percent) {
+
+    var R = parseInt(color.substring(1,3),16);
+    var G = parseInt(color.substring(3,5),16);
+    var B = parseInt(color.substring(5,7),16);
+
+    R = parseInt(R * (100 + percent) / 100);
+    G = parseInt(G * (100 + percent) / 100);
+    B = parseInt(B * (100 + percent) / 100);
+
+    R = (R<255)?R:255;  
+    G = (G<255)?G:255;  
+    B = (B<255)?B:255;  
+
+    var RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
+    var GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
+    var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
+
+    return "#"+RR+GG+BB;
+}
 
 
+// get willingness sum in events intervals
+function calculateIntervals(total_events){
+  // get timestamp of start and end time
+  var timestamp_list = []
+  console.log(total_events)
+  for(var i =0;i<total_events.length; i++){
+    var start = total_events[i]["start"]
+    var end = total_events[i]["end"]
+    timestamp_list.push(start)
+    timestamp_list.push(end)
+  }
+  // sort 
+  timestamp_list.sort()
+
+  console.log("sorted result",timestamp_list)
+  // iterate each inteval
+  var willing_sum = []
+  for(var i = 0; i<timestamp_list.length-1; i++){
+    var start = timestamp_list[i];
+    var end = timestamp_list[i+1];
+    // check how many events contains these interval
+    for(var j = 0; j<total_events.length; j++){
+       summ = 0
+       if(total_events[j]["start"] <= start && total_events[j]["end"] >= start){
+          summ+= total_events[j]["willingness"];
+       }else if (total_events[j]["start"] >= start && total_events[j]["start"] < end){ 
+          summ += total_events[j]["willingness"];
+       }
+       if (summ > 1)
+          summ = 1
+       willing_sum.push(summ)
+    }
+  }
+  console.log(willing_sum)
+  // calculate the color
+  var default_color = "#AD1457"
+  var interval_events = []
+  for(var i = 0; i < timestamp_list.length-1;i++){
+     if(timestamp_list[i] == timestamp_list[i+1])
+        continue;
+     var interval = {
+        content: "",
+        startDate: new Date(timestamp_list[i] * 1000),
+        endDate: new Date(timestamp_list[i+1] * 1000),
+        willingness: willing_sum[i],
+        color: shadeColor(default_color, - willing_sum[i] * 100 + 50)
+     }
+     console.log(new Date(timestamp_list[i] * 1000))
+     interval_events.push(interval);
+  }
+  return interval_events;
+
+}
 $(document).ready(function(){
   // slider part
   var willingness = 0;
   var tag = false,ox = 0,left = 0,bgleft = 0,bar_length = 200,clickable = true;
-  var total_events = [];
   var category_color = {Private:"#FF8F00",Professional:"#AD1457",Fun:"#BA0F90",Family:"#AF8C00"};
+
+  // get rendering data
+  console.log("js",data_list)  
+
+  var events_data = JSON.parse(data_list); // from rendering
+  console.log("getting all events from users friend",events_data)
+  var interval_list = calculateIntervals(events_data)
+
+
+
+
+
+
+  // select other category
+  $(document).on('click','.dropdown-menu>a',function(e){
+    var c = $(this).children('i').css("color");
+    var t = $(this).children("span").text();
+
+    console.log("c,t",c,t)
+    $(".btn-dropdown > i").css('color',c);
+    $(".btn-dropdown > span").text(t);
+    $(".btn-dropdown").data("category",$(this).data("category"))
+
+  });
   $(document).on('mousedown','.progress_btn',function(e) {
       if(clickable){
         ox = e.pageX - left;
@@ -20,7 +116,7 @@ $(document).ready(function(){
 
   });
   $(document).on('mousemove','.progress',function(e) {//mouse move
-      if (tag && clickable) {
+      if (tag) {
           left = e.pageX - ox;
           if (left <= 0) {
               left = 0;
@@ -33,7 +129,7 @@ $(document).ready(function(){
       }
   });
   $(document).on('click','.progress_bg',function(e) {// mouse click
-      if (!tag && clickable) {
+      if (!tag) {
           bgleft = $('.progress_bg').offset().left;
           left = e.pageX - bgleft;
           if (left <= 0) {
@@ -46,20 +142,43 @@ $(document).ready(function(){
           $('.text').html(parseInt((left/bar_length)*100) + '%');
       }
   });
+  // suppose event 
+  $(document).on('click','#superimpose_btn',function(event){
+
+  });
 
   YUI().use('aui-button', 'aui-scheduler', 'event-custom-base', function (Y) {
 
     // var eventRecorder = new Y.SchedulerEventRecorder();
+    var scheduler;
     var weekView = new Y.SchedulerWeekView();
     var eventRecorder = new Y.SchedulerEventRecorder({
       on: {
         save: function(event) {
-          //
+          // console.log("currrent save ");
+          // this.get('scheduler').addEvents(event.newSchedulerEvent);
+          // scheduler.
+          // this._defSaveEventFn(event)
+          
+          // console.log("on save event",event)
+          // event["currentTarget"].set('color','#000000')
+          // console.log("new event",event,event["currentTarget"].get('endDate'))
+          // this.syncUI()
+          // console.log("node",this.get('node'))
+         
+          this.set("content",$(".scheduler-event-recorder-content").val())
+          this.set("category",$(".btn-dropdown").data("category"))
           this.set("willingness", willingness)
           this.set("description",$(".input-context").val())
+          var current_color = category_color[this.get("category")];
+          if (current_color!=undefined)
+            this.set("color",current_color)
+
           data = this.getTemplateData();
-          var new_event = {start:data["startDate"],end:data["endDate"],title:data["content"],willingness:this.get("willingness"),description:this.get("description")}
-          console.log(this,this.getTemplateData(),new_event)
+          var new_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
+          willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
+
+          // console.log("prepare data",this.getTemplateData(),new_event)
 
           // send to server
           $.ajax({
@@ -79,25 +198,74 @@ $(document).ready(function(){
 
         },
         edit: function(event) {
-          alert('Edit Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
+          // alert('Edit Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
+
+          eventRecorder.set("content",$(".scheduler-event-recorder-content").val())
+          eventRecorder.set("category",$(".btn-dropdown").data("category"))
+          eventRecorder.set("willingness", willingness)
+          eventRecorder.set("description",$(".input-context").val())
+          var current_color = category_color[eventRecorder.get("category")];
+          if (current_color!=undefined)
+            eventRecorder.set("color",current_color)
+          data = eventRecorder.getTemplateData();
+          var edit_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
+          willingness:eventRecorder.get("willingness"),description:eventRecorder.get("description"),category:eventRecorder.get("category")}
+
+          // console.log("prepare edit data",eventRecorder,edit_event)
+
+          // send to server
+          $.ajax({
+            url: '/update_activity/',
+            type: 'POST',
+            data: JSON.stringify(edit_event), 
+            contentType: 'application/json; charset=UTF-8',
+            dataType: 'json', 
+            success: function(data) { 
+              console.log("sent")
+              console.log(data)
+            },
+            error: function(e) {
+            console.log(e)
+            }
+          });
         },
         delete: function(event) {
-          alert('Delete Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
-  // Note: The cancel event seems to be buggy and occurs at the wrong times, so I commented it out.
-  //      },
-  //      cancel: function(event) {
-  //        alert('Cancel Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
+          data = this.getTemplateData();
+          var old_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
+          willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
+
+          // console.log(this,this.getTemplateData(),old_event)
+
+          // send to server
+          $.ajax({
+            url: '/delete_activity/',
+            type: 'POST',
+            data: JSON.stringify(old_event), 
+            contentType: 'application/json; charset=UTF-8',
+            dataType: 'json', 
+            success: function(data) { 
+              console.log("sent delete")
+              console.log(data)
+            },
+            error: function(e) {
+            console.log(e)
+            }
+          });
+
         }
       }
     });
-
-    new Y.Scheduler({
+    
+    scheduler = new Y.Scheduler({
         boundingBox: '#mySchedule2',
-        date: new Date(2014, 8, 28),
+        date: new Date(),
         eventRecorder: eventRecorder,
-        items: [],
+        items: interval_list,
         views: [weekView]
     }).render();
+    // var click_event = $
+   
+    // scheduler.addEvents([event1])
 
     var editButton;
     const bar = `<div class="willingness">
@@ -111,31 +279,93 @@ $(document).ready(function(){
                     
                   </div>
                 </div>`;
-    var description = `<textarea class="form-control input-context" 
+    const description = `<textarea class="form-control input-context" 
                           aria-label="With textarea" placeholder="add description"></textarea>`
-    Y.Do.after(function() {
-        var addPlace = Y.one("#mySchedule2 .popover-content");
-        var toolbarBtnGroup = Y.one('#mySchedule2 .toolbar .btn-group');
-        toolbarBtnGroup.appendChild('<button id="edit" type="button">Edit</button>');
-        addPlace.appendChild(bar);
-        addPlace.appendChild(description)
-        editButton = new Y.Button({
-            // label: 'Edit',
-            srcNode: '#edit',
-        }).render();
 
-        editButton.on('click', function(event) {
-            alert('Edit clicked!');
-            eventRecorder.hidePopover();
-        });
+    const select_bar = ` <div class="dropdown select-category">
+
+                  <button class="btn btn-secondary dropdown-toggle btn-dropdown" data-category="" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-square select-color"> </i><span></span>
+                  </button>
+
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item private-option" data-category="Private" href="#">
+                      <i class="fas fa-square private-color"> </i><span> Private</span>
+                    </a>
+                    <a class="dropdown-item professional-option" data-category="Professional" href="#">
+                       <i class="fas fa-square professional-color"></i><span> Professional</span>
+                    </a>
+                    <a class="dropdown-item fun-option" data-category="Fun" href="#">
+                      <i class="fas fa-square fun-color"> </i><span> Fun</span>
+                    </a>
+                    <a class="dropdown-item Family-option" data-category="Family" href="#">
+                      <i class="fas fa-square family-color"> </i><span> Family</span>
+                    </a>
+                  </div>
+                </div>`
+    var addPlace;
+    Y.Do.after(function() {
+        // add additional elements
+        addPlace = Y.one("#mySchedule2 .popover-content");
+        addPlace.appendChild(bar);
+        addPlace.appendChild(description);
+        addPlace.appendChild(select_bar);
+        var current_category = this.get("category")
+
+        // bar
+        if(this.get("willingness")!=undefined){
+          willingness = this.get("willingness");
+          // console.log("current willingness",willingness)
+          left = willingness * bar_length;
+          $('.progress_btn').css('left', left);
+          $('.progress_bar').animate({width:left},bar_length);
+          $('.text').html(parseInt((left/bar_length)*100) + '%');
+
+        }
+        
+        // console.log("current click category",this)
+         // other option color
+         $(".private-color").css('color',category_color["Private"]);
+         $(".professional-color").css('color',category_color["Professional"]);
+         $(".fun-color").css('color',category_color["Fun"]);
+         $(".family-color").css('color',category_color["Family"]);
+
+         $(".private-color").data('category',"Private");
+         $(".professional-color").data('category',"Professional");
+         $(".fun-color").data('category',"Fun");
+         $(".family-color").data('category',"Family");
+         // menu for category
+         $(".btn-dropdown > i").css('color',category_color[current_category]);
+         $(".btn-dropdown > span").text(current_category)
+         $(".btn-dropdown").data("category",current_category)
+         // set bar
+         // console.log("willingness",this.get("willingness"))
+         var area = Y.all('.scheduler-event')
+         // console.log("area",area)
+
+        
+
+        
     }, eventRecorder, 'showPopover');
     
     Y.Do.after(function() {
-        
+
+      // var current_category = this.get("category")
+      // // menu for category
+      // $(".btn-dropdown > i").css('color',category_color[current_category]);
+      // $(".btn-dropdown > span").text(current_category)
+      // console.log("after hide popover",this.get("color"),this.get("category"))
+     
+      
+      var current_color = category_color[this.get("category")];
+      // this.setStyle({"color":current_color})
+      // this.set("color",current_color);
+      // console.log("change event",this);
         // Make sure that the editButton is destroyed to avoid a memory leak.
-        if (editButton) {
-            editButton.destroy();
-        }
+      // var current_color = category_color[this.get("category")];
+
+        // console.log("change",$(".scheduler-event").css("background-color"))
+      
     }, eventRecorder, 'hidePopover');
 });
 
