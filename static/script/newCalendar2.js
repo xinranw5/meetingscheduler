@@ -72,12 +72,12 @@ function calculateIntervals(total_events){
         continue;
      var interval = {
         content: "",
-        startDate: new Date(timestamp_list[i] * 1000),
-        endDate: new Date(timestamp_list[i+1] * 1000),
+        startDate: new Date(timestamp_list[i]),
+        endDate: new Date(timestamp_list[i+1]),
         willingness: willing_sum[i],
         color: shadeColor("#1ea4d800", - willing_sum[i] * 100 +30 )
      }
-     console.log(new Date(timestamp_list[i] * 1000))
+     console.log(new Date(timestamp_list[i]))
      interval_events.push(interval);
   }
   return interval_events;
@@ -158,7 +158,7 @@ $(document).ready(function(){
       var friend_id_list = []
       var checkboxs = $('input[name="usercheckbox"]:checked')
       for(var i=0;i<checkboxs.length;i++){
-        var id = checkbos[i].val()
+        var id = checkboxs[i].val()
         friend_id_list.push(id);
       }
       var json_list = {supList: friend_id_list}

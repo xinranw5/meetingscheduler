@@ -53,8 +53,8 @@ $(document).ready(function(){
       var data = {}
       data["content"] = data_json[i]["title"]
       data["description"] = data_json[i]["description"]
-      data["startDate"] = new Date(data_json[i]["start"] * 1000);
-      data["endDate"] = new Date(data_json[i]["end"] * 1000);
+      data["startDate"] = new Date(data_json[i]["start"] );
+      data["endDate"] = new Date(data_json[i]["end"]);
       data["category"] = data_json[i]["category"];
       data["willingness"] = data_json[i]["willingness"];
       data["color"] = shadeColor("#1ea4d800", - data["willingness"] * 100 + 30);
@@ -168,7 +168,7 @@ $(document).ready(function(){
           var new_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
           willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
 
-          // console.log("prepare data",this.getTemplateData(),new_event)
+          console.log("prepare data",this.getTemplateData(),new_event)
 
           // send to server
           $.ajax({

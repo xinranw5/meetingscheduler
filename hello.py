@@ -96,7 +96,7 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('index'))
 
-@app.route('/supCalendarPage')
+@app.route('/supCalendarPage', methods=['POST','GET'])
 def supCalendarPage():
     actList = []
     friendList = []
