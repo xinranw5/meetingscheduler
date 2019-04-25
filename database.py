@@ -8,7 +8,7 @@ db_schedule = "scheduler"
 
 userPage = "users"
 invitationPage = "invitations"
-contactPage = "contacts"
+contactPage = "contact"
 timePage = "calendar"
 
 InvIdLength = 10
@@ -46,26 +46,22 @@ def userAddInv(inv,uid):
 # modify name or psw or timezone
 
 # contacts
-def addCon(uid, fid, fname, fnickname):
-    sql = "insert into %s (uid, id, name, nickname) values ('%s','%s','%s','%s' )"% (contactPage, uid, fid, fname, fnickname)
+def addCon(uid, fid, fname):
+    sql = "insert into %s (uid, fid, fname) values (%s, %s, '%s' )"% (contactPage, uid, fid, fname)
     exe(sql)
-    # sql = "select fid from %s where uid ='%s' and id='%s'" % (contactPage, uid, fid)
-    # t = exe(sql)
-    # if len(t)==0:
-    #     sql = "insert into %s (uid, id, name, nickname) values ('%s','%s','%s','%s' )"% (contactPage, uid, fid, fname, fnickname)
-    #     exe(sql)
-
+    
 def updateCon(uid, fid, goal, val):
-    sql = "update %s set %s='%s' where uid='%s' and id='%s'" %  (contactPage, goal, val, uid, fid[4:])
+    sql = "update %s set %s='%s' where uid=%s" %  (contactPage, goal, val, uid)
     return exe(sql)
 
 def delCon(uid,fid):
-    sql = "delete from %s where uid='%s' and id='%s'" % (contactPage, uid, fid)
+    sql = "delete from %s where uid=%s and fid=%s" % (contactPage, uid, fid)
     exe(sql)
 
 def findCon(uid):
-    goal = "id,name,nickname"
-    sql = "select %s from %s where uid='%s' " % (goal,contactPage,uid)
+    goal = "fid,fname"
+    sql = "select %s from %s where uid=%s " % (goal,contactPage,uid)
+    print(sql)
     return exe(sql)
 
 def relation(uid,fid):

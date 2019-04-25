@@ -1,10 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import MySQLdb
+from datetime import datetime
 userPage = "users"
 invitationPage = "invitations"
-contactPage = "contacts"
-timePage = "times"
+contactPage = "contact"
+timePage = "calendar"
+
 def cleanDb():
     pages=[userPage,invitationPage,contactPage,timePage]
     for page in pages:
@@ -61,8 +63,18 @@ def changePage():
     """
     exe(sql)
 
+def addActivity(uid,title,start,end,willingness,acttype,descrption):
+    sql = "insert into %s (uid, title, start, end, willingness, type, descrption) values (%s, '%s', %s, %s, %s,'%s','%s' )"% (timePage,uid,title,start,end,willingness,acttype,descrption)
+    print(sql)
+    exe(sql)
+
+def insertData(uid, actList):
+    for act in actList:
+        addActivity(uid, act["title"], act["start"], act["end"], act["willingness"], act["category"], act["description"])
+
+
 def exe(sql):
-    db = MySQLdb.connect(host='127.0.0.1',port = 3306,user='root', passwd='',db ='gooseberry')
+    db = MySQLdb.connect(host='127.0.0.1',port = 3306,user='root', passwd='12345678',db ='scheduler')
     cursor = db.cursor()
     results = []
     try:
@@ -72,7 +84,65 @@ def exe(sql):
     except:
        db.rollback()
     db.close()
-    print results
+    print(results)
     return results
 
-changePage()
+actList1 = [{
+            "title": 'Go out',
+            "end": datetime(2019, 4, 21, 20, 00).timestamp(),
+            "start": datetime(2019, 4, 21, 15, 00).timestamp(),
+            "willingness": 0.1,
+            "description": "add1 ",
+            "category": "Professional",
+    },
+    {
+            "title": 'buy stuff',
+            "end": datetime(2019, 4, 22, 15, 30).timestamp(),
+            "start": datetime(2019, 4, 22, 11, 00).timestamp(),
+            "willingness": 0.2,
+            "description": "add2 ",
+            "category": "Private",
+    },  
+    {
+            "title": 'Eat Out',
+            "end": datetime(2019, 4, 23, 15,30).timestamp(),
+            "start": datetime(2019, 4, 23, 11, 30).timestamp(),
+            "willingness": 0.3,
+            "description": "add2 ",
+            "category": "Fun",
+    },
+    {
+            "title": 'Work from home',
+            "end": datetime(2019, 4, 23, 19, 00).timestamp(),
+            "start": datetime(2019, 4, 23, 17, 00).timestamp(),
+            "willingness": 0.8,
+            "description": "add4 ",
+            "category": "Family",
+    }]
+actList2 = [{
+            "title": 'AllDay',
+            "end": datetime(2019, 4, 22, 14, 00).timestamp(),
+            "start": datetime(2019, 4, 22, 12, 00).timestamp(),
+            "willingness": 0.3,
+            "description": "Go out ",
+            "category": "Professional",
+    },
+    {
+            "title": 'buy stuff',
+            "end": datetime(2019, 4, 23, 17, 30).timestamp(),
+            "start": datetime(2019, 4, 23, 11, 00).timestamp(),
+            "willingness": 0.4,
+            "description": "Buy things",
+            "category": "Private",
+    },  
+    {
+            "title": 'buy stuff',
+            "end": datetime(2019, 4, 25, 17, 30).timestamp(),
+            "start": datetime(2019, 4, 25, 13, 00).timestamp(),
+            "willingness": 0.7,
+            "description": "Stay at home",
+            "category": "Private",
+    },  
+    ]
+insertData(2, actList1)
+insertData(3, actList2)

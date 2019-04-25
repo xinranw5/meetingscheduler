@@ -32,7 +32,7 @@
 id, name, pwd, invitations, timezone
 
 ## contact table
-uid, fid, fname
+id, uid, fid, fname
 
 ## calendar table
 uid, title, start, end, willingness, type, descrption
@@ -47,7 +47,7 @@ iid, host, participants, start, end, title, description, status(upcoming/)
 ## sql create
 create table users(id INT NOT NULL AUTO_INCREMENT, name VARCHAR(40), pwd VARCHAR(100), invitations VARCHAR(400), timezone VARCHAR(40), PRIMARY KEY(id));
 
-create table contact(uid INT, fid INT, fname VARCHAR(100),PRIMARY KEY(uid));
+create table contact(id INT NOT NULL AUTO_INCREMENT, uid INT, fid INT, fname VARCHAR(100),PRIMARY KEY(id));
 
 create table calendar(eid INT NOT NULL AUTO_INCREMENT, uid INT, title VARCHAR(100), start BIGINT, end BIGINT, willingness FLOAT(10,6), type VARCHAR(100), descrption VARCHAR(250), PRIMARY KEY(eid));
 
@@ -55,8 +55,21 @@ create table feedback(fbid INT, uid INT, iid INT, attendence BOOLEAN, score doub
 
 create table invitations(iid INT, host INT, participants VARCHAR(400), start DATETIME, end DATETIME, title VARCHAR(100), description VARCHAR(400), statue VARCHAR(100));
 
-insert into users (name, pwd, invitations, timezone) values ("w", "1", "", "");
 
+## sql for data
+insert into users (name, pwd, invitations, timezone) values ("w", "1", "", "");
+insert into users (name, pwd, invitations, timezone) values ("Alice", "1", "", "");
+insert into users (name, pwd, invitations, timezone) values ("Bob", "1", "", "");
+insert into users (name, pwd, invitations, timezone) values ("Charlie", "1", "", "");
+
+insert into contact (uid, fid, fname) values (2, 3, "Bob");
+insert into contact (uid, fid, fname) values (2, 4, "Charlie");
+insert into contact (uid, fid, fname) values (3, 2, "Alice");
+insert into contact (uid, fid, fname) values (3, 4, "Charlie");
+insert into contact (uid, fid, fname) values (4, 2, "Alice");
+insert into contact (uid, fid, fname) values (4, 3, "Bob");
+
+insert into calendar (uid, title, start, end, willingness, type, descrption) values (2, 'Go out', 1555876800,  )
 
 
 ## event need to be in the same day
