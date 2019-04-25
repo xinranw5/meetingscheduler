@@ -105,22 +105,6 @@ $(document).ready(function(){
    * Listening for events
    */
   
-  // $(document).on('Calendar.init','#calendar', function(event, instance, before, current, after){
-  //   console.log('event : Calendar.init is call');
-  // });
-  // $(document).on('Calendar.daynote-mouseenter', '#calendar',function(event, instance, elem){
-  // });
-  // $(document).on('Calendar.daynote-mouseleave','#calendar', function(event, instance, elem){
-    
-  // });
-  // $(document).on('Calendar.event-mouseenter','#calendar', function(event, instance, elem){
-    
-  // });
-  // $(document).on('Calendar.event-mouseleave','#calendar', function(event, instance, elem){
-    
-  // });
-  // $(document).on('Calendar.daynote-click','#calendar', function(event, instance, elem, evt){   
-  // });
  
   
   // if there is an event, don't create new event

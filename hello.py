@@ -7,6 +7,8 @@ import database
 import json
 from flask import jsonify
 from data import timeunit,timetable,activity,user
+from datetime import datetime
+import time
 app = Flask(__name__)
 # set the secret key.  keep this really secret:
 app.secret_key = '|G\x8f\x7f\x02\xb87\x9cYai\xc4D\x11\xd4\xf4j>\x1a\x15\xdc\x95l\x1f'
@@ -46,7 +48,65 @@ def rootpage():
 @app.route("/index", methods=['GET', 'POST'])
 def index():
     username = ''
-    actList = []
+    actList = [{
+            "title": 'Go out',
+            "end": datetime(2019, 4, 21, 20, 00).timestamp(),
+            "start": datetime(2019, 4, 21, 15, 00).timestamp(),
+            "willingness": 0.1,
+            "description": "add1 ",
+            "category": "Professional",
+    },
+    {
+            "title": 'buy stuff',
+            "end": datetime(2019, 4, 22, 15, 30).timestamp(),
+            "start": datetime(2019, 4, 22, 11, 00).timestamp(),
+            "willingness": 0.2,
+            "description": "add2 ",
+            "category": "Private",
+    },  
+    {
+            "title": 'Eat Out',
+            "end": datetime(2019, 4, 23, 15,30).timestamp(),
+            "start": datetime(2019, 4, 23, 11, 30).timestamp(),
+            "willingness": 0.3,
+            "description": "add2 ",
+            "category": "Fun",
+    },
+    {
+            "title": 'Work from home',
+            "end": datetime(2019, 4, 23, 19, 00).timestamp(),
+            "start": datetime(2019, 4, 23, 17, 00).timestamp(),
+            "willingness": 0.8,
+            "description": "add4 ",
+            "category": "Family",
+    }]
+    actList = [{
+            "title": 'AllDay',
+            "end": datetime(2019, 4, 22, 14, 00).timestamp(),
+            "start": datetime(2019, 4, 22, 12, 00).timestamp(),
+            "willingness": 0.3,
+            "description": "Go out ",
+            "category": "Professional",
+    },
+    {
+            "title": 'buy stuff',
+            "end": datetime(2019, 4, 23, 17, 30).timestamp(),
+            "start": datetime(2019, 4, 23, 11, 00).timestamp(),
+            "willingness": 0.4,
+            "description": "Buy things",
+            "category": "Private",
+    },  
+    {
+            "title": 'buy stuff',
+            "end": datetime(2019, 4, 25, 17, 30).timestamp(),
+            "start": datetime(2019, 4, 25, 13, 00).timestamp(),
+            "willingness": 0.7,
+            "description": "Stay at home",
+            "category": "Private",
+    },  
+    ]
+
+
     if 'username' in session:
         username = session['username']
         uid = session['uid']
@@ -61,6 +121,7 @@ def index():
             act["description"] = activity[6]
             actList.append(act)
         print("actList", actList)
+    # print(actList)
     return render_template("index.html", uname=username, actList=actList)
 
 ###############################
@@ -93,7 +154,68 @@ def logout():
 
 @app.route('/supCalendarPage')
 def supCalendarPage():
-    return render_template("supCalendarPage.html")
+	actList = [{
+            "title": 'Go out',
+            "end": datetime(2019, 4, 21, 20, 00).timestamp(),
+            "start": datetime(2019, 4, 21, 15, 00).timestamp(),
+            "willingness": 0.1,
+            "description": "add1 ",
+            "category": "Professional",
+    },
+    {
+            "title": 'buy stuff',
+            "end": datetime(2019, 4, 22, 15, 30).timestamp(),
+            "start": datetime(2019, 4, 22, 11, 00).timestamp(),
+            "willingness": 0.2,
+            "description": "add2 ",
+            "category": "Private",
+    },  
+    {
+            "title": 'Eat Out',
+            "end": datetime(2019, 4, 23, 15,30).timestamp(),
+            "start": datetime(2019, 4, 23, 11, 30).timestamp(),
+            "willingness": 0.3,
+            "description": "add2 ",
+            "category": "Fun",
+    },
+    {
+            "title": 'Work from home',
+            "end": datetime(2019, 4, 23, 19, 00).timestamp(),
+            "start": datetime(2019, 4, 23, 17, 00).timestamp(),
+            "willingness": 0.8,
+            "description": "add4 ",
+            "category": "Family",
+    },
+    {
+            "title": 'AllDay',
+            "end": datetime(2019, 4, 22, 14, 00).timestamp(),
+            "start": datetime(2019, 4, 22, 12, 00).timestamp(),
+            "willingness": 0.3,
+            "description": "Go out ",
+            "category": "Professional",
+    },
+    {
+            "title": 'buy stuff',
+            "end": datetime(2019, 4, 23, 17, 30).timestamp(),
+            "start": datetime(2019, 4, 23, 11, 00).timestamp(),
+            "willingness": 0.4,
+            "description": "Buy things",
+            "category": "Private",
+    },  
+    {
+            "title": 'buy stuff',
+            "end": datetime(2019, 4, 25, 17, 30).timestamp(),
+            "start": datetime(2019, 4, 25, 13, 00).timestamp(),
+            "willingness": 0.7,
+            "description": "Stay at home",
+            "category": "Private",
+    },
+    ]
+
+
+
+
+	return render_template("supCalendarPage.html", actList=actList)
 
 #
 @app.route("/searchpeople/",methods=['GET','POST'])

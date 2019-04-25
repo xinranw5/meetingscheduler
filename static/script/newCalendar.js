@@ -57,7 +57,8 @@ $(document).ready(function(){
       data["endDate"] = new Date(data_json[i]["end"] * 1000);
       data["category"] = data_json[i]["category"];
       data["willingness"] = data_json[i]["willingness"];
-      data["color"] = shadeColor(category_color[data_json[i]["category"]], data["willingness"] * 100 -50);
+      data["color"] = shadeColor("#1ea4d800", - data["willingness"] * 100 + 30);
+      // data["color"] = shadeColor(category_color[data_json[i]["category"]], data["willingness"] * 100 -50);
 
       events.push(data);
   }
@@ -153,14 +154,15 @@ $(document).ready(function(){
           // console.log("new event",event,event["currentTarget"].get('endDate'))
           // this.syncUI()
           // console.log("node",this.get('node'))
-         
+          // event.currentTarget.set("color","#0AA000")
+          console.log("event",this)
           this.set("content",$(".scheduler-event-recorder-content").val())
           this.set("category",$(".btn-dropdown").data("category"))
           this.set("willingness", willingness)
           this.set("description",$(".input-context").val())
           var current_color = category_color[this.get("category")];
-          if (current_color!=undefined)
-            this.set("color",current_color)
+          // if (current_color!=undefined)
+          //   this.set("color",current_color)
 
           data = this.getTemplateData();
           var new_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
@@ -292,8 +294,9 @@ $(document).ready(function(){
                   </div>
                 </div>`
     var addPlace;
-    Y.Do.after(function() {
+    Y.Do.after(function(e) {
         // add additional elements
+
         addPlace = Y.one("#mySchedule .popover-content");
         addPlace.appendChild(bar);
         addPlace.appendChild(description);
@@ -343,7 +346,6 @@ $(document).ready(function(){
       // $(".btn-dropdown > i").css('color',category_color[current_category]);
       // $(".btn-dropdown > span").text(current_category)
       // console.log("after hide popover",this.get("color"),this.get("category"))
-     
       
       var current_color = category_color[this.get("category")];
       // this.setStyle({"color":current_color})

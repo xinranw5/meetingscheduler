@@ -37,35 +37,45 @@ function calculateIntervals(total_events){
   console.log("sorted result",timestamp_list)
   // iterate each inteval
   var willing_sum = []
+  var wanted_indexes = {}
   for(var i = 0; i<timestamp_list.length-1; i++){
     var start = timestamp_list[i];
     var end = timestamp_list[i+1];
     // check how many events contains these interval
+    summ = 0
+    var flag  = 0
     for(var j = 0; j<total_events.length; j++){
-       summ = 0
-       if(total_events[j]["start"] <= start && total_events[j]["end"] >= start){
+       if(total_events[j]["start"] <= start && total_events[j]["end"] > start){
           summ+= total_events[j]["willingness"];
+          flag = 1
        }else if (total_events[j]["start"] >= start && total_events[j]["start"] < end){ 
           summ += total_events[j]["willingness"];
+          flag = 1
        }
-       if (summ > 1)
-          summ = 1
-       willing_sum.push(summ)
     }
+    if (summ > 1)
+          summ = 1
+    if(flag == 1){
+      wanted_indexes[i] = 1
+    }else{
+      wanted_indexes[i] = 0
+    }
+    willing_sum.push(summ)
   }
+  console.log(wanted_indexes)
   console.log(willing_sum)
   // calculate the color
   var default_color = "#AD1457"
   var interval_events = []
   for(var i = 0; i < timestamp_list.length-1;i++){
-     if(timestamp_list[i] == timestamp_list[i+1])
+     if(timestamp_list[i] == timestamp_list[i+1] || wanted_indexes[i] == 0)
         continue;
      var interval = {
         content: "",
         startDate: new Date(timestamp_list[i] * 1000),
         endDate: new Date(timestamp_list[i+1] * 1000),
         willingness: willing_sum[i],
-        color: shadeColor(default_color, - willing_sum[i] * 100 + 50)
+        color: shadeColor("#1ea4d800", - willing_sum[i] * 100 +30 )
      }
      console.log(new Date(timestamp_list[i] * 1000))
      interval_events.push(interval);
