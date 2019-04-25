@@ -334,21 +334,21 @@ $(document).ready(function(){
     Y.Do.after(function() {
         // add additional elements
         addPlace = Y.one("#mySchedule2 .popover-content");
-        addPlace.appendChild(bar);
+        // addPlace.appendChild(bar);
         addPlace.appendChild(description);
         addPlace.appendChild(select_bar);
         var current_category = this.get("category")
 
         // bar
-        if(this.get("willingness")!=undefined){
-          willingness = this.get("willingness");
-          // console.log("current willingness",willingness)
-          left = willingness * bar_length;
-          $('.progress_btn').css('left', left);
-          $('.progress_bar').animate({width:left},bar_length);
-          $('.text').html(parseInt((left/bar_length)*100) + '%');
+        // if(this.get("willingness")!=undefined){
+        //   willingness = this.get("willingness");
+        //   // console.log("current willingness",willingness)
+        //   left = willingness * bar_length;
+        //   $('.progress_btn').css('left', left);
+        //   $('.progress_bar').animate({width:left},bar_length);
+        //   $('.text').html(parseInt((left/bar_length)*100) + '%');
 
-        }
+        // }
         
         // console.log("current click category",this)
          // other option color
