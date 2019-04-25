@@ -43,70 +43,13 @@ def update_user_calendar(usr,time_unit_list):
 @app.route("/")
 def rootpage():
     username = ''
-    return render_template("index.html", uname=username)
+    actList = {}
+    return render_template("index.html", uname=username, actList=actList)
 
 @app.route("/index", methods=['GET', 'POST'])
 def index():
     username = ''
-    actList = [{
-            "title": 'Go out',
-            "end": datetime(2019, 4, 21, 20, 00).timestamp(),
-            "start": datetime(2019, 4, 21, 15, 00).timestamp(),
-            "willingness": 0.1,
-            "description": "add1 ",
-            "category": "Professional",
-    },
-    {
-            "title": 'buy stuff',
-            "end": datetime(2019, 4, 22, 15, 30).timestamp(),
-            "start": datetime(2019, 4, 22, 11, 00).timestamp(),
-            "willingness": 0.2,
-            "description": "add2 ",
-            "category": "Private",
-    },  
-    {
-            "title": 'Eat Out',
-            "end": datetime(2019, 4, 23, 15,30).timestamp(),
-            "start": datetime(2019, 4, 23, 11, 30).timestamp(),
-            "willingness": 0.3,
-            "description": "add2 ",
-            "category": "Fun",
-    },
-    {
-            "title": 'Work from home',
-            "end": datetime(2019, 4, 23, 19, 00).timestamp(),
-            "start": datetime(2019, 4, 23, 17, 00).timestamp(),
-            "willingness": 0.8,
-            "description": "add4 ",
-            "category": "Family",
-    }]
-    actList = [{
-            "title": 'AllDay',
-            "end": datetime(2019, 4, 22, 14, 00).timestamp(),
-            "start": datetime(2019, 4, 22, 12, 00).timestamp(),
-            "willingness": 0.3,
-            "description": "Go out ",
-            "category": "Professional",
-    },
-    {
-            "title": 'buy stuff',
-            "end": datetime(2019, 4, 23, 17, 30).timestamp(),
-            "start": datetime(2019, 4, 23, 11, 00).timestamp(),
-            "willingness": 0.4,
-            "description": "Buy things",
-            "category": "Private",
-    },  
-    {
-            "title": 'buy stuff',
-            "end": datetime(2019, 4, 25, 17, 30).timestamp(),
-            "start": datetime(2019, 4, 25, 13, 00).timestamp(),
-            "willingness": 0.7,
-            "description": "Stay at home",
-            "category": "Private",
-    },  
-    ]
-
-
+    actList = []
     if 'username' in session:
         username = session['username']
         uid = session['uid']
@@ -155,68 +98,30 @@ def logout():
 
 @app.route('/supCalendarPage')
 def supCalendarPage():
-	actList = [{
-            "title": 'Go out',
-            "end": datetime(2019, 4, 21, 20, 00).timestamp(),
-            "start": datetime(2019, 4, 21, 15, 00).timestamp(),
-            "willingness": 0.1,
-            "description": "add1 ",
-            "category": "Professional",
-    },
-    {
-            "title": 'buy stuff',
-            "end": datetime(2019, 4, 22, 15, 30).timestamp(),
-            "start": datetime(2019, 4, 22, 11, 00).timestamp(),
-            "willingness": 0.2,
-            "description": "add2 ",
-            "category": "Private",
-    },  
-    {
-            "title": 'Eat Out',
-            "end": datetime(2019, 4, 23, 15,30).timestamp(),
-            "start": datetime(2019, 4, 23, 11, 30).timestamp(),
-            "willingness": 0.3,
-            "description": "add2 ",
-            "category": "Fun",
-    },
-    {
-            "title": 'Work from home',
-            "end": datetime(2019, 4, 23, 19, 00).timestamp(),
-            "start": datetime(2019, 4, 23, 17, 00).timestamp(),
-            "willingness": 0.8,
-            "description": "add4 ",
-            "category": "Family",
-    },
-    {
-            "title": 'AllDay',
-            "end": datetime(2019, 4, 22, 14, 00).timestamp(),
-            "start": datetime(2019, 4, 22, 12, 00).timestamp(),
-            "willingness": 0.3,
-            "description": "Go out ",
-            "category": "Professional",
-    },
-    {
-            "title": 'buy stuff',
-            "end": datetime(2019, 4, 23, 17, 30).timestamp(),
-            "start": datetime(2019, 4, 23, 11, 00).timestamp(),
-            "willingness": 0.4,
-            "description": "Buy things",
-            "category": "Private",
-    },  
-    {
-            "title": 'buy stuff',
-            "end": datetime(2019, 4, 25, 17, 30).timestamp(),
-            "start": datetime(2019, 4, 25, 13, 00).timestamp(),
-            "willingness": 0.7,
-            "description": "Stay at home",
-            "category": "Private",
-    },
-    ]
-
-
-
-
-	return render_template("supCalendarPage.html", actList=actList)
+    actList = []
+    friendList = []
+    supList = []
+    if 'username' not in session:
+            return request(url_for('index'))
+    friends = database.findCon(session['uid']);
+    for friend in friends:
+        friendList.append({'id':friend[0], 'name':friend[1]})
+    print("friends of "+session['username'], friendList)
+    if request.method == 'POST':        
+        data = request.get_json()
+        supList = friendlist
+        for fid in supList:
+            activities = database.findActivitiesByUser(fid)
+            for act in activities:
+                act={}
+                act["title"] = activity[2]
+                act["start"] = activity[3]
+                act["end"] = activity[4]
+                act["willingness"] = activity[5]
+                act["category"] = activity[6]
+                act["description"] = activity[7]
+                actList.append(act)
+    return render_template("supCalendarPage.html", friendList=friendList, actList=actList, supList=supList)
 
 #
 @app.route("/searchpeople/",methods=['GET','POST'])
@@ -310,41 +215,6 @@ def getcon():
 #        return json.dumps(database.findCon(session['uid']))
         return json.dumps({data:"getcon"})
 
-def get_table_info_by_usr(usr):
-	event_list = []
-	table_data = {"time" : [{"title":"act 1","start":"1","end":"5"},{"title":"act 2","start":"20","end":"36"}]}
-	#get data from database by user id
-	#all activities
-	#date
-	#todo
-	return table_data
-
-
-def cal_color(usrlist):
-    color_data ={"color1":[],"color2":[],"color3":[]}
-    tmpdict={}
-	#Count the times of each time unit
-	#todo
-	#get users'data from database
-    for i in usrlist:
-        usr = find_user_by_id(int(i))
-        if(usr != None):
-			#usr.user_week_time_table.print_timetable()
-            for k in usr.user_week_time_table.week_table:
-                if not str(k.get_number()) in tmpdict:
-                    tmpdict[str(k.get_number())] = 1
-                else:
-                    tmpdict[str(k.get_number())] += 1
-
-    for key in tmpdict:
-        #print 'key: '+key+'  '+str(tmpdict[key])
-        if tmpdict[key] == 1:
-            color_data["color1"].append(int(key))
-        elif tmpdict[key] == 2:
-            color_data["color2"].append(int(key))
-        else:
-            color_data["color3"].append(int(key))
-    return color_data
 
 # evoked by user.html
 @app.route("/createInvitation/")
@@ -423,21 +293,6 @@ def update_activity():
             database.updateActivity(eid, session['uid'], update_act["title"],update_act["start"],update_act["end"],update_act["willingness"],update_act["category"],update_act["description"])
         return json.dumps(update_act)
 
-
-@app.route("/get_color/",methods=['POST','GET'])
-def get_color():
-        usrlist = [cur_user.id]
-        if request.method == 'POST':
-            print(type(request.get_json()))
-            #usrdata = request.get_json()
-            usrdata = json.loads(request.get_json())
-            usrlist = usrdata['id']
-            usrlist.append(cur_user.id)
-
-        print(usrlist)
-        bkdata= json.dumps(cal_color(usrlist));
-        print(bkdata)
-        return bkdata
 
 @app.route("/invitation/<inv_id>")
 def invitation(inv_id):

@@ -20,8 +20,8 @@
           <div style="overflow-y:auto;overflow-x:hidden;height:160px">
            <p>Friend list</p>
             <ul id="intervieweelist" style="list-style-type:circle;height:auto">
-              {% for i in friendlist %}
-                      <label><input type="checkbox" name="usercheckbox" value={{i.id}}> {{i.id}} </label>
+              {% for i in friendList %}
+                      <label><input type="checkbox" name="usercheckbox" value={{i.id}}> {{i.name}} </label>
                 <br>
               {% endfor %}
             </ul>
