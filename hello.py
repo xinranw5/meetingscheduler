@@ -58,7 +58,8 @@ def index():
             act["start"] = activity[3]
             act["end"] = activity[4]
             act["willingness"] = activity[5]
-            act["description"] = activity[6]
+            act["category"] = activity[6]
+            act["description"] = activity[7]
             actList.append(act)
         print("actList", actList)
     return render_template("index.html", uname=username, actList=actList)
