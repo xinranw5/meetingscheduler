@@ -1,0 +1,36 @@
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <div class="navbar-brand">
+      <a href="#" class="navbar-brand mb-0 h1"> Meeting Scheduler </a>
+    </div>
+
+
+    <form>
+      <input type="text" placeholder="Search for friends.." name="search">
+      <button type="button" id="searchFriendBtn">search</button>
+    </form>
+
+    
+      {% if uname|length >0 %}
+      <ul class="navbar-toggler">
+        <li>
+          <a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"> Log Out </span></a>
+        </li>
+      </ul>
+      <ul class="navbar-toggler">
+          <a href="#"><span class="glyphicon glyphicon-user"> {{uname}}</span></a>
+        </li>
+      </ul>
+      {% else %}
+      <ul class="navbar-toggler">
+        <li>
+          <a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"> Log in </span></a>
+        </li>
+      </ul>
+      <ul class="navbar-toggler">
+          <a href="{{ url_for('signup') }}"><span class="glyphicon glyphicon-sign-up"> Sign up </span></a>
+        </li>
+      </ul>
+      {% endif %}
+  </div>
+</nav>
