@@ -154,6 +154,32 @@ $(document).ready(function(){
   });
   // suppose event 
   $(document).on('click','#superimpose_btn',function(event){
+      // get friendlist
+      var friend_id_list = []
+      var checkboxs = $('input[name="usercheckbox"]:checked')
+      for(var i=0;i<checkboxs.length;i++){
+        var id = checkbos[i].val()
+        friend_id_list.push(id);
+      }
+      var json_list = {supList: friend_id_list}
+      $.ajax({
+              url: '/supCalendarPage',
+              type: 'POST',
+              data: JSON.stringify(json_list), 
+              contentType: 'application/json; charset=UTF-8',
+              dataType: 'json', 
+              success: function(data) { 
+                console.log("sent")
+                console.log(data)
+              },
+              error: function(e) {
+                console.log(e)
+              }
+      });
+  });
+
+  $(document).on('click','.btn-sumbit-event',function(event){
+    
 
   });
 
@@ -278,17 +304,6 @@ $(document).ready(function(){
     // scheduler.addEvents([event1])
 
     var editButton;
-    const bar = `<div class="willingness">
-                  <h3>Willingness</h3>
-                  <div class="text">0%</div>
-                  <div class="progress">
-                    <div class="progress_bg">
-                        <div class="progress_bar"></div>
-                    </div>
-                    <div class="progress_btn"></div>
-                    
-                  </div>
-                </div>`;
     const description = `<textarea class="form-control input-context" 
                           aria-label="With textarea" placeholder="add description"></textarea>`
 
@@ -314,6 +329,8 @@ $(document).ready(function(){
                   </div>
                 </div>`
     var addPlace;
+    const submit_btn = `<button type="button" class="btn btn-primary btn-submit-event">Primary</button>`
+
     Y.Do.after(function() {
         // add additional elements
         addPlace = Y.one("#mySchedule2 .popover-content");
