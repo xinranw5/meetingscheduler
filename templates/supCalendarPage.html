@@ -3,41 +3,118 @@
 <head>
   {% include 'header.html' %}
   <script src="../static/script/newCalendar2.js"></script>
-  <script type="text/javascript">
+  <script>
     var data_list = '{{actList|tojson}}';
+    
+    $(document).on('click', '#searchFriendBtn', function(event){
+    console.log("search friend")
+      var searchText = $('#searchFriendText').val();
+      console.log("searchText",searchText)
+      $.ajax({
+        type: "POST",
+        url: "/searchpeople/",
+        cache: false,
+        data: {names:searchText},
+        dataType:'json',
+        success: function(data) {
+          var list= document.getElementById("searchResult");
+          var $list = $('#searchResult');
+          list.innerHTML = "";
+          var wrList = data['wrong'];
+          var frList = data['friends'];
+          var stList = data['strangers'];
+          for(n in stList){
+            s = "<a class='dropdown-item' id='"+stList[n][0]+"'><font size='4'>"+stList[n][1]+"</font><button style='float:right' type='button' onclick=\"addcon('"+stList[n][0]+"','"+stList[n][1]+"')\" class='btn btn-info'>+ Add  </button></br><font size='2' color='grey'> "+stList[n][0]+"</font></a>";
+            $list.append(s);
+          }
+          for(n in wrList){
+            $list.append("<li class='list-group-item list-group-item-danger'><font size='4'>"+wrList[n]+"</font></br><font size='2' color='grey'> no such user </font></li>");
+          }
+          for(n in frList){
+            s="<li class='list-group-item' id='"+frList[n][0]+"'><font size='4'>"+frList[n][1]+"</font><button style='float:right' type='button' onclick=\"delcon('"+frList[n][0]+"','"+frList[n][1]+"')\" class='btn btn-error'>Delete</button></br><font size='2' color='grey'> "+frList[n][0]+"</font></li>";
+            $list.append(s);
+          }
+        }
+      });
+  });
+
   </script>
+
       <h3>Start new meeting</h3>
       
+</head>
+  <body>
+      <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+          <div class="navbar-brand">
+            <a href="#" class="navbar-brand mb-0 h1"> Meeting Scheduler </a>
+          </div>
+
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Search friend
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="searchResult">
+                <input type="text" id="searchFriendText" placeholder="Search for friends.." name="search">
+                <button type="button" id="searchFriendBtn">search</button>
+            </div>
+          </div>
+
+          
+
+          
+            {% if uname|length >0 %}
+            <ul class="navbar-toggler">
+              <li>
+                <a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"> Log Out </span></a>
+              </li>
+            </ul>
+            <ul class="navbar-toggler">
+                <a href="#"><span class="glyphicon glyphicon-user"> {{uname}}</span></a>
+              </li>
+            </ul>
+            {% else %}
+            <ul class="navbar-toggler">
+              <li>
+                <a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"> Log in </span></a>
+              </li>
+            </ul>
+            <ul class="navbar-toggler">
+                <a href="{{ url_for('signup') }}"><span class="glyphicon glyphicon-sign-up"> Sign up </span></a>
+              </li>
+            </ul>
+            {% endif %}
+        </div>
+      </nav>
+
       <div class="container">
+        
         <!-- <div class="col-md-8">
           <div id="supCalendar" class="calendar"></div> 
         </div> -->
-        <div id="wrapper3">
-          <div id="mySchedule2"></div>
+        <div class="col-md-8">
+          <a href="/index" class="btn btn-info" role="button">Back</a>
+          <div id="wrapper3">
+            <div id="mySchedule2"></div>
+          </div>
         </div>
 
-        <div class="col-md-2">
+        <div class="col-md-4">
+          <!--button type="button" id="addFriendBtn" class="btn btn-info" data-toggle="modal" data-target="#addFriendModal">+ Add Friends</button-->
           <div style="overflow-y:auto;overflow-x:hidden;height:160px">
            <p>Friend list</p>
             <ul id="intervieweelist" style="list-style-type:circle;height:auto">
               {% for i in friendList %}
-                      <label><input type="checkbox" name="usercheckbox" value={{i.id}}> {{i.name}} </label>
+                      <label><input type="checkbox" name="usercheckbox" value={{i.id}} {% if i.isChecked==1 %}checked{% endif %}> {{i.name}} </label>
                 <br>
               {% endfor %}
             </ul>
           </div>
           <button type="button" id="superimpose_btn" class="btn btn-primary" style="height:32px;vertical-align:center">Superimpose</button>
         </div>
+</div>
 
-        <ul id="contactList" style="list-style-type:circle;height:auto">
-        </ul>
 
-        <div class="col-sm-3">
-          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addFriendModal">+ Add Friend</button>
-          <ul id="contactList" style="list-style-type:circle;height:auto">
-          </ul>
-          <button type="button" class="btn btn-danger" >x Delete</button>
-        </div>
-      </div>
-</head>
+
+  </body>
 </html>

@@ -1,8 +1,8 @@
 from flask import Flask
 from flask import abort, redirect, url_for, render_template
 from flask import request, session
-import pymysql
-pymysql.install_as_MySQLdb()
+# import pymysql
+# pymysql.install_as_MySQLdb()
 import database
 import json
 from flask import jsonify
@@ -96,50 +96,65 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('index'))
 
-@app.route('/supCalendarPage', methods=['POST','GET'])
+
+@app.route('/supCalendarPage', methods = ['GET', 'POST'])
 def supCalendarPage():
+    username = ''
     actList = []
     friendList = []
     supList = []
     if 'username' not in session:
             return request(url_for('index'))
+    username = session['username']
     friends = database.findCon(session['uid']);
     for friend in friends:
-        friendList.append({'id':friend[0], 'name':friend[1]})
-    print("friends of "+session['username'], friendList)
-    if request.method == 'POST':        
+        friendList.append({'id':friend[0], 'name':friend[1], 'isChecked':0})
+    if request.method == 'POST':   
+        # print("request",request.getWriter().print(json.toJSONString()))     
         data = request.get_json()
-        supList = friendlist
-        for fid in supList:
-            activities = database.findActivitiesByUser(fid)
-            for act in activities:
-                act={}
-                act["title"] = activity[2]
-                act["start"] = activity[3]
-                act["end"] = activity[4]
-                act["willingness"] = activity[5]
-                act["category"] = activity[6]
-                act["description"] = activity[7]
-                actList.append(act)
-    return render_template("supCalendarPage.html", friendList=friendList, actList=actList, supList=supList)
+        print("data",data)
+        for fid in data["supList"]:
+            fname = database.getUsernameByUid(fid)[0][0]
+            supList.append({"id":fid, "name": fname})
+    else:
+        supList = friendList[:]
+    for friend in friendList:
+        for sup in supList:
+            if friend['id'] == sup['id']:
+                friend['isChecked']=1
+    supList.append({'id':session['uid'], 'name':session['username']})
+    for friend in supList:
+        activities = database.findActivitiesByUser(friend['id'])
+        for activity in activities:
+            act={}
+            act["title"] = activity[2]
+            act["start"] = activity[3]
+            act["end"] = activity[4]
+            act["willingness"] = activity[5]
+            act["category"] = activity[6]
+            act["description"] = activity[7]
+            actList.append(act)
+    return render_template("supCalendarPage.html", uname=username, friendList=friendList, actList=actList)
 
 #
 @app.route("/searchpeople/",methods=['GET','POST'])
 def searchpeople():
+    if 'username' not in session:
+        return "Not log in"
     if request.method == 'POST':
-        searchText = request.values.get('ids').split(';');
+        searchText = request.values.get('names').split(';');
         uid=session['uid']
         frList=[]
         nofrList=[]
         noPerList=[]
-        for fid in searchText:
-            t = database.relation(uid,fid.strip())
+        for fname in searchText:
+            t = database.findConByName(uid, fname)
             print(t)
             if len(t)>0:
                 frList.append(t[0])
             else:
                 print(t)
-                t = database.findUser("id,name",fid)
+                t = database.getUidByUname(fname.strip())
                 if len(t)>0:
                     nofrList.append(t[0])
                 else:

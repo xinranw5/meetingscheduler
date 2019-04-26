@@ -154,29 +154,43 @@ $(document).ready(function(){
   });
   // suppose event 
   $(document).on('click','#superimpose_btn',function(event){
+      console.log("superpose now")
       // get friendlist
       var friend_id_list = []
-      var checkboxs = $('input[name="usercheckbox"]:checked')
-      for(var i=0;i<checkboxs.length;i++){
-        var id = checkboxs[i].val()
+      var checkboxes = $('input[name="usercheckbox"]:checked')
+      console.log("checked checkbox", checkboxes)
+      for(var i=0;i<checkboxes.length;i++){
+        console.log("checkbox i ", checkboxes[i])
+        var id = checkboxes[i].value
         friend_id_list.push(id);
       }
       var json_list = {supList: friend_id_list}
+      console.log("supList", json_list)
       $.ajax({
               url: '/supCalendarPage',
               type: 'POST',
               data: JSON.stringify(json_list), 
+              context: document.body,
               contentType: 'application/json; charset=UTF-8',
-              dataType: 'json', 
               success: function(data) { 
                 console.log("sent")
                 console.log(data)
+                $(this).html(data)
+                
               },
               error: function(e) {
+                console.log("error")
                 console.log(e)
               }
       });
+      // $.post('/supCalendarPage',json_list,function(data,status){
+      //     alert(data)
+      //     $(document).find("html").html(data);
+      // });
   });
+
+  
+
 
   $(document).on('click','.btn-sumbit-event',function(event){
     

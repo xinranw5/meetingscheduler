@@ -23,7 +23,12 @@ def addUser(uid, psw, name, timezone):
     exe(sql)
 
 def findUser(goal,uid):
-    sql = "select %s from %s where id='%s'" % (goal,userPage,uid)
+    sql = "select %s from %s where id=%s" % (goal,userPage,uid)
+    return exe(sql)
+
+def getUsernameByUid(uid):
+    sql = "select name from %s where id=%s" % (userPage,uid)
+    print(sql)
     return exe(sql)
 
 def getUidByUname(username):
@@ -64,9 +69,14 @@ def findCon(uid):
     print(sql)
     return exe(sql)
 
+def findConByName(uid,fname):
+    goal = "fid,fname"
+    sql = "select %s from %s where uid=%s and fname='%s' " % (goal,contactPage,uid,fname)
+    return exe(sql)
+
 def relation(uid,fid):
-    goal = "id,name,nickname"
-    sql = "select %s from %s where uid='%s' and id='%s' " % (goal,contactPage,uid,fid)
+    goal = "fid,fname"
+    sql = "select %s from %s where uid=%s and fid=%s " % (goal,contactPage,uid,fid)
     return exe(sql)
 
 #time, activity 
