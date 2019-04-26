@@ -115,9 +115,10 @@ def supCalendarPage():
         print("data",data)
         for fid in data["supList"]:
             fname = database.getUsernameByUid(fid)[0][0]
-            supList.append({"id":fid, "name": fname})
+            supList.append({"id":int(fid), "name": fname})
     else:
         supList = friendList[:]
+    print("supList",supList)
     for friend in friendList:
         for sup in supList:
             if friend['id'] == sup['id']:
@@ -134,6 +135,7 @@ def supCalendarPage():
             act["category"] = activity[6]
             act["description"] = activity[7]
             actList.append(act)
+    print("friendlist",friendList)
     return render_template("supCalendarPage.html", uname=username, friendList=friendList, actList=actList)
 
 #
