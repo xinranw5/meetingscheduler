@@ -124,7 +124,8 @@ function delcon(fid,fname){
           var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
           var startTime = new Date(data[n]["start"]).toLocaleString("en-US");
           var endTime = new Date(data[n]["end"]).toLocaleString("en-US");
-          $('#eveTbody').append("<tr><td><a href=\"{{url_for('invitation',inv_id='"+data[n]["id"]+"')}}\">"+data[n]["title"]+"</a></td><td>"+startTime+"</td><td>"+endTime+"</td><td>"+data[n]["host"]+"</td><td>"+data[n]["participants"]+"</td><td>"+data[n]["description"]+"</td><td>"+data[n]["state"]+"</td><td><button id='acceptEvent"+data[n]["id"]+"Btn' class='accept-event-btn' data-id="+data[n]["id"]+">Accept</button></td></tr>");
+          $('#eveTbody').append("<tr><td><a id='invitation"+data[n]["id"]+"Link'>"+data[n]["title"]+"</a></td><td>"+startTime+"</td><td>"+endTime+"</td><td>"+data[n]["host"]+"</td><td>"+data[n]["participants"]+"</td><td>"+data[n]["description"]+"</td><td>"+data[n]["state"]+"</td><td><button id='acceptEvent"+data[n]["id"]+"Btn' class='accept-event-btn' data-id="+data[n]["id"]+">Accept</button></td></tr>");
+          $("#invitation"+data[n]["id"]+"Link").attr("href", "/invitation/"+data[n]["id"])
         }
       }
     });

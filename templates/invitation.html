@@ -3,31 +3,41 @@
 <head>
   {% include 'header.html' %}
 </head>
+
 <body>
 
 
 
 <div class="container">
-  <h2> {{ event.title }} </h2><h4> voting </h4>
+  <a href="/index" class="btn btn-info" role="button">Back</a>
+  <h2> {{ event.title }} </h2>
   <p> starter:{{ event.host }} </p>
   <p> description: {{event.description}} </p>
-  <p> time: from {{event.start}} to {{event.end}} </p>
+  <p id="eventTimeText"> something </p>
   <form role="form">
-    <div class="checkbox">
-      <label><input type="checkbox" value="">slot 1</label>
-    </div>
-    <div class="checkbox">
-      <label><input type="checkbox" value="">slot 2</label>
-    </div>
-    <div class="checkbox disabled">
-      <label><input type="checkbox" value="" disabled>slot 3</label>
+    <div class="form-group">
+      <label for="feedbackTextarea">Feedback for this event</label>
+      <textarea class="form-control" id="feedbackTextarea" rows="3"></textarea>
+      <button type="button" class="btn btn-success"> Save </button>
     </div>
   </form>
-  <button type="button" class="btn btn-success"> Join </button>
-  <button type="button" class="btn btn-danger"> Delete </button>
+  
+  <!--button type="button" class="btn btn-danger"> Delete </button>
   <button type="button" class="btn btn-warning"> Change </button>
-  <button type="button" class="btn btn-info"> Add To Group </button>
+  <button type="button" class="btn btn-info"> Add To Group </button-->
 </div>
-
+<script>
+  var eventStr = '{{event|tojson}}';
+  var eventData = JSON.parse(eventStr)
+  console.log("event",eventData)
+  var startTime = new Date(eventData["start"]).toLocaleString("en-US");
+  var endTime = new Date(eventData["end"]).toLocaleString("en-US");
+  console.log("time",startTime)
+  var eveText = $("#eventTimeText").text();
+  console.log(eveText)
+  console.log($("#eventTimeText"))
+  $("#eventTimeText").html("Time: start from "+startTime+" to "+endTime)
+    
+</script>
 </body>
 </html>
