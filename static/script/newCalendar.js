@@ -216,7 +216,15 @@ $(document).ready(function(){
           $('.text').html(parseInt((left/bar_length)*100) + '%');
       }
   });
+  function findmatchEvent(events,current_event){
+    console.log("find",events,current_event)
+    for(var i =0;i<events.length;i++){
 
+      if(events[i]["startDate"].getTime() == current_event["startDate"] && events[i]["endDate"].getTime() == current_event["endDate"] && events[i]["content"] == current_event["content"])
+        return i;
+    }
+    return -1;
+  }
   YUI().use('aui-button', 'aui-scheduler', 'event-custom-base', function (Y) {
 
     // var eventRecorder = new Y.SchedulerEventRecorder();
@@ -225,10 +233,7 @@ $(document).ready(function(){
     var eventRecorder = new Y.SchedulerEventRecorder({
       on: {
         save: function(event) {
-          // console.log("currrent save ");
-          // this.get('scheduler').addEvents(event.newSchedulerEvent);
-          // scheduler.
-          // this._defSaveEventFn(event)
+          
           
           // console.log("on save event",event)
           // event["currentTarget"].set('color','#000000')
@@ -236,6 +241,7 @@ $(document).ready(function(){
           // this.syncUI()
           // console.log("node",this.get('node'))
           // event.currentTarget.set("color","#0AA000")
+
           console.log("event",this)
           this.set("content",$(".scheduler-event-recorder-content").val())
           this.set("category",$(".btn-dropdown").data("category"))
@@ -250,8 +256,14 @@ $(document).ready(function(){
           willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
 
           console.log("prepare data",this.getTemplateData(),new_event)
-
+          var addevent =new_event;
+          addevent["startDate"] = new Date(new_event["start"])
+          addevent["endDate"] = new Date(new_event["end"])
+          addevent["content"] = new_event["title"]
+          console.log(addevent)
+          events.push(addevent)
           // send to server
+
           $.ajax({
             url: '/save_activity/',
             type: 'POST',
@@ -271,17 +283,25 @@ $(document).ready(function(){
         edit: function(event) {
           // alert('Edit Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
 
-          eventRecorder.set("content",$(".scheduler-event-recorder-content").val())
-          eventRecorder.set("category",$(".btn-dropdown").data("category"))
-          eventRecorder.set("willingness", willingness)
-          eventRecorder.set("description",$(".input-context").val())
+          this.set("content",$(".scheduler-event-recorder-content").val())
+          this.set("category",$(".btn-dropdown").data("category"))
+          this.set("willingness", willingness)
+          this.set("description",$(".input-context").val())
           var current_color = category_color[eventRecorder.get("category")];
           if (current_color!=undefined)
-            eventRecorder.set("color",current_color)
-          data = eventRecorder.getTemplateData();
+            this.set("color",current_color)
+          data = this.getTemplateData();
           var edit_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
-          willingness:eventRecorder.get("willingness"),description:eventRecorder.get("description"),category:eventRecorder.get("category")}
-
+          willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
+          var index = findmatchEvent(events, this.getTemplateData())
+          console.log("edit",events,edit_event)
+          if(index>=0){
+            var will = edit_event["willingness"]
+            console.log(events,index)
+            events[index]["willingness"] = will
+            events[index]["description"] = edit_event["description"]
+            events[index]["category"] = edit_event["category"]
+          }
           // console.log("prepare edit data",eventRecorder,edit_event)
 
           // send to server
@@ -304,7 +324,13 @@ $(document).ready(function(){
           data = this.getTemplateData();
           var old_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
           willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
-
+          var old = old_event;
+          old["startDate"] = new Date(old_event["start"])
+          old["endDate"] = new Date(old_event["end"])
+          var index = findmatchEvent(events, old)
+          if(index>=0){
+            events = events.splice(index,1)
+          }
           // console.log(this,this.getTemplateData(),old_event)
 
           // send to server
@@ -383,21 +409,27 @@ $(document).ready(function(){
         addPlace.appendChild(description);
         addPlace.appendChild(select_bar);
         var current_category = this.get("category")
-
-
-
-        
-        // bar
-        if(this.get("willingness")!=undefined){
-           willingness = this.get("willingness");
+        var current_click = this.getTemplateData()
+        current_click["title"] = current_click["content"];
+        // find the current event
+        var index = findmatchEvent(events,current_click)
+        if(index>=0){
+          $(".input-context").val(events[index]["description"])
+          willingness = events[index]["willingness"]
           // console.log("current willingness",willingness)
           left = willingness * bar_length;
           $('.progress_btn').css('left', left);
           $('.progress_bar').animate({width:left},bar_length);
           $('.text').html(parseInt((left/bar_length)*100) + '%');
           console.log("willingness",this.getTemplateData())
-
         }
+        
+        
+        // // bar
+        // if(this.get("willingness")!=undefined){
+          
+
+        // }
         
         // console.log("current click category",this)
          // other option color

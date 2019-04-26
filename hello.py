@@ -94,7 +94,7 @@ def login():
 def logout():
     session.pop('uid', None)
     session.pop('username', None)
-    return redirect(url_for('login'))
+    return redirect(url_for('index'))
 
 
 @app.route('/supCalendarPage', methods = ['GET', 'POST'])
@@ -194,6 +194,7 @@ def setnickname():
     else:
         return "success"
 
+
 @app.route("/startevent",methods=['GET','POST'])
 def startevent():
     if request.method == 'POST':
@@ -221,7 +222,7 @@ def startevent():
 @app.route("/getinv/",methods=['GET','POST'])
 def getinv():
     if request.method == 'POST':
-        return json.dumps(database.findInvByCreator("iid,title,state,start,end",session['uid']))
+        return json.dumps(database.findInvByCreator("iid,ititle,istate,icount",session['uid']))
 
 
 @app.route("/geteve/",methods=['GET','POST'])
