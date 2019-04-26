@@ -152,7 +152,7 @@ def searchpeople():
                 frList.append(t[0])
             else:
                 print(t)
-                t = database.getUidByUname(fname.strip())
+                t = database.getUserByUname(fname.strip())
                 if len(t)>0:
                     nofrList.append(t[0])
                 else:
@@ -169,7 +169,7 @@ def addcon():
     uid=session['uid']
     fid=request.args.get('id')
     fname=request.args.get('name')
-    database.addCon(uid,fid,fname,"")
+    database.addCon(uid,fid,fname)
     return "success"
 
 @app.route("/delcon/")

@@ -36,6 +36,11 @@ def getUidByUname(username):
     print(sql)
     return exe(sql)
 
+def getUserByUname(username):
+    sql = "select id, name from %s where name='%s'" % (userPage,username)
+    print(sql)
+    return exe(sql)
+
 def updateUser(goal,val,uid):
     sql = "update %s set %s=\"%s\" where id='%s'" % (userPage,goal,val,uid)
     return exe(sql)
