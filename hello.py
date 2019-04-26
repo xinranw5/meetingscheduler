@@ -155,12 +155,12 @@ def searchpeople():
             if len(t)>0:
                 frList.append(t[0])
             else:
-                print(t)
                 t = database.getUserByUname(fname.strip())
+                print(t, len(t))
                 if len(t)>0:
                     nofrList.append(t[0])
                 else:
-                    noPerList.append(fid)
+                    noPerList.append(fname)
         result = {}
         result['friends']=frList
         result['strangers']=nofrList
@@ -199,8 +199,20 @@ def startevent():
     if request.method == 'POST':
         newevent = request.get_json()
         friendList = newevent["friend_list"]
+        title = newevent["title"]
+        start = int(newevent["start"])
+        end = int(newevent["end"])
+        description = newevent["description"]
+        state = "upcoming"
         participants = ';'.join(friendList)
-        database.createEvent(session['uid'], newevent["title"], newevent["start"], newevent["end"], participants, newevent["description"], "upcoming")
+        # Create event
+        database.createEvent(session['uid'], title, start, end, participants, description, state)
+        iid = database.findEvent(session['uid'], title, start, end)[0][0]
+        # Insert invitation for host
+        database.userAddInv(iid,session['uid'])
+        # Insert for participants
+        for f in friendList:
+            database.userAddInv(iid, int(f))
         return "success"
 
 
@@ -215,20 +227,35 @@ def getinv():
 @app.route("/geteve/",methods=['GET','POST'])
 def geteve():
     if request.method == 'POST':
-
-        ids = json.loads(database.findUser("invitations", session['uid'])[0][0])
-        print(ids)
-        flag = False
-        results = []
-        for iid in ids:
-            t = database.findInvById("id,title,state,count,creator",iid)
-            if len(t)==0:
-                ids.remove(iid)
-                flag = True
-            else:
-                results.append(t[0])
-        if flag:
-            database.updateUser('invitations',json.dumps(ids),session['uid'])
+        results=[]
+        eids = database.getUserEvents(session['uid'])
+        print("eids",eids)
+        for eid in eids:
+            tmp = database.getEvent(eid[0])[0]
+            print(tmp)
+            event={}
+            event["host"] = tmp[1]
+            event["title"] = tmp[2]
+            event["start"] = tmp[3]
+            event["end"] = tmp[4]
+            event["participants"] = tmp[5]
+            event["description"] = tmp[6]
+            event["state"] = tmp[7]
+            results.append(event)
+        # ids = json.loads(database.findUser("invitations", session['uid'])[0][0])
+        # print(ids)
+        # flag = False
+        # results = []
+        # for iid in ids:
+        #     t = database.findInvById("id,title,state,count,creator",iid)
+        #     if len(t)==0:
+        #         ids.remove(iid)
+        #         flag = True
+        #     else:
+        #         results.append(t[0])
+        # if flag:
+        #     database.updateUser('invitations',json.dumps(ids),session['uid'])
+        print("events:", results)
         return json.dumps(results)
 
 @app.route("/joinInv/")

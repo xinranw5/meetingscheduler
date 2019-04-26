@@ -100,14 +100,8 @@ function delcon(fid,fname){
       success: function(data) {
         document.getElementById("eveTbody").innerHTML = "";
         for ( n in data ){
-          var status="unknown";
-          if(data[n][2]=='v'){
-            status="voting";
-          }
-          else if (data[n][2]=='f'){
-            status="finished";
-          }
-          $('#eveTbody').append("<tr><td><a href=\"{{url_for('invitation',inv_id='"+data[n][0]+"',host='true')}}\">"+data[n][1]+"</a></td><td>"+status+"</td><td>"+data[n][3]+"</td><td>"+data[n][4]+"</td></tr>");
+          
+          $('#eveTbody').append("<tr><td><a href=\"{{url_for('invitation',inv_id='"+data[n][0]+"',host='true')}}\">"+data[n]["title"]+"</a></td><td>"+data[n]["start"]+"</td><td>"+data[n]["end"]+"</td><td>"+data[n]["host"]+"</td><td>"+data[n]["participants"]+"</td><td>"+data[n]["description"]+"</td><td>"+data[n]["state"]+"</td></tr>");
         }
       }
     });
@@ -219,11 +213,12 @@ function delcon(fid,fname){
         <thead>
           <tr>
             <th>Title</th>
-            <th>State</th>
             <th>start</th>
             <th>end</th>
             <th>host</th>
             <th>participants</th>
+            <th>description</th>
+            <th>State</th>
             <th>action</th>
           </tr>
         </thead>
