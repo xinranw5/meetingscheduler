@@ -217,7 +217,7 @@ $(document).ready(function(){
           }     
           this.set("description",$(".input-context").val())
           data = this.getTemplateData();
-          var new_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
+          var new_event = {start:data["startDate"],end:data["endDate"],title:$(".scheduler-event-recorder-content").val(),
           description:$(".input-context").val(),friend_list:friend_id_list}
 
           console.log("prepare data",new_event)
