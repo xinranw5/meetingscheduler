@@ -9,7 +9,7 @@
   var table_data0 = '{{actList|tojson}}'
 
   // console.log(table_data0)
-      $(document).on('click', '#searchFriendBtn', function(event){
+  $(document).on('click', '#searchFriendBtn', function(event){
     console.log("search friend")
       var searchText = $('#searchFriendText').val();
       console.log("searchText",searchText)
@@ -91,6 +91,27 @@ function delcon(fid,fname){
     });
     return true;
   }
+
+  $(document).on('click','.accept-event-btn',function(e) {// mouse click
+      var iid = $(this).data('id');
+      console.log("iid",iid)
+      $.ajax({
+        type: "GET",
+        url: "/joinInv/",
+        data: {
+          iid:iid
+        },
+        cache: false,
+        success: function(data) {
+          var iid=JSON.parse(data)["iid"]
+          console.log("success now",iid)
+          console.log(data)
+          console.log("#acceptEvent"+iid+"Btn")
+          $("#acceptEvent"+iid+"Btn").prop("disabled",true);
+        }
+      })
+  });
+
   function getEve(){
     $.ajax({
       type: "POST",
@@ -100,8 +121,10 @@ function delcon(fid,fname){
       success: function(data) {
         document.getElementById("eveTbody").innerHTML = "";
         for ( n in data ){
-          
-          $('#eveTbody').append("<tr><td><a href=\"{{url_for('invitation',inv_id='"+data[n][0]+"',host='true')}}\">"+data[n]["title"]+"</a></td><td>"+data[n]["start"]+"</td><td>"+data[n]["end"]+"</td><td>"+data[n]["host"]+"</td><td>"+data[n]["participants"]+"</td><td>"+data[n]["description"]+"</td><td>"+data[n]["state"]+"</td></tr>");
+          var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+          var startTime = new Date(data[n]["start"]).toLocaleString("en-US");
+          var endTime = new Date(data[n]["end"]).toLocaleString("en-US");
+          $('#eveTbody').append("<tr><td><a href=\"{{url_for('invitation',inv_id='"+data[n]["id"]+"')}}\">"+data[n]["title"]+"</a></td><td>"+startTime+"</td><td>"+endTime+"</td><td>"+data[n]["host"]+"</td><td>"+data[n]["participants"]+"</td><td>"+data[n]["description"]+"</td><td>"+data[n]["state"]+"</td><td><button id='acceptEvent"+data[n]["id"]+"Btn' class='accept-event-btn' data-id="+data[n]["id"]+">Accept</button></td></tr>");
         }
       }
     });

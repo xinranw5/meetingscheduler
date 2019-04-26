@@ -58,8 +58,10 @@ def userAddInv(inv,uid):
     print(sql, result)
     if len(result[0][0])>0:
         invs = result[0][0].split(";")
-        invs.append(inv)
-        sql = "update %s set invitations='%s' where id=%s" % (userPage,';'.join(invs),uid)
+        invs.append(str(inv))
+        newInv=';'.join(invs)
+        print(newInv)
+        sql = "update %s set invitations='%s' where id=%s" % (userPage,newInv,uid)
     else:
         sql = "update %s set invitations='%s' where id=%s" % (userPage, inv, uid)
     print(sql)
