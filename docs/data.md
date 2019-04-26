@@ -69,7 +69,7 @@ insert into contact (uid, fid, fname) values (3, 4, "Charlie");
 insert into contact (uid, fid, fname) values (4, 2, "Alice");
 insert into contact (uid, fid, fname) values (4, 3, "Bob");
 
-insert into calendar (uid, title, start, end, willingness, type, descrption) values (2, 'Go out', 1555876800,  )
+insert into calendar (uid, title, start, end, willingness, type, descrption) values (2, 'Go out', 1555876800,  );
 
 
 ## event need to be in the same day

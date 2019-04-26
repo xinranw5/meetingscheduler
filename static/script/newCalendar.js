@@ -63,22 +63,90 @@ $(document).ready(function(){
       events.push(data);
   }
   console.log("initial data",events)
-  // console.log("table",table_data0)
-  // var events =  [{
-  //           content: 'AllDay',
-  //           endDate: new Date(2019, 4, 23, 23, 59),
-  //           startDate: new Date(2019, 4, 23, 12, 59),
-  //           color: '#AD1457',
-  //           category: "Professional",
-  //   },
-  //   {
-  //           content: 'AllDay',
-  //           endDate: new Date(2019, 4, 23, 23, 59),
-  //           startDate: new Date(2019, 4, 23, 12, 59),
-  //           color: '#FF8F00',
-  //           category: "Private",
-  //   }
-  // ];
+  
+
+
+  // generate report  
+  // according to events
+  $(document).on('click','.suggestions-tag',function(e){
+
+      // weekday time
+      var weekday_time = 1000*60*60*24*5;
+      var weekend_time = 1000*60*60*24*2;
+
+      // get total count
+      var week_act_time_sum = 0;
+      var weekend_act_time_sum = 0;
+      var weekday_act_time_sum = 0;
+      var week_unwill_sum = 0;
+      var weekend_unwill_sum = 0;
+      var weekday_unwill_sum = 0;
+      var wake_up_time = 0;
+      var sleep_time = 1
+
+      for(var i=0;i<events.length;i++){
+        var dis_time = events[i]['endDate'].getTime() - events[i]['startDate'].getTime()
+        var start_hour =  events[i]['startDate'].getHours();
+        var end_hour = events[i]['endDate'].getHours();
+        var weekend_late_sleep_day =0, weekday_late_sleep_day = 0;
+        week_act_time_sum+=dis_time
+        week_unwill_sum+=events[i]["willingness"];
+
+        if(events[i]['startDate'].getDay() == 0 || events[i]['startDate'].getDay() == 6){
+          weekend_act_time_sum+=dis_time
+          weekend_unwill_sum+=events[i]["willingness"];
+          if(start_hour>=23 && end_hour <= 7){
+            weekend_late_sleep_day += 1
+          }
+        }else{
+          weekday_act_time_sum+=dis_time
+          weekday_unwill_sum+=events[i]["willingness"];
+          if(start_hour>=23 && end_hour <= 7){
+            weekend_late_sleep_day += 1
+          }
+        }
+        
+
+      }
+      var percent_set_act_week = week_act_time_sum / (weekday_time+weekend_time)
+      var percent_set_act_weekend =  weekend_act_time_sum / weekend_time
+      var percent_set_act_weekday =  weekday_act_time_sum / weekday_time
+      // total number
+      $("#activityTbody tr :nth-child(1)").html(events.length);
+      $("#sug_week_perc").html(percent_set_act_week.toFixed(2));
+      $("#sug_weekend_perc").html(percent_set_act_weekend.toFixed(2));
+      $("#sug_weekday_perc").html(percent_set_act_weekday.toFixed(2));
+
+      $("#unw_week_perc").html((week_unwill_sum/events.length * 100).toFixed(2));
+      $("#unw_weekend_perc").html((weekend_unwill_sum/events.length * 100).toFixed(2));
+      $("#unw_weekday_perc").html((weekday_unwill_sum/events.length * 100).toFixed(2));
+
+
+      $("#late_week").html(weekend_late_sleep_day+weekday_late_sleep_day);
+      $("#late_weekend").html(weekend_late_sleep_day);
+      $("#late_weekday").html(weekday_late_sleep_day);
+
+      // get total time
+      
+      var hoursDif = (act_time_sum/1000/60/60).toFixed(2)
+      $("#activityTbody tr :nth-child(2)").html(hoursDif);
+      // get average hour
+      var aveHour = hoursDif/events.length;
+      $("#activityTbody tr :nth-child(3)").html(aveHour.toFixed(2));
+      // get average unwill
+      var aveUnwill = total_unwill_sum/events.length;
+      $("#activityTbody tr :nth-child(4)").html(aveUnwill.toFixed(2));
+      // console.log(hoursDif,aveHour,aveUnwill)
+      // suggestion for going out
+      var suggestion = ""
+      // if(aveUnwill > 0.5){
+      //     suggestion= "Hey, there are so much fun to have more activities! Why not try more?";
+      // }else{
+      //   suggestion = "Hey, you are so energetic! Keep going!"
+      // }
+
+
+  });
 
 
 
@@ -303,14 +371,18 @@ $(document).ready(function(){
         addPlace.appendChild(select_bar);
         var current_category = this.get("category")
 
+
+
+        
         // bar
         if(this.get("willingness")!=undefined){
-          willingness = this.get("willingness");
+           willingness = this.get("willingness");
           // console.log("current willingness",willingness)
           left = willingness * bar_length;
           $('.progress_btn').css('left', left);
           $('.progress_bar').animate({width:left},bar_length);
           $('.text').html(parseInt((left/bar_length)*100) + '%');
+          console.log("willingness",this.getTemplateData())
 
         }
         

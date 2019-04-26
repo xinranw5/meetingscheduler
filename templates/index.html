@@ -181,7 +181,7 @@ function delcon(fid,fname){
     <li class="active"><a data-toggle="tab" href="#myCalendar">Calendar</a></li>
     <!--li><a data-toggle="tab" href="#invitations" onclick="getInv()">Invitations</a></li-->
     <li><a data-toggle="tab" href="#events" onclick="getEve()">Events</a></li>
-    <li><a data-toggle="tab" href="#suggestions">Check your suggestions</a></li>
+    <li><a data-toggle="tab" href="#suggestions" class="suggestions-tag">Check your suggestions</a></li>
     <!--li><a data-toggle="tab" href="#goose" onclick="getCon()">Start an event</a></li-->
     <li><a href="/supCalendarPage">Start an event</a></li>
   </ul>
@@ -230,8 +230,41 @@ function delcon(fid,fname){
     <div id="suggestions" class="tab-pane fade">
       <h3>Here is your report!</h3>
       <!--p>to be filled.</p-->
+      <h2> Percentage of setting up activities</h2>
+      <h3>Last week you have set <span id="sug_week_perc"> </span>% of time for activities!</h3>
+	  <h3>Last weekend you have set <span id="sug_weekend_perc"> </span>% of time for activities!</h3>
+	  <h3>Last weekday you have set <span id="sug_weekday_perc"> </span>% of time for activities!</h3>
+	  <h2> Percentage of unwillingness for social events</h2>
+	  <h3>Last week you have average <span id="unw_week_perc"> </span>% of unwillingness for social events!</h3>
+	  <h3>Last weekend you have average <span id="unw_weekend_perc"> </span>% of unwillingness for social events!</h3>
+	  <h3>Last weekday you have average <span id="unw_weekday_perc"> </span>% of unwillingness for social events!</h3>
+
+	  <h2> Late sleep day</h2>
+	  <h3>Last week you have <span id="late_week"> </span> days are late for sleep</h3>
+	  <h3>Last week you have <span id="late_weekend"> </span> days are late for sleep</h3>
+	  <h3>Last week you have <span id="late_weekday"> </span> days are late for sleep</h3>
+
+      <h2>Suggestion</h2>
+      <h3 id="sug_for_activity"></h3>
+      <h3 id="sug_for_events"></h3>
+      <h3 id="sug_for_late_sleep"></h3>
       <table class="table table-hover">
-        
+        <thead>
+        	<tr>
+        		<th>Total number of activity</th>
+        		<th>Total times spend on activity</th>
+        		<th>Average times spend on activity</th>
+        		<th>Average number of unwillingness</th>
+        	</tr>
+        	 <tbody id="activityTbody">
+	        	 <tr>
+	        	 	<th></th>
+	        		<th></th>
+	        		<th></th>
+	        		<th></th>
+	        	</tr>
+       	 	</tbody>
+        </thead>
       </table>
     </div>
 
