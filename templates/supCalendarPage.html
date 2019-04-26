@@ -24,14 +24,14 @@
           var frList = data['friends'];
           var stList = data['strangers'];
           for(n in stList){
-            s = "<li id='"+stList[n][0]+"'>"+stList[n][1]+"</font><button style='float:right' type='button' onclick=\"addcon('"+stList[n][0]+"','"+stList[n][1]+"')\" class='btn btn-info'>+ Add  </button></br>"+stList[n][0]+"</font></li>";
+            s = "<li id='"+stList[n][0]+"'>"+stList[n][1]+"</font><button style='float:right' type='button' onclick=\"addcon('"+stList[n][0]+"','"+stList[n][1]+"')\" class='btn btn-info btn-sm'>+ Add  </button><br></br></li>";
             $list.append(s);
           }
           for(n in wrList){
             $list.append("<li>"+wrList[n]+"<font size='2' color='grey'> no such user </font></li>");
           }
           for(n in frList){
-            s="<li id='"+frList[n][0]+"'>"+frList[n][1]+"<button style='float:right' type='button' onclick=\"delcon('"+frList[n][0]+"','"+frList[n][1]+"')\" class='btn btn-error'>Delete</button></br> "+frList[n][0]+"</li>";
+            s="<li id='"+frList[n][0]+"'>"+frList[n][1]+"<button style='float:right' type='button' onclick=\"delcon('"+frList[n][0]+"','"+frList[n][1]+"')\" class='btn btn-error'>Delete</button></br></li>";
             $list.append(s);
           }
         }
@@ -47,6 +47,7 @@ function delcon(fid,fname){
       success: function() {
         document.getElementById(fid).innerHTML = "";
         $("li[id='"+fid+"']").append("<font size='4'>"+fname+"</font><button style='float:right' type='button' onclick=\"addcon('"+fid+"','"+fname+"')\" class='btn btn-info'>+ Add  </button></br><font size='2' color='grey'> "+fid+"</font>");
+        $("#friend_"+fid).remove();
       }
     });
   }
@@ -62,6 +63,7 @@ function delcon(fid,fname){
       success: function() {
         document.getElementById(fid).innerHTML = "";
         $("li[id='"+fid+"']").append("<font size='4'>"+fname+"</font><button style='float:right' type='button' onclick=\"delcon('"+fid+"','"+fname+"')\" class='btn btn-error'>Delete</button></br><font size='2' color='grey'> "+fid+"</font>");
+        $("#intervieweelist").append("<label id='friend_'"+fid+"><input type='checkbox' name='usercheckbox' value="+fid+"> "+fname+"</label>");
       }
     });
   }
@@ -134,7 +136,7 @@ function delcon(fid,fname){
            <p>Friend list</p>
             <ul id="intervieweelist" style="list-style-type:circle;height:auto">
               {% for i in friendList %}
-                      <label><input type="checkbox" name="usercheckbox" value={{i.id}} {% if i.isChecked==1 %}checked{% endif %}> {{i.name}} </label>
+                      <label id="friend_{{ i.id }}"><input type="checkbox" name="usercheckbox" value={{i.id}} {% if i.isChecked==1 %}checked{% endif %}> {{i.name}} </label>
                 <br>
               {% endfor %}
             </ul>

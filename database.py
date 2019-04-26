@@ -45,12 +45,26 @@ def updateUser(goal,val,uid):
     sql = "update %s set %s=\"%s\" where id='%s'" % (userPage,goal,val,uid)
     return exe(sql)
 
+def getUserEvents(uid):
+    sql = "select invitations from %s where id=%s" % (userPage,uid)
+    print(sql)
+    return exe(sql)
+
+
 def userAddInv(inv,uid):
     sql = "select invitations from %s where id=%s" % (userPage,uid)
     # print exe(sql)
-    invs = json.loads(exe(sql)[0][0])
-    invs.append(inv)
-    sql = "update %s set invitations='%s' where id=%s" % (userPage,json.dumps(invs),uid)
+    result = exe(sql)
+    print(sql, result)
+    if len(result[0][0])>0:
+        invs = result[0][0].split(";")
+        invs.append(str(inv))
+        newInv=';'.join(invs)
+        print(newInv)
+        sql = "update %s set invitations='%s' where id=%s" % (userPage,newInv,uid)
+    else:
+        sql = "update %s set invitations='%s' where id=%s" % (userPage, inv, uid)
+    print(sql)
     exe(sql)
 
 # modify name or psw or timezone
@@ -125,7 +139,12 @@ def createEvent(uid, title, start, end, participants, description, state):
     exe(sql)
 
 def findEvent(uid, title, start, end):
-    sql = "select iid from %s where uid=%s and start=%s and end=%s and title='%s'" % (invitationPage, uid, start, end, title)
+    sql = "select iid from %s where host=%s and start=%s and end=%s and title='%s'" % (invitationPage, uid, start, end, title)
+    print(sql)
+    return exe(sql)
+
+def getEvent(iid):
+    sql = "select * from %s where iid=%s" % (invitationPage, iid)
     print(sql)
     return exe(sql)
 
