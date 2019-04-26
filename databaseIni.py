@@ -72,7 +72,7 @@ def addActivity(uid,title,start,end,willingness,acttype,descrption):
 
 def insertData(uid, actList):
     for act in actList:
-        addActivity(uid, act["title"], act["start"], act["end"], act["willingness"], act["category"], act["description"])
+        addActivity(uid, act["title"], act["start"]*1000, act["end"]*1000, act["willingness"], act["category"], act["description"])
 
 
 def exe(sql):

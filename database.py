@@ -46,11 +46,11 @@ def updateUser(goal,val,uid):
     return exe(sql)
 
 def userAddInv(inv,uid):
-    sql = "select invitations from %s where id='%s'" % (userPage,uid)
+    sql = "select invitations from %s where id=%s" % (userPage,uid)
     # print exe(sql)
     invs = json.loads(exe(sql)[0][0])
     invs.append(inv)
-    sql = "update %s set invitations='%s' where id='%s'" % (userPage,json.dumps(invs),uid)
+    sql = "update %s set invitations='%s' where id=%s" % (userPage,json.dumps(invs),uid)
     exe(sql)
 
 # modify name or psw or timezone
@@ -116,6 +116,24 @@ def findTime(uid, start):
     sql = "select %s from %s where uid='%s' and ((start>='%s' and start<%s) or (end>'%s' and end<=%s))" % (goal,timePage,uid, start, end, start, end)
     return exe(sql)
 
+#events
+
+
+def createEvent(uid, title, start, end, participants, description, state):
+    sql = "insert into %s (host, title, start, end, participants, description, state) values (%s, '%s', %s, %s, '%s','%s','%s' )"% (invitationPage,uid,title,start,end,participants,description,state)
+    print(sql)
+    exe(sql)
+
+def findEvent(uid, title, start, end):
+    sql = "select iid from %s where uid=%s and start=%s and end=%s and title='%s'" % (invitationPage, uid, start, end, title)
+    print(sql)
+    return exe(sql)
+
+def deleteEvent(iid):
+    sql = "delete from %s where iid=%s" % (invitationPage, iid)
+
+
+
 #invitations
 def addInv(goal, data):
     iid = ranchar(InvIdLength)
@@ -131,7 +149,7 @@ def deleteInv(iid):
     exe(sql)
 
 def findInvByCreator(goal,uid):
-    sql = "select %s from %s where creator='%s'" % (goal,invitationPage,uid)
+    sql = "select %s from %s where host=%s" % (goal,invitationPage,uid)
     return exe(sql)
 
 def findInvById(goal,iid):
