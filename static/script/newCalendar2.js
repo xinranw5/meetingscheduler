@@ -166,7 +166,6 @@ $(document).ready(function(){
       }
       var json_list = {supList: friend_id_list}
       console.log("supList", json_list)
-      $(document).unbind('click')
       $.ajax({
               url: '/supCalendarPage',
               type: 'POST',
@@ -178,7 +177,7 @@ $(document).ready(function(){
                 // console.log(data)
                 // $(this).html("")
                 $(this).html(data)
-
+                
                 // window.location.reload()
               },
               error: function(e) {
