@@ -174,7 +174,7 @@ $(document).ready(function(){
               contentType: 'application/json; charset=UTF-8',
               success: function(data) { 
                 console.log("sent")
-                console.log(data)
+                // console.log(data)
                 $(this).html(data)
                 
               },
@@ -205,38 +205,28 @@ $(document).ready(function(){
     var eventRecorder = new Y.SchedulerEventRecorder({
       on: {
         save: function(event) {
-          // console.log("currrent save ");
-          // this.get('scheduler').addEvents(event.newSchedulerEvent);
-          // scheduler.
-          // this._defSaveEventFn(event)
           
-          // console.log("on save event",event)
-          // event["currentTarget"].set('color','#000000')
-          // console.log("new event",event,event["currentTarget"].get('endDate'))
-          // this.syncUI()
-          // console.log("node",this.get('node'))
-         
-          this.set("content",$(".scheduler-event-recorder-content").val())
-          this.set("category",$(".btn-dropdown").data("category"))
-          this.set("willingness", willingness)
+         var friend_id_list = []
+         var checkboxes = $('input[name="usercheckbox"]:checked')
+         console.log("checked checkbox", checkboxes)
+         for(var i=0;i<checkboxes.length;i++){
+            console.log("checkbox i ", checkboxes[i])
+            var id = checkboxes[i].value
+            friend_id_list.push(id);
+          }     
           this.set("description",$(".input-context").val())
-          var current_color = category_color[this.get("category")];
-          if (current_color!=undefined)
-            this.set("color",current_color)
-
           data = this.getTemplateData();
           var new_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
-          willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
+          description:$(".input-context").val(),friend_list:friend_id_list}
 
-          // console.log("prepare data",this.getTemplateData(),new_event)
+          console.log("prepare data",new_event)
 
           // send to server
           $.ajax({
-            url: '/save_activity/',
+            url: '/startevent',
             type: 'POST',
             data: JSON.stringify(new_event), 
             contentType: 'application/json; charset=UTF-8',
-            dataType: 'json', 
             success: function(data) { 
               console.log("sent")
               console.log(data)
@@ -343,15 +333,16 @@ $(document).ready(function(){
                   </div>
                 </div>`
     var addPlace;
-    const submit_btn = `<button type="button" class="btn btn-primary btn-submit-event">Primary</button>`
+    const submit_btn = `<button type="button" class="btn btn-primary btn-submit-event">Start</button>`
 
     Y.Do.after(function() {
         // add additional elements
         addPlace = Y.one("#mySchedule2 .popover-content");
-        // addPlace.appendChild(bar);
         addPlace.appendChild(description);
-        addPlace.appendChild(select_bar);
-        var current_category = this.get("category")
+        // addPlace.appendChild(submit_btn);
+        // console.log($(" .toolbar .btn-group").children().first())
+        console.log($(".toolbar .btn-group :nth-child(2)"))
+        $(".toolbar .btn-group :nth-child(2)").hide();
 
         // bar
         // if(this.get("willingness")!=undefined){
@@ -375,14 +366,8 @@ $(document).ready(function(){
          $(".professional-color").data('category',"Professional");
          $(".fun-color").data('category',"Fun");
          $(".family-color").data('category',"Family");
-         // menu for category
-         $(".btn-dropdown > i").css('color',category_color[current_category]);
-         $(".btn-dropdown > span").text(current_category)
-         $(".btn-dropdown").data("category",current_category)
-         // set bar
-         // console.log("willingness",this.get("willingness"))
-         var area = Y.all('.scheduler-event')
-         // console.log("area",area)
+        
+         
 
         
 
