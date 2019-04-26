@@ -366,7 +366,7 @@ $(document).ready(function(){
 
     var editButton;
     const bar = `<div class="willingness">
-                  <h3>Willingness</h3>
+                  <h3>UnWillingness</h3>
                   <div class="text">0%</div>
                   <div class="progress">
                     <div class="progress_bg">
