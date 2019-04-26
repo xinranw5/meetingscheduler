@@ -82,29 +82,32 @@ $(document).ready(function(){
       var weekend_unwill_sum = 0;
       var weekday_unwill_sum = 0;
       var wake_up_time = 0;
-      var sleep_time = 1
+      var sleep_time = 0;
+      var weekend_late_sleep_day =0, weekday_late_sleep_day = 0;
 
       for(var i=0;i<events.length;i++){
         var dis_time = events[i]['endDate'].getTime() - events[i]['startDate'].getTime()
         var start_hour =  events[i]['startDate'].getHours();
         var end_hour = events[i]['endDate'].getHours();
-        var weekend_late_sleep_day =0, weekday_late_sleep_day = 0;
+        console.log(start_hour,end_hour)
         week_act_time_sum+=dis_time
         week_unwill_sum+=events[i]["willingness"];
 
         if(events[i]['startDate'].getDay() == 0 || events[i]['startDate'].getDay() == 6){
           weekend_act_time_sum+=dis_time
           weekend_unwill_sum+=events[i]["willingness"];
-          if(start_hour>=23 && end_hour <= 7){
+          if(start_hour>=1 && end_hour <= 7){
             weekend_late_sleep_day += 1
           }
         }else{
           weekday_act_time_sum+=dis_time
           weekday_unwill_sum+=events[i]["willingness"];
-          if(start_hour>=23 && end_hour <= 7){
+          if(start_hour>=1 && end_hour <= 7){
             weekend_late_sleep_day += 1
           }
         }
+        console.log("week_act_time_sum",week_act_time_sum)
+        console.log("week_time",weekday_time + weekend_time)
         
 
       }
@@ -113,9 +116,9 @@ $(document).ready(function(){
       var percent_set_act_weekday =  weekday_act_time_sum / weekday_time
       // total number
       $("#activityTbody tr :nth-child(1)").html(events.length);
-      $("#sug_week_perc").html(percent_set_act_week.toFixed(2));
-      $("#sug_weekend_perc").html(percent_set_act_weekend.toFixed(2));
-      $("#sug_weekday_perc").html(percent_set_act_weekday.toFixed(2));
+      $("#sug_week_perc").html((percent_set_act_week * 100).toFixed(2));
+      $("#sug_weekend_perc").html((percent_set_act_weekend * 100).toFixed(2));
+      $("#sug_weekday_perc").html((percent_set_act_weekday * 100).toFixed(2));
 
       $("#unw_week_perc").html((week_unwill_sum/events.length * 100).toFixed(2));
       $("#unw_weekend_perc").html((weekend_unwill_sum/events.length * 100).toFixed(2));
@@ -128,22 +131,32 @@ $(document).ready(function(){
 
       // get total time
       
-      var hoursDif = (act_time_sum/1000/60/60).toFixed(2)
-      $("#activityTbody tr :nth-child(2)").html(hoursDif);
-      // get average hour
-      var aveHour = hoursDif/events.length;
-      $("#activityTbody tr :nth-child(3)").html(aveHour.toFixed(2));
-      // get average unwill
-      var aveUnwill = total_unwill_sum/events.length;
-      $("#activityTbody tr :nth-child(4)").html(aveUnwill.toFixed(2));
-      // console.log(hoursDif,aveHour,aveUnwill)
+      
       // suggestion for going out
-      var suggestion = ""
-      // if(aveUnwill > 0.5){
-      //     suggestion= "Hey, there are so much fun to have more activities! Why not try more?";
-      // }else{
-      //   suggestion = "Hey, you are so energetic! Keep going!"
-      // }
+      var act_suggestion = "",unw_suggestion = "", sleep_sug="";
+      if(percent_set_act_week < 0.4){
+          act_suggestion= "Hey, there are so much fun to have more activities! Why not try more?";
+      }else if (percent_set_act_week > 0.8){
+        act_suggestion = "Hey, don't push yourself too hard! Try to relax more!"
+      }else{
+        act_suggestion = "Hey, keep up with this attitude!"
+      }
+
+      if((week_unwill_sum/events.length * 100).toFixed(2) > 0.7){
+        unw_suggestion = "Meeting with friends would gain more fun!"
+      }else{
+        unw_suggestion = "You have a great attitude towards social activity, keep it up!"
+      }
+
+      if(weekend_late_sleep_day+weekday_late_sleep_day >= 3){
+        sleep_sug = "Sleep more to relax yourself!"
+      }else{
+        sleep_sug = "You sleep habit is good, keep it up!"
+      }
+
+      $("#sug_for_activity").html(act_suggestion);
+      $("#sug_for_events").html(unw_suggestion);
+      $("#sug_for_late_sleep").html(sleep_sug);
 
 
   });
