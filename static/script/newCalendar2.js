@@ -88,7 +88,7 @@ $(document).ready(function(){
   var willingness = 0;
   var tag = false,ox = 0,left = 0,bgleft = 0,bar_length = 200,clickable = true;
   var category_color = {Private:"#FF8F00",Professional:"#AD1457",Fun:"#BA0F90",Family:"#AF8C00"};
-
+  var scheduler;
   // get rendering data
   console.log("js",data_list)  
 
@@ -166,6 +166,7 @@ $(document).ready(function(){
       }
       var json_list = {supList: friend_id_list}
       console.log("supList", json_list)
+      $(document).unbind('click')
       $.ajax({
               url: '/supCalendarPage',
               type: 'POST',
@@ -177,6 +178,7 @@ $(document).ready(function(){
                 // console.log(data)
                 // $(this).html("")
                 $(this).html(data)
+
                 // window.location.reload()
               },
               error: function(e) {
@@ -201,7 +203,7 @@ $(document).ready(function(){
   YUI().use('aui-button', 'aui-scheduler', 'event-custom-base', function (Y) {
 
     // var eventRecorder = new Y.SchedulerEventRecorder();
-    var scheduler;
+    
     var weekView = new Y.SchedulerWeekView();
     var eventRecorder = new Y.SchedulerEventRecorder({
       on: {
