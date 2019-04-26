@@ -72,12 +72,12 @@ function calculateIntervals(total_events){
         continue;
      var interval = {
         content: "",
-        startDate: new Date(timestamp_list[i] * 1000),
-        endDate: new Date(timestamp_list[i+1] * 1000),
+        startDate: new Date(timestamp_list[i]),
+        endDate: new Date(timestamp_list[i+1]),
         willingness: willing_sum[i],
         color: shadeColor("#1ea4d800", - willing_sum[i] * 100 +30 )
      }
-     console.log(new Date(timestamp_list[i] * 1000))
+     console.log(new Date(timestamp_list[i]))
      interval_events.push(interval);
   }
   return interval_events;
@@ -170,16 +170,23 @@ $(document).ready(function(){
               url: '/supCalendarPage',
               type: 'POST',
               data: JSON.stringify(json_list), 
+              context: document.body,
               contentType: 'application/json; charset=UTF-8',
-              dataType: 'json', 
               success: function(data) { 
                 console.log("sent")
                 console.log(data)
+                $(this).html(data)
+                
               },
               error: function(e) {
+                console.log("error")
                 console.log(e)
               }
       });
+      // $.post('/supCalendarPage',json_list,function(data,status){
+      //     alert(data)
+      //     $(document).find("html").html(data);
+      // });
   });
 
   
