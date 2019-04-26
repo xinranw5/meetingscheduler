@@ -53,7 +53,7 @@ $(document).ready(function(){
       var data = {}
       data["content"] = data_json[i]["title"]
       data["description"] = data_json[i]["description"]
-      data["startDate"] = new Date(data_json[i]["start"] );
+      data["startDate"] = new Date(data_json[i]["start"]);
       data["endDate"] = new Date(data_json[i]["end"]);
       data["category"] = data_json[i]["category"];
       data["willingness"] = data_json[i]["willingness"];
