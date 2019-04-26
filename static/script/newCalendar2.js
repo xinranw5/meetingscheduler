@@ -62,8 +62,8 @@ function calculateIntervals(total_events){
     }
     willing_sum.push(summ)
   }
-  console.log(wanted_indexes)
-  console.log(willing_sum)
+  // console.log(wanted_indexes)
+  // console.log(willing_sum)
   // calculate the color
   var default_color = "#AD1457"
   var interval_events = []
@@ -77,7 +77,7 @@ function calculateIntervals(total_events){
         willingness: willing_sum[i],
         color: shadeColor("#1ea4d800", - willing_sum[i] * 100 +30 )
      }
-     console.log(new Date(timestamp_list[i]))
+     // console.log(new Date(timestamp_list[i]))
      interval_events.push(interval);
   }
   return interval_events;
@@ -175,8 +175,9 @@ $(document).ready(function(){
               success: function(data) { 
                 console.log("sent")
                 // console.log(data)
+                // $(this).html("")
                 $(this).html(data)
-                
+                // window.location.reload()
               },
               error: function(e) {
                 console.log("error")
@@ -193,7 +194,7 @@ $(document).ready(function(){
 
 
   $(document).on('click','.btn-sumbit-event',function(event){
-    
+      
 
   });
 
@@ -237,62 +238,6 @@ $(document).ready(function(){
           });
 
         },
-        edit: function(event) {
-          // alert('Edit Event:' + this.isNew() + ' --- ' + this.getContentNode().val());
-
-          eventRecorder.set("content",$(".scheduler-event-recorder-content").val())
-          eventRecorder.set("category",$(".btn-dropdown").data("category"))
-          eventRecorder.set("willingness", willingness)
-          eventRecorder.set("description",$(".input-context").val())
-          var current_color = category_color[eventRecorder.get("category")];
-          if (current_color!=undefined)
-            eventRecorder.set("color",current_color)
-          data = eventRecorder.getTemplateData();
-          var edit_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
-          willingness:eventRecorder.get("willingness"),description:eventRecorder.get("description"),category:eventRecorder.get("category")}
-
-          // console.log("prepare edit data",eventRecorder,edit_event)
-
-          // send to server
-          $.ajax({
-            url: '/update_activity/',
-            type: 'POST',
-            data: JSON.stringify(edit_event), 
-            contentType: 'application/json; charset=UTF-8',
-            dataType: 'json', 
-            success: function(data) { 
-              console.log("sent")
-              console.log(data)
-            },
-            error: function(e) {
-            console.log(e)
-            }
-          });
-        },
-        delete: function(event) {
-          data = this.getTemplateData();
-          var old_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
-          willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
-
-          // console.log(this,this.getTemplateData(),old_event)
-
-          // send to server
-          $.ajax({
-            url: '/delete_activity/',
-            type: 'POST',
-            data: JSON.stringify(old_event), 
-            contentType: 'application/json; charset=UTF-8',
-            dataType: 'json', 
-            success: function(data) { 
-              console.log("sent delete")
-              console.log(data)
-            },
-            error: function(e) {
-            console.log(e)
-            }
-          });
-
-        }
       }
     });
     
