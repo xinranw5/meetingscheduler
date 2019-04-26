@@ -9,7 +9,39 @@
   var table_data0 = '{{actList|tojson}}'
 
   // console.log(table_data0)
-  function delcon(fid,fname){
+      $(document).on('click', '#searchFriendBtn', function(event){
+    console.log("search friend")
+      var searchText = $('#searchFriendText').val();
+      console.log("searchText",searchText)
+      $.ajax({
+        type: "POST",
+        url: "/searchpeople/",
+        cache: false,
+        data: {names:searchText},
+        dataType:'json',
+        success: function(data) {
+          var list= document.getElementById("searchResult");
+          var $list = $('#searchResult');
+          list.innerHTML = "";
+          var wrList = data['wrong'];
+          var frList = data['friends'];
+          var stList = data['strangers'];
+          for(n in stList){
+            s = "<li id='"+stList[n][0]+"'>"+stList[n][1]+"</font><button style='float:right' type='button' onclick=\"addcon('"+stList[n][0]+"','"+stList[n][1]+"')\" class='btn btn-info'>+ Add  </button></br>"+stList[n][0]+"</font></li>";
+            $list.append(s);
+          }
+          for(n in wrList){
+            $list.append("<li>"+wrList[n]+"<font size='2' color='grey'> no such user </font></li>");
+          }
+          for(n in frList){
+            s="<li id='"+frList[n][0]+"'>"+frList[n][1]+"<button style='float:right' type='button' onclick=\"delcon('"+frList[n][0]+"','"+frList[n][1]+"')\" class='btn btn-error'>Delete</button></br> "+frList[n][0]+"</li>";
+            $list.append(s);
+          }
+        }
+      });
+  });
+
+function delcon(fid,fname){
     $.ajax({
       type: "GET",
       url: "/delcon/",
@@ -32,7 +64,7 @@
       cache: false,
       success: function() {
         document.getElementById(fid).innerHTML = "";
-        $("li[id='"+fid+"']").append("<font size='4'>"+fname+"</font><font size='1' color='grey'>  备注：<input style='border:1px;border-bottom-style:none;border-top-style:none;border-left-style:none;border-right-style:none;' type='text' name='nickname' id='nick"+fid+"' value=''></input></font><button style='float:right' type='button' onclick=\"delcon('"+fid+"','"+fname+"')\" class='btn btn-error'>Delete</button></br><font size='2' color='grey'> "+fid+"</font>");
+        $("li[id='"+fid+"']").append("<font size='4'>"+fname+"</font><button style='float:right' type='button' onclick=\"delcon('"+fid+"','"+fname+"')\" class='btn btn-error'>Delete</button></br><font size='2' color='grey'> "+fid+"</font>");
       }
     });
   }
@@ -106,42 +138,49 @@
 </head>
 <body>
 
-<nav class="navbar navbar-dark bg-dark">
-  <div class="container-fluid">
-    <div class="navbar-brand">
-      <a href="#" class="navbar-brand mb-0 h1"> Meeting Scheduler </a>
-    </div>
+      <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+          <div class="navbar-brand">
+            <a href="#" class="navbar-brand mb-0 h1"> Meeting Scheduler </a>
+          </div>
 
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Search friend
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <input type="text" id="searchFriendText" placeholder="Search for friends.." name="search">
+                <button type="button" id="searchFriendBtn">search</button>
+                <ul id="searchResult"></ul>
+            </div>
+          </div>
 
-    <form>
-      <input type="text" placeholder="Search for friends.." name="search">
-      <button type="button" id="searchFriendBtn">search</button>
-    </form>
+          
 
-    
-      {% if uname|length >0 %}
-      <ul class="navbar-toggler">
-        <li>
-          <a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"> Log Out </span></a>
-        </li>
-      </ul>
-      <ul class="navbar-toggler">
-          <a href="#"><span class="glyphicon glyphicon-user"> {{uname}}</span></a>
-        </li>
-      </ul>
-      {% else %}
-      <ul class="navbar-toggler">
-        <li>
-          <a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"> Log in </span></a>
-        </li>
-      </ul>
-      <ul class="navbar-toggler">
-          <a href="{{ url_for('signup') }}"><span class="glyphicon glyphicon-sign-up"> Sign up </span></a>
-        </li>
-      </ul>
-      {% endif %}
-  </div>
-</nav>
+          
+            {% if uname|length >0 %}
+            <ul class="navbar-toggler">
+              <li>
+                <a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"> Log Out </span></a>
+              </li>
+            </ul>
+            <ul class="navbar-toggler">
+                <a href="#"><span class="glyphicon glyphicon-user"> {{uname}}</span></a>
+              </li>
+            </ul>
+            {% else %}
+            <ul class="navbar-toggler">
+              <li>
+                <a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"> Log in </span></a>
+              </li>
+            </ul>
+            <ul class="navbar-toggler">
+                <a href="{{ url_for('signup') }}"><span class="glyphicon glyphicon-sign-up"> Sign up </span></a>
+              </li>
+            </ul>
+            {% endif %}
+        </div>
+      </nav>
 
 <div class="container">
   <ul class="nav nav-tabs">

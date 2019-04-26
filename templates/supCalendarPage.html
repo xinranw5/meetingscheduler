@@ -24,19 +24,49 @@
           var frList = data['friends'];
           var stList = data['strangers'];
           for(n in stList){
-            s = "<a class='dropdown-item' id='"+stList[n][0]+"'><font size='4'>"+stList[n][1]+"</font><button style='float:right' type='button' onclick=\"addcon('"+stList[n][0]+"','"+stList[n][1]+"')\" class='btn btn-info'>+ Add  </button></br><font size='2' color='grey'> "+stList[n][0]+"</font></a>";
+            s = "<li id='"+stList[n][0]+"'>"+stList[n][1]+"</font><button style='float:right' type='button' onclick=\"addcon('"+stList[n][0]+"','"+stList[n][1]+"')\" class='btn btn-info'>+ Add  </button></br>"+stList[n][0]+"</font></li>";
             $list.append(s);
           }
           for(n in wrList){
-            $list.append("<li class='list-group-item list-group-item-danger'><font size='4'>"+wrList[n]+"</font></br><font size='2' color='grey'> no such user </font></li>");
+            $list.append("<li>"+wrList[n]+"<font size='2' color='grey'> no such user </font></li>");
           }
           for(n in frList){
-            s="<li class='list-group-item' id='"+frList[n][0]+"'><font size='4'>"+frList[n][1]+"</font><button style='float:right' type='button' onclick=\"delcon('"+frList[n][0]+"','"+frList[n][1]+"')\" class='btn btn-error'>Delete</button></br><font size='2' color='grey'> "+frList[n][0]+"</font></li>";
+            s="<li id='"+frList[n][0]+"'>"+frList[n][1]+"<button style='float:right' type='button' onclick=\"delcon('"+frList[n][0]+"','"+frList[n][1]+"')\" class='btn btn-error'>Delete</button></br> "+frList[n][0]+"</li>";
             $list.append(s);
           }
         }
       });
   });
+
+function delcon(fid,fname){
+    $.ajax({
+      type: "GET",
+      url: "/delcon/",
+      data: {id:fid},
+      cache: false,
+      success: function() {
+        document.getElementById(fid).innerHTML = "";
+        $("li[id='"+fid+"']").append("<font size='4'>"+fname+"</font><button style='float:right' type='button' onclick=\"addcon('"+fid+"','"+fname+"')\" class='btn btn-info'>+ Add  </button></br><font size='2' color='grey'> "+fid+"</font>");
+      }
+    });
+  }
+  function addcon(fid,fname){
+    $.ajax({
+      type: "GET",
+      url: "/addcon/",
+      data: {
+        id:fid,
+        name:fname,
+      },
+      cache: false,
+      success: function() {
+        document.getElementById(fid).innerHTML = "";
+        $("li[id='"+fid+"']").append("<font size='4'>"+fname+"</font><button style='float:right' type='button' onclick=\"delcon('"+fid+"','"+fname+"')\" class='btn btn-error'>Delete</button></br><font size='2' color='grey'> "+fid+"</font>");
+      }
+    });
+  }
+
+
 
   </script>
 
@@ -54,9 +84,10 @@
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Search friend
             </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="searchResult">
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <input type="text" id="searchFriendText" placeholder="Search for friends.." name="search">
                 <button type="button" id="searchFriendBtn">search</button>
+                <ul id="searchResult"></ul>
             </div>
           </div>
 
