@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-import MySQLdb
+# import MySQLdb
+import pymysql
+pymysql.install_as_MySQLdb()
 from datetime import datetime
 userPage = "users"
 invitationPage = "invitations"
@@ -74,7 +76,7 @@ def insertData(uid, actList):
 
 
 def exe(sql):
-    db = MySQLdb.connect(host='127.0.0.1',port = 3306,user='root', passwd='12345678',db ='scheduler')
+    db = pymysql.connect(host='127.0.0.1',port = 3306,user='root', passwd='12345678',db ='scheduler')
     cursor = db.cursor()
     results = []
     try:
