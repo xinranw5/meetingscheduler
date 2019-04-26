@@ -120,7 +120,7 @@ def findTime(uid, start):
 
 
 def createEvent(uid, title, start, end, participants, description, state):
-    sql = "insert into %s (host, title, start, end, participants, descrption, state) values (%s, '%s', %s, %s, '%s','%s','%s' )"% (invitationPage,uid,title,start,end,participants,descrption,state)
+    sql = "insert into %s (host, title, start, end, participants, description, state) values (%s, '%s', %s, %s, '%s','%s','%s' )"% (invitationPage,uid,title,start,end,participants,description,state)
     print(sql)
     exe(sql)
 
