@@ -185,8 +185,9 @@ function delcon(fid,fname){
 <div class="container">
   <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#myCalendar">Calendar</a></li>
-    <li><a data-toggle="tab" href="#invitations" onclick="getInv()">Invitations</a></li>
+    <!--li><a data-toggle="tab" href="#invitations" onclick="getInv()">Invitations</a></li-->
     <li><a data-toggle="tab" href="#events" onclick="getEve()">Events</a></li>
+    <li><a data-toggle="tab" href="#suggestions">Check your suggestions</a></li>
     <!--li><a data-toggle="tab" href="#goose" onclick="getCon()">Start an event</a></li-->
     <li><a href="/supCalendarPage">Start an event</a></li>
   </ul>
@@ -219,12 +220,23 @@ function delcon(fid,fname){
           <tr>
             <th>Title</th>
             <th>State</th>
-            <th>Votes</th>
-            <th>Creator</th>
+            <th>start</th>
+            <th>end</th>
+            <th>host</th>
+            <th>participants</th>
+            <th>action</th>
           </tr>
         </thead>
         <tbody id="eveTbody">
         </tbody>
+      </table>
+    </div>
+
+    <div id="suggestions" class="tab-pane fade">
+      <h3>Here is your report!</h3>
+      <!--p>to be filled.</p-->
+      <table class="table table-hover">
+        
       </table>
     </div>
 

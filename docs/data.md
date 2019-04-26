@@ -53,7 +53,7 @@ create table calendar(eid INT NOT NULL AUTO_INCREMENT, uid INT, title VARCHAR(10
 
 create table feedback(fbid INT, uid INT, iid INT, attendence BOOLEAN, score double,  review VARCHAR(400),PRIMARY KEY(fbid));
 
-create table invitations(iid INT, host INT, participants VARCHAR(400), start DATETIME, end DATETIME, title VARCHAR(100), description VARCHAR(400), statue VARCHAR(100));
+create table invitations(iid INT NOT NULL AUTO_INCREMENT, host INT, participants VARCHAR(400), start BIGINT, end BIGINT, title VARCHAR(100), description VARCHAR(400), state VARCHAR(100), PRIMARY KEY(iid));
 
 
 ## sql for data
