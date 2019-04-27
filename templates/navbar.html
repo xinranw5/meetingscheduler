@@ -12,9 +12,9 @@
 
     
       {% if uname|length >0 %}
-      <ul class="navbar-toggler">
-        <li>
-          <a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"> Log Out </span></a>
+      <ul class="navbar-toggler navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item active">
+          <a href="{{ url_for('logout') }}" class = "nav-link"><span class="glyphicon glyphicon-log-out"> Log Out </span></a>
         </li>
       </ul>
       <ul class="navbar-toggler">
@@ -22,8 +22,8 @@
         </li>
       </ul>
       {% else %}
-      <ul class="navbar-toggler">
-        <li>
+      <ul class="navbar-toggler navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item active">
           <a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"> Log in </span></a>
         </li>
       </ul>

@@ -1,0 +1,38 @@
+
+<!-- saved from url=(0080)file:///Users/admin/Desktop/cs565/project/meetingscheduler/templates/navbar.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"></head><body><nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <div class="navbar-brand">
+      <a href="file:///Users/admin/Desktop/cs565/project/meetingscheduler/templates/navbar.html#" class="navbar-brand mb-0 h1"> Meeting Scheduler </a>
+    </div>
+
+
+    <form>
+      <input type="text" placeholder="Search for friends.." name="search">
+      <button type="button" id="searchFriendBtn">search</button>
+    </form>
+
+    
+      {% if uname|length &gt;0 %}
+      <ul class="navbar-toggler navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item active">
+          <a href="file:///Users/admin/Desktop/cs565/project/meetingscheduler/templates/%7B%7B%20url_for(&#39;logout&#39;)%20%7D%7D" class="nav-link"><span class="glyphicon glyphicon-log-out"> Log Out </span></a>
+        </li>
+      </ul>
+      <ul class="navbar-toggler">
+          <a href="file:///Users/admin/Desktop/cs565/project/meetingscheduler/templates/navbar.html#"><span class="glyphicon glyphicon-user"> {{uname}}</span></a>
+        
+      </ul>
+      {% else %}
+      <ul class="navbar-toggler navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item active">
+          <a href="file:///Users/admin/Desktop/cs565/project/meetingscheduler/templates/%7B%7B%20url_for(&#39;login&#39;)%20%7D%7D"><span class="glyphicon glyphicon-log-in"> Log in </span></a>
+        </li>
+      </ul>
+      <ul class="navbar-toggler">
+          <a href="file:///Users/admin/Desktop/cs565/project/meetingscheduler/templates/%7B%7B%20url_for(&#39;signup&#39;)%20%7D%7D"><span class="glyphicon glyphicon-sign-up"> Sign up </span></a>
+        
+      </ul>
+      {% endif %}
+  </div>
+</nav></body></html>
