@@ -55,6 +55,8 @@ create table feedback(fbid INT, uid INT, iid INT, attendence BOOLEAN, score doub
 
 create table invitations(iid INT NOT NULL AUTO_INCREMENT, host INT, participants VARCHAR(400), start BIGINT, end BIGINT, title VARCHAR(100), description VARCHAR(400), state VARCHAR(100), PRIMARY KEY(iid));
 
+create table events(id INT NOT NULL AUTO_INCREMENT, iid INT, uid INT, status VARCHAR(100),  PRIMARY KEY(id));
+
 
 ## sql for data
 insert into users (name, pwd, invitations, timezone) values ("w", "1", "", "");

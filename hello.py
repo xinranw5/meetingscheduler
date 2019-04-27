@@ -237,6 +237,7 @@ def geteve():
                 tmp = database.getEvent(eid)[0]
                 print(tmp)
                 event={}
+                iid = int(tmp[0])
                 hostID = int(tmp[1])
                 event["host"] = database.getUsernameByUid(hostID)[0][0]
                 partIDs = tmp[2].split(';')
@@ -250,7 +251,16 @@ def geteve():
                 event["title"] = tmp[5]
                 event["description"] = tmp[6]
                 event["state"] = tmp[7]
-                event["id"] = int(tmp[0])
+                event["id"] = iid
+
+                accepted = False
+                status = database.findAcceptedEvent(session['uid'], iid)
+                print("status",status)
+                if len(status)>0:
+                    accepted=True
+
+                event["accepted"] = accepted
+
                 results.append(event)
         # ids = json.loads(database.findUser("invitations", session['uid'])[0][0])
         # print(ids)
@@ -280,7 +290,12 @@ def joinInv():
     category = ''
     description = event[6]
 
-    database.addActivity(session['uid'], title, start, end, willingness, category, description)
+    status = database.findAcceptedEvent(session['uid'], invId)
+    print("status",status)
+    if len(status)==0:
+        database.acceptEvent(session['uid'], invId, "accepted")
+        database.addActivity(session['uid'], title, start, end, willingness, category, description)
+
     result={"iid":invId}
     return json.dumps(result)
     # database.invAddMember(invId,uid)
