@@ -10,6 +10,7 @@ userPage = "users"
 invitationPage = "invitations"
 contactPage = "contact"
 timePage = "calendar"
+acceptEventPage = "events"
 
 InvIdLength = 10
 calendarW = 7
@@ -150,6 +151,23 @@ def getEvent(iid):
 
 def deleteEvent(iid):
     sql = "delete from %s where iid=%s" % (invitationPage, iid)
+
+# accepted events
+# Consider from single user
+def acceptEvent(uid, iid, status):
+    sql = "insert into %s (iid, uid, status ) values (%s, %s, '%s')" % (acceptEventPage, iid, uid, status)
+    print(sql)
+    exe(sql)
+
+def deleteAcceptedEvent(uid, iid):
+    sql = "delete from %s where iid=%s and uid=%s" % (acceptEventPage, iid, uid)
+    print(sql)
+    exe(sql)
+
+def findAcceptedEvent(uid, iid):
+    sql = "select status from %s where iid=%s and uid=%s" % (acceptEventPage, iid, uid)
+    print(sql)
+    return exe(sql)
 
 
 
