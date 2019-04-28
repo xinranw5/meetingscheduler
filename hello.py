@@ -108,7 +108,7 @@ def supCalendarPage():
     username = session['username']
     friends = database.findCon(session['uid']);
     for friend in friends:
-        friendList.append({'id':friend[0], 'name':friend[1], 'isChecked':0, "weight":1})
+        friendList.append({'id':friend[0], 'name':friend[1], 'isChecked':0, "weight":1.0})
 
     if request.method == 'POST':   
         # print("request",request.getWriter().print(json.toJSONString()))     
@@ -118,7 +118,7 @@ def supCalendarPage():
             fid = f["id"]
             fweight = f["weight"]
             fname = database.getUsernameByUid(fid)[0][0]
-            supList.append({"id":int(fid), "name": fname, "weight":fweight})
+            supList.append({"id":int(fid), "name": fname, "weight":float(fweight)})
     else:
         supList = friendList[:]
     print("supList",supList)
@@ -126,7 +126,7 @@ def supCalendarPage():
         for sup in supList:
             if friend['id'] == sup['id']:
                 friend['isChecked']=1
-    supList.append({'id':session['uid'], 'name':session['username'], "weight":1})
+    supList.append({'id':session['uid'], 'name':session['username'], "weight":1.0})
     for friend in supList:
         activities = database.findActivitiesByUser(friend['id'])
         fweight = friend["weight"]
