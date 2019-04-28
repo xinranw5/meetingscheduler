@@ -85,9 +85,7 @@ function delcon(fid,fname){
 
           <div class="navbar-collapse" id="navbarTogglerDemo02">
             <ul class="navbar-nav ml-auto user-info-nav">
-              <!-- <li class="nav-item active">
-                <a  class="nav-link" href="/index" >Back </a>
-              </li> -->
+
               {% if uname|length >0 %}
               <li class="nav-item active">
                 <a class="nav-link" href="{{ url_for('logout') }}">Log Out</a>
@@ -118,6 +116,9 @@ function delcon(fid,fname){
         <!-- <div class="col-md-8">
           <div id="supCalendar" class="calendar"></div> 
         </div> -->
+
+        <a  class="nav-link" href="/index" >Back </a>
+
         <div class="row">
           <div class="col-lg-8">
             <!-- <a href="/index" class="btn btn-info" role="button">Back</a> -->
@@ -126,26 +127,8 @@ function delcon(fid,fname){
             </div>
           </div>
 
-          <div class="col-lg-3">
-            
-            <!--button type="button" id="addFriendBtn" class="btn btn-info" data-toggle="modal" data-target="#addFriendModal">+ Add Friends</button-->
-            <div style="overflow-y:auto;overflow-x:hidden;">
-              <ul id="intervieweelist" style="list-style-type:circle;height:auto" class=”list-group“>
-                <li class="list-group-item"><h3>Friend list</h3></li>
-                {% for i in friendList %}
-                       <li class="list-group-item list-group-item-action"> <h4 id="friend_{{ i.id }}"><input type="checkbox" name="usercheckbox" value={{i.id}} {% if i.isChecked==1 %}checked{% endif %}> {{i.name}} </h4></li>
-                {% endfor %}
-                <li class="list-group-item">
-                  <button type="button" id="superimpose_btn" class="btn btn-info" style="height:32px;vertical-align:center">Calculate for me</button>
-                </li>
-              </ul>
-            </div>
-
-
-           
-          </div>
-          <div class="col-lg-1">
-             <div class="dropdown">
+          <div class="col-lg-4">
+            <div class="dropdown">
               <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Search friend
               </button>
@@ -154,12 +137,65 @@ function delcon(fid,fname){
                   <button type="button" id="searchFriendBtn">search</button>
                   <ul id="searchResult"></ul>
               </div>
+              
             </div>
-            <br>
+
+            <br></br>
+            <div class="card" style="width: 18rem;">
+              <div class="card-header">
+                Friend list
+              </div>
+              <div class="card-body">
+                
+                <form action="/supCalendarPage">
+                  <div class="form-check">
+                    {% for i in friendList %}
+                    <label class="" for="friendCheckbox{{i.id}}">
+                    <input type="checkbox" class="" id="friendCheckbox{{i.id}}" value={{i.id}} name=friendCheckbox{{i.id}} {% if i.isChecked==1 %}checked{% endif %}>
+                    
+                      {{i.name}}
+                    </label>
+                    <input type="range" class="form-control-range" id="friebdControlRange{{i.id}}">
+                    {% endfor %}
+                  </div>
+                  <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+                  <button type="button" id="superimpose_btn" class="btn btn-info" style="height:32px;vertical-align:center">Calculate for me</button>
+                </form>
+
+
+
+                <div>
+                  <!-- <ul id="intervieweelist"  class="list-group">
+                    
+                    {% for i in friendList %}
+                           <li class="list-group-item list-group-item-action"> 
+                            <h4 id="friend_{{ i.id }}"><input type="checkbox" name="usercheckbox" value={{i.id}} {% if i.isChecked==1 %}checked{% endif %}> {{i.name}} 
+                            </h4>
+                            <span class="font-weight-bold indigo-text mr-2 mt-1">0</span>
+                            <form class="range-field w-25">
+                              <input class="border-0" type="range" min="0" max="100" />
+                            </form>
+                            <span class="font-weight-bold indigo-text ml-2 mt-1">100</span> 
+                           </li>
+                    {% endfor %}
+                  </ul>
+                  <br></br> -->
+                  
+                    
+                </div>
+              </div>
+            </div>
+            <!--button type="button" id="addFriendBtn" class="btn btn-info" data-toggle="modal" data-target="#addFriendModal">+ Add Friends</button-->
             
+
+
+           
           </div>
+          
+            
+          
         </div>
-</div>
+      </div>
 
 
 

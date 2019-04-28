@@ -7,21 +7,21 @@
 </head>
 
  <body>
-    <div class="wrapper fadeInDown">
+    <div class="wrapper">
     <div id="formContent">
       <!-- Tabs Titles -->
 
       <!-- Icon -->
-      <div class="fadeIn first">
+      <div class="">
         <h1>Meeting Scheduler</h1>
       </div>
 
       <!-- Login Form -->
       <form action="/login" method="post">
-        <input type="text" id="login" class="fadeIn second" name="username" placeholder="Username" value="{{
+        <input type="text" id="login" class=" second" name="username" placeholder="Username" value="{{
           request.form.username }}">
-        <input type="password" id="password" class="fadeIn third" name="password" placeholder="Password">
-        <input type="submit" class="fadeIn fourth" value="Log In">
+        <input type="password" id="password" class=" third" name="password" placeholder="Password">
+        <input type="submit" class=" fourth" value="Log In">
       </form>
        {% if error %}
         <p class="error"><strong>Error:</strong> {{ error }}</p>
