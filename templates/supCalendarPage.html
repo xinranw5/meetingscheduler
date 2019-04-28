@@ -47,7 +47,7 @@ function delcon(fid,fname){
       success: function() {
         document.getElementById(fid).innerHTML = "";
         $("li[id='"+fid+"']").append("<font size='4'>"+fname+"</font><button style='float:right' type='button' onclick=\"addcon('"+fid+"','"+fname+"')\" class='btn btn-info'>+ Add  </button></br><font size='2' color='grey'> "+fid+"</font>");
-        $("#friend_"+fid).remove();
+        $("#friendformgroup"+fid).remove();
       }
     });
   }
@@ -63,7 +63,8 @@ function delcon(fid,fname){
       success: function() {
         document.getElementById(fid).innerHTML = "";
         $("li[id='"+fid+"']").append("<font size='4'>"+fname+"</font><button style='float:right' type='button' onclick=\"delcon('"+fid+"','"+fname+"')\" class='btn btn-error'>Delete</button></br><font size='2' color='grey'> "+fid+"</font>");
-        $("#intervieweelist").append("<label id='friend_'"+fid+"><input type='checkbox' name='usercheckbox' value="+fid+"> "+fname+"</label>");
+        // $("#intervieweelist").append("<label id='friend_'"+fid+"><input type='checkbox' name='usercheckbox' value="+fid+"> "+fname+"</label>");
+        $("#friendlistform").append("<div class='form-group' id='friendformgroup"+fid+"'><label for='friendCheckbox"+fid+"'><input type='checkbox' id='friendCheckbox"+fid+"' value="+fid+" name='friendCheckbox"+fid+"'>"+fname+"</label><input type='range' class='custom-range' min='0' max='1' value='1' step='0.1' id='friendControlRange"+fid+"'></div>")
       }
     });
   }
@@ -117,7 +118,7 @@ function delcon(fid,fname){
           <div id="supCalendar" class="calendar"></div> 
         </div> -->
 
-        <a  class="nav-link" href="/index" >Back </a>
+        <!-- <a  class="nav-link" href="/index" >Back </a> -->
 
         <div class="row">
           <div class="col-lg-8">
@@ -148,14 +149,16 @@ function delcon(fid,fname){
               <div class="card-body">
                 
                 <form action="/supCalendarPage">
-                  <div class="form-check">
+                  <div class="form-check" id="friendlistform">
                     {% for i in friendList %}
-                    <label class="" for="friendCheckbox{{i.id}}">
-                    <input type="checkbox" class="" id="friendCheckbox{{i.id}}" value={{i.id}} name=friendCheckbox{{i.id}} {% if i.isChecked==1 %}checked{% endif %}>
-                    
-                      {{i.name}}
-                    </label>
-                    <input type="range" class="custom-range" min="0" max="1" value="1" step="0.1" id="friendControlRange{{i.id}}">
+                    <div class="form-group" id="friendformgroup{{i.id}}">
+                      <label class="" for="friendCheckbox{{i.id}}">
+                      <input type="checkbox" class="" id="friendCheckbox{{i.id}}" value={{i.id}} name=friendCheckbox{{i.id}} {% if i.isChecked==1 %}checked{% endif %}>
+                      
+                        {{i.name}}
+                      </label>
+                      <input type="range" class="custom-range" min="0" max="1" value="1" step="0.1" id="friendControlRange{{i.id}}">
+                    </div>
                     {% endfor %}
                   </div>
                   <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
