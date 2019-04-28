@@ -108,15 +108,17 @@ def supCalendarPage():
     username = session['username']
     friends = database.findCon(session['uid']);
     for friend in friends:
-        friendList.append({'id':friend[0], 'name':friend[1], 'isChecked':0})
+        friendList.append({'id':friend[0], 'name':friend[1], 'isChecked':0, "weight":1})
 
     if request.method == 'POST':   
         # print("request",request.getWriter().print(json.toJSONString()))     
         data = request.get_json()
         print("data",data)
-        for fid in data["supList"]:
+        for f in data["supList"]:
+            fid = f["id"]
+            fweight = f["weight"]
             fname = database.getUsernameByUid(fid)[0][0]
-            supList.append({"id":int(fid), "name": fname})
+            supList.append({"id":int(fid), "name": fname, "weight":fweight})
     else:
         supList = friendList[:]
     print("supList",supList)
@@ -124,9 +126,10 @@ def supCalendarPage():
         for sup in supList:
             if friend['id'] == sup['id']:
                 friend['isChecked']=1
-    supList.append({'id':session['uid'], 'name':session['username']})
+    supList.append({'id':session['uid'], 'name':session['username'], "weight":1})
     for friend in supList:
         activities = database.findActivitiesByUser(friend['id'])
+        fweight = friend["weight"]
         for activity in activities:
             act={}
             act["title"] = activity[2]
@@ -135,6 +138,7 @@ def supCalendarPage():
             act["willingness"] = activity[5]
             act["category"] = activity[6]
             act["description"] = activity[7]
+            act["weight"] = fweight
             actList.append(act)
     print("friendlist",friendList)
     return render_template("supCalendarPage.html", uname=username, friendList=friendList, actList=actList)
