@@ -46,10 +46,10 @@ function calculateIntervals(total_events){
     var flag  = 0
     for(var j = 0; j<total_events.length; j++){
        if(total_events[j]["start"] <= start && total_events[j]["end"] > start){
-          summ+= total_events[j]["willingness"];
+          summ+= total_events[j]["willingness"] * total_events[j]["weight"];
           flag = 1
        }else if (total_events[j]["start"] >= start && total_events[j]["start"] < end){ 
-          summ += total_events[j]["willingness"];
+          summ += total_events[j]["willingness"]  * total_events[j]["weight"];
           flag = 1
        }
     }
@@ -157,12 +157,14 @@ $(document).ready(function(){
       console.log("superpose now")
       // get friendlist
       var friend_id_list = []
-      var checkboxes = $('input[name="usercheckbox"]:checked')
+      var checkboxes = $('input:checked')
       console.log("checked checkbox", checkboxes)
       for(var i=0;i<checkboxes.length;i++){
         console.log("checkbox i ", checkboxes[i])
-        var id = checkboxes[i].value
-        friend_id_list.push(id);
+        var friend_id = checkboxes[i].value
+        var weight = $("#friendControlRange"+friend_id).val()
+        console.log("id", friend_id)
+        friend_id_list.push({id:friend_id,weight:weight});
       }
       var json_list = {supList: friend_id_list}
       console.log("supList", json_list)
@@ -175,7 +177,6 @@ $(document).ready(function(){
               success: function(data) { 
                 console.log("sent")
                 // console.log(data)
-                // $(this).html("")
                 $(this).html(data)
                 
                 // window.location.reload()
