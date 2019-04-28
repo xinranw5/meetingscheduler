@@ -85,9 +85,9 @@ function delcon(fid,fname){
 
           <div class="navbar-collapse" id="navbarTogglerDemo02">
             <ul class="navbar-nav ml-auto user-info-nav">
-              <li class="nav-item active">
+              <!-- <li class="nav-item active">
                 <a  class="nav-link" href="/index" >Back </a>
-              </li>
+              </li> -->
               {% if uname|length >0 %}
               <li class="nav-item active">
                 <a class="nav-link" href="{{ url_for('logout') }}">Log Out</a>
@@ -110,6 +110,8 @@ function delcon(fid,fname){
 
 
       </nav>
+      <a href="/index"><i class="fas fa-arrow-circle-left back-btn fa-2x"></i></a>
+
 
       <div class="container">
         
