@@ -45,7 +45,7 @@ $(document).ready(function(){
   var willingness = 0;
   var tag = false,ox = 0,left = 0,bgleft = 0,bar_length = 200,clickable = true;
   var total_events = [];
-  var category_color = {Private:"#FF8F00",Professional:"#AD1457",Fun:"#BA0F90",Family:"#AF8C00"};
+  var category_color = {activity:"#FF8F00",mood:"#AD1457"};
   console.log("js",table_data0)
   var data_json = JSON.parse(table_data0)
   var events = []
@@ -260,6 +260,7 @@ $(document).ready(function(){
           addevent["startDate"] = new Date(new_event["start"])
           addevent["endDate"] = new Date(new_event["end"])
           addevent["content"] = new_event["title"]
+          addevent["category"] = new_event["category"]
           console.log(addevent)
           events.push(addevent)
           // send to server
@@ -288,8 +289,8 @@ $(document).ready(function(){
           this.set("willingness", willingness)
           this.set("description",$(".input-context").val())
           var current_color = category_color[eventRecorder.get("category")];
-          if (current_color!=undefined)
-            this.set("color",current_color)
+          // if (current_color!=undefined)
+          //   this.set("color",current_color)
           data = this.getTemplateData();
           var edit_event = {start:data["startDate"],end:data["endDate"],title:data["content"],
           willingness:this.get("willingness"),description:this.get("description"),category:this.get("category")}
@@ -386,17 +387,11 @@ $(document).ready(function(){
                   </button>
 
                   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item private-option" data-category="Private" href="#">
-                      <i class="fas fa-square private-color"> </i><span> Private</span>
+                    <a class="dropdown-item private-option" data-category="activity" href="#">
+                      <i class="fas fa-square activity-color"> </i><span> Activity</span>
                     </a>
-                    <a class="dropdown-item professional-option" data-category="Professional" href="#">
-                       <i class="fas fa-square professional-color"></i><span> Professional</span>
-                    </a>
-                    <a class="dropdown-item fun-option" data-category="Fun" href="#">
-                      <i class="fas fa-square fun-color"> </i><span> Fun</span>
-                    </a>
-                    <a class="dropdown-item Family-option" data-category="Family" href="#">
-                      <i class="fas fa-square family-color"> </i><span> Family</span>
+                    <a class="dropdown-item professional-option" data-category="mood" href="#">
+                       <i class="fas fa-square mood-color"></i><span> Mood</span>
                     </a>
                   </div>
                 </div>`
@@ -422,6 +417,20 @@ $(document).ready(function(){
           $('.progress_bar').animate({width:left},bar_length);
           $('.text').html(parseInt((left/bar_length)*100) + '%');
           console.log("willingness",this.getTemplateData())
+          // console.log(category_color[events[index]["category"]])
+          // menu for category
+          $('.select-color').css('color',category_color[events[index]["category"]])
+          $(".btn-dropdown > i").css('color',category_color[current_category]);
+          if(events[index]["category"] !=undefined)
+            $(".btn-dropdown > span").text(" " + events[index]["category"])
+          else
+            $(".btn-dropdown > span").text("")
+          $(".btn-dropdown").data("category",current_category)
+        }else{
+           // menu for category
+         // $(".btn-dropdown > i").css('color',category_color[current_category]);
+         $(".btn-dropdown > span").text(" select")
+         // $(".btn-dropdown").data("category",current_category)
         }
         
         
@@ -433,22 +442,14 @@ $(document).ready(function(){
         
         // console.log("current click category",this)
          // other option color
-         $(".private-color").css('color',category_color["Private"]);
-         $(".professional-color").css('color',category_color["Professional"]);
-         $(".fun-color").css('color',category_color["Fun"]);
-         $(".family-color").css('color',category_color["Family"]);
+         $(".activity-color").css('color',category_color["activity"]);
+         $(".mood-color").css('color',category_color["mood"]);
+         
 
-         $(".private-color").data('category',"Private");
-         $(".professional-color").data('category',"Professional");
-         $(".fun-color").data('category',"Fun");
-         $(".family-color").data('category',"Family");
-         // menu for category
-         $(".btn-dropdown > i").css('color',category_color[current_category]);
-         $(".btn-dropdown > span").text(current_category)
-         $(".btn-dropdown").data("category",current_category)
+         
+        
          // set bar
          // console.log("willingness",this.get("willingness"))
-         var area = Y.all('.scheduler-event')
          // console.log("area",area)
 
         
