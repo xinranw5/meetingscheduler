@@ -421,7 +421,10 @@ $(document).ready(function(){
           // menu for category
           $('.select-color').css('color',category_color[events[index]["category"]])
           $(".btn-dropdown > i").css('color',category_color[current_category]);
-          $(".btn-dropdown > span").text(" " + current_category)
+          if(events[index]["category"] !=undefined)
+            $(".btn-dropdown > span").text(" " + events[index]["category"])
+          else
+            $(".btn-dropdown > span").text("")
           $(".btn-dropdown").data("category",current_category)
         }else{
            // menu for category
