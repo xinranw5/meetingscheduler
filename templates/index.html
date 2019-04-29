@@ -103,9 +103,6 @@ function delcon(fid,fname){
         cache: false,
         success: function(data) {
           var iid=JSON.parse(data)["iid"]
-          console.log("success now",iid)
-          console.log(data)
-          console.log("#acceptEvent"+iid+"Btn")
           $("#acceptEvent"+iid+"Btn").prop("disabled",true);
         }
       })
@@ -123,8 +120,12 @@ function delcon(fid,fname){
           var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
           var startTime = new Date(data[n]["start"]).toLocaleString("en-US");
           var endTime = new Date(data[n]["end"]).toLocaleString("en-US");
+          var accepted = data[n]["accepted"]
           $('#eveTbody').append("<tr><td><a id='invitation"+data[n]["id"]+"Link'>"+data[n]["title"]+"</a></td><td>"+startTime+"</td><td>"+endTime+"</td><td>"+data[n]["host"]+"</td><td>"+data[n]["participants"]+"</td><td>"+data[n]["description"]+"</td><td>"+data[n]["state"]+"</td><td><button id='acceptEvent"+data[n]["id"]+"Btn' class='accept-event-btn' data-id="+data[n]["id"]+">Accept</button></td></tr>");
           $("#invitation"+data[n]["id"]+"Link").attr("href", "/invitation/"+data[n]["id"])
+          if (accepted || data[n]["state"]=="closed"){
+            $("#acceptEvent"+data[n]["id"]+"Btn").prop("disabled",true);
+          }
         }
       }
     });
@@ -157,7 +158,7 @@ function delcon(fid,fname){
 
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         
-          <a href="#" class="navbar-brand mb-0 h1"> Meeting Scheduler </a>
+          <a href="/index" class="navbar-brand mb-0 h1"> Meeting Scheduler </a>
           <!-- <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Search friend

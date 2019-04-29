@@ -51,7 +51,7 @@ create table contact(id INT NOT NULL AUTO_INCREMENT, uid INT, fid INT, fname VAR
 
 create table calendar(eid INT NOT NULL AUTO_INCREMENT, uid INT, title VARCHAR(100), start BIGINT, end BIGINT, willingness FLOAT(10,6), type VARCHAR(100), descrption VARCHAR(250), PRIMARY KEY(eid));
 
-create table feedback(fbid INT, uid INT, iid INT, attendence BOOLEAN, score double,  review VARCHAR(400),PRIMARY KEY(fbid));
+create table feedback(fbid INT NOT NULL AUTO_INCREMENT, uid INT, iid INT, attendance INT, attitude INT, score double,  review VARCHAR(400),PRIMARY KEY(fbid));
 
 create table invitations(iid INT NOT NULL AUTO_INCREMENT, host INT, participants VARCHAR(400), start BIGINT, end BIGINT, title VARCHAR(100), description VARCHAR(400), state VARCHAR(100), PRIMARY KEY(iid));
 

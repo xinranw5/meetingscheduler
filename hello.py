@@ -42,9 +42,10 @@ def update_user_calendar(usr,time_unit_list):
 
 @app.route("/")
 def rootpage():
-    username = ''
-    actList = {}
-    return render_template("index.html", uname=username, actList=actList)
+    return redirect(url_for('index'))
+    # username = ''
+    # actList = {}
+    # return render_template("index.html", uname=username, actList=actList)
 
 @app.route("/index", methods=['GET', 'POST'])
 def index():
@@ -242,6 +243,7 @@ def geteve():
                 tmp = database.getEvent(eid)[0]
                 print(tmp)
                 event={}
+                iid = int(tmp[0])
                 hostID = int(tmp[1])
                 event["host"] = database.getUsernameByUid(hostID)[0][0]
                 partIDs = tmp[2].split(';')
@@ -255,21 +257,17 @@ def geteve():
                 event["title"] = tmp[5]
                 event["description"] = tmp[6]
                 event["state"] = tmp[7]
-                event["id"] = int(tmp[0])
+                event["id"] = iid
+
+                accepted = False
+                status = database.findAcceptedEvent(session['uid'], iid)
+                print("status",status)
+                if len(status)>0:
+                    accepted=True
+
+                event["accepted"] = accepted
                 results.append(event)
-        # ids = json.loads(database.findUser("invitations", session['uid'])[0][0])
-        # print(ids)
-        # flag = False
-        # results = []
-        # for iid in ids:
-        #     t = database.findInvById("id,title,state,count,creator",iid)
-        #     if len(t)==0:
-        #         ids.remove(iid)
-        #         flag = True
-        #     else:
-        #         results.append(t[0])
-        # if flag:
-        #     database.updateUser('invitations',json.dumps(ids),session['uid'])
+       
         print("events:", results)
         return json.dumps(results)
 
@@ -285,7 +283,11 @@ def joinInv():
     category = ''
     description = event[6]
 
-    database.addActivity(session['uid'], title, start, end, willingness, category, description)
+    status = database.findAcceptedEvent(session['uid'], invId)
+    print("status",status)
+    if len(status)==0:
+        database.acceptEvent(session['uid'], invId, "accepted")
+        database.addActivity(session['uid'], title, start, end, willingness, category, description)
     result={"iid":invId}
     return json.dumps(result)
     # database.invAddMember(invId,uid)
@@ -378,6 +380,9 @@ def update_activity():
 
 @app.route("/invitation/<inv_id>")
 def invitation(inv_id):
+    username = ''
+    if 'username' in session:
+        username = session['username']
     tmp = database.getEvent(inv_id)[0]
     event={}
     hostID = int(tmp[1])
@@ -395,7 +400,23 @@ def invitation(inv_id):
     event["state"] = tmp[7]
     event["id"] = int(tmp[0])
 
-    return render_template("invitation.html", event=event, on_create = True)
+    # Get feedback
+    iid = inv_id
+    uid = session['uid']
+    res = database.findFeedback(uid, iid)
+    print("find feedback", res)
+    if len(res)==0:
+        event['attendance']=1
+        event['attitude']=1
+        event["review"]=""
+    else:
+        fid=int(res[0][0])
+        fb = database.getFeedback(fid)[0]
+        event['attendance'] = fb[3]
+        event['attitude'] = fb[4]
+        event['review'] = fb[6]
+
+    return render_template("invitation.html", uname=username, event=event, on_create = True)
     # if not signed-in:
     #     return redirect(url_for('hello'))
     # else:
@@ -404,6 +425,60 @@ def invitation(inv_id):
     #         return render_template("invitation.html", data=invitation, on_create = on_create)
     #     else:
     #         return "Invitation does not exist!"
+
+@app.route("/save_feedback", methods=['POST','GET'])
+def save_feedback():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        # save feedback into database
+        data = request.get_json()
+        print("get feedback",data)
+        uid = session['uid']
+        iid = int(data['iid'])
+        attendance=int(data['attendance'])
+        attitude=int(data['attitude'])
+        score=int(data['score'])
+        review=data['review']
+        # Find if there is a feedback
+        res = database.findFeedback(uid, iid)
+        print("res", res)
+        if len(res)==0:
+            database.saveFeedback(uid, iid, attendance, attitude, score, review)
+            # print("save")
+        else:
+            fid = res[0][0]
+            database.updateFeedbackNum(fid, "attendance", attendance) 
+            database.updateFeedbackNum(fid, "attitude", attitude)
+            database.updateFeedbackNum(fid, "score", score)
+            database.updateFeedbackReview(fid, review) 
+
+        return "success"
+
+@app.route("/reportpage", method=['POST', 'GET'])
+def reportpage():
+    if username not in session:
+        return redirect(url_for('login'))
+    username = ''
+    actList = []
+    username = session['username']
+    uid = session['uid']
+    activities = database.findActivitiesByUser(uid)
+    # print("activity", activities)
+    for activity in activities:
+        act={}
+        act["title"] = activity[2]
+        act["start"] = activity[3]
+        act["end"] = activity[4]
+        act["willingness"] = activity[5]
+        act["category"] = activity[6]
+        act["description"] = activity[7]
+        actList.append(act)
+    print("actList", actList)
+    # print(actList)
+    return render_template("reportpage.html", uname=username, actList=actList)
+
 
 @app.route("/about/")
 def about():
