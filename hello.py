@@ -456,6 +456,30 @@ def save_feedback():
 
         return "success"
 
+@app.route("/reportpage", method=['POST', 'GET'])
+def reportpage():
+    if username not in session:
+        return redirect(url_for('login'))
+    username = ''
+    actList = []
+    username = session['username']
+    uid = session['uid']
+    activities = database.findActivitiesByUser(uid)
+    # print("activity", activities)
+    for activity in activities:
+        act={}
+        act["title"] = activity[2]
+        act["start"] = activity[3]
+        act["end"] = activity[4]
+        act["willingness"] = activity[5]
+        act["category"] = activity[6]
+        act["description"] = activity[7]
+        actList.append(act)
+    print("actList", actList)
+    # print(actList)
+    return render_template("reportpage.html", uname=username, actList=actList)
+
+
 @app.route("/about/")
 def about():
     return "Under construction"
