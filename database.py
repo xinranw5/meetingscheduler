@@ -11,6 +11,7 @@ invitationPage = "invitations"
 contactPage = "contact"
 timePage = "calendar"
 acceptEventPage = "events"
+feedbackPage = "feedback"
 
 InvIdLength = 10
 calendarW = 7
@@ -169,6 +170,37 @@ def findAcceptedEvent(uid, iid):
     print(sql)
     return exe(sql)
 
+# for feedback
+
+def saveFeedback(uid, iid, attendance, attitude, score, review):
+    sql = "insert into %s (uid, iid, attendance, attitude, score, review) values (%s, %s, %s, %s, %s, '%s')" % (feedbackPage, uid, iid, attendance, attitude, score, review )
+    print(sql)
+    exe(sql)
+
+def findFeedback(uid, iid):
+    sql = "select fbid from %s where uid=%s and iid=%s" % (feedbackPage, uid, iid)
+    print(sql)
+    return exe(sql)
+
+def deleteFeedback(uid, iid):
+    sql = "delete from %s where iid=%s and uid=%s" % (feedbackPage, iid, uid)
+    print(sql)
+    exe(sql)
+
+def updateFeedbackNum(fbid, goal, val):
+    sql = "update %s set %s=%s where fbid=%s" % (feedbackPage, goal,val,fbid)
+    print(sql)
+    exe(sql)
+
+def updateFeedbackReview(fbid, review):
+    sql = "update %s set review='%s' where fbid=%s" % (feedbackPage, review, fbid)
+    print(sql)
+    exe(sql)
+
+def getFeedback(fbid):
+    sql = "select * from %s where fbid=%s" % (feedbackPage, fbid)
+    print(sql)
+    return exe(sql)
 
 
 #invitations

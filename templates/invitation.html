@@ -2,26 +2,114 @@
 <html lang="en">
 <head>
   {% include 'header.html' %}
+
+<script type="text/javascript">
+  $(document).on('click', '#saveFeedbackBtn', function(event){
+    var attendance = $('#attendanceSelectInput').val()
+    var attitude = $('#attitudeSelectInput').val()
+    var review = $('#reviewTextarea').val();
+    var iid = $('#iidLabel').data("iid");
+    
+    var feedback = {attendance:attendance, attitude:attitude, review:review, score:0, iid:iid};
+    console.log(feedback)
+    $.ajax({
+        type: "POST",
+        url: "/save_feedback",
+        cache: false,
+        data: JSON.stringify(feedback), 
+        context: document.body,
+        contentType: 'application/json; charset=UTF-8',
+        success: function(data) {
+
+        }
+      });
+
+  });
+</script>
+
 </head>
 
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  
+    <a href="/index" class="navbar-brand mb-0 h1"> Meeting Scheduler </a>
 
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="navbar-collapse" id="navbarTogglerDemo02">
+      <ul class="navbar-nav ml-auto user-info-nav">
+        {% if uname|length >0 %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('logout') }}">Log Out</a>
+        </li>
+        <li class="nav-item active"> 
+          <a class="nav-link" href="#"> {{uname}}</a>
+        </li>
+        {% else %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('login') }}">Log in </a>
+        </li>
+        <li class="nav-item active">
+          <a  class="nav-link" href="{{ url_for('signup') }}">Sign up </a>
+        </li>
+        {% endif %}
+      </ul>
+      
+    </div>
+</nav>
 
 
 <div class="container">
   <a href="/index" class="btn btn-info" role="button">Back</a>
   <h2> {{ event.title }} </h2>
+  <label id="iidLabel" data-iid="{{event.id}}">{{event.id}} </label>
   <p> starter:{{ event.host }} </p>
   <p> description: {{event.description}} </p>
   <p id="eventTimeText"> something </p>
   <form role="form">
-    <div class="form-group">
-      <label for="feedbackTextarea">Feedback for this event</label>
-      <textarea class="form-control" id="feedbackTextarea" rows="3"></textarea>
-      <button type="button" class="btn btn-success"> Save </button>
+    <div class="form-group" id="attendanceRadioInput">
+      <label>Did you attend this event?</label>
+      <!-- <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="1">
+        <label class="form-check-label" for="inlineRadio1">Yes</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="0">
+        <label class="form-check-label" for="inlineRadio2">No</label>
+      </div> -->
+      <select id="attendanceSelectInput">
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </select>
+      <br />
     </div>
+    <div class="form-group" id="attitudeRadioInput">
+      <label>What's your attitude towards this event?</label>
+      <!-- <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="1">
+        <label class="form-check-label" for="inlineRadio3">Positive</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="0">
+        <label class="form-check-label" for="inlineRadio4">Negative</label>
+      </div> -->
+      <select id="attitudeSelectInput">
+        <option value='1'>Positive</option>
+        <option value='0'>Negative</option>
+      </select>
+      <br />
+    </div>
+    <div class="form-group">
+      <label for="reviewTextarea">Feedback for this event</label>
+      <textarea class="form-control" id="reviewTextarea" rows="3"></textarea>
+      
+    </div>
+    <button type="button" class="btn btn-success" id="saveFeedbackBtn"> Save </button>
   </form>
-  
+
   
   <!--button type="button" class="btn btn-danger"> Delete </button>
   <button type="button" class="btn btn-warning"> Change </button>
@@ -38,6 +126,11 @@
   console.log(eveText)
   console.log($("#eventTimeText"))
   $("#eventTimeText").html("Time: start from "+startTime+" to "+endTime)
+
+  $('#attendanceSelectInput').val(eventData["attendance"])
+  $('#attitudeSelectInput').val(eventData["attitude"])
+  $('#reviewTextarea').val(eventData["review"])
+
     
 </script>
 </body>
