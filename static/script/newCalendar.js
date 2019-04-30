@@ -89,7 +89,7 @@ $(document).ready(function(){
         var dis_time = events[i]['endDate'].getTime() - events[i]['startDate'].getTime()
         var start_hour =  events[i]['startDate'].getHours();
         var end_hour = events[i]['endDate'].getHours();
-        console.log(start_hour,end_hour)
+        // console.log(start_hour,end_hour)
         week_act_time_sum+=dis_time
         week_unwill_sum+=events[i]["willingness"];
 
@@ -106,8 +106,8 @@ $(document).ready(function(){
             weekend_late_sleep_day += 1
           }
         }
-        console.log("week_act_time_sum",week_act_time_sum)
-        console.log("week_time",weekday_time + weekend_time)
+        // console.log("week_act_time_sum",week_act_time_sum)
+        // console.log("week_time",weekday_time + weekend_time)
         
 
       }

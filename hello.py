@@ -42,10 +42,9 @@ def update_user_calendar(usr,time_unit_list):
 
 @app.route("/")
 def rootpage():
-    return redirect(url_for('index'))
-    # username = ''
-    # actList = {}
-    # return render_template("index.html", uname=username, actList=actList)
+    username = ''
+    actList = {}
+    return render_template("index.html", uname=username, actList=actList)
 
 @app.route("/index", methods=['GET', 'POST'])
 def index():
@@ -280,7 +279,6 @@ def geteve():
                 tmp = database.getEvent(eid)[0]
                 print(tmp)
                 event={}
-                iid = int(tmp[0])
                 hostID = int(tmp[1])
                 event["host"] = database.getUsernameByUid(hostID)[0][0]
                 partIDs = tmp[2].split(';')
@@ -294,17 +292,21 @@ def geteve():
                 event["title"] = tmp[5]
                 event["description"] = tmp[6]
                 event["state"] = tmp[7]
-                event["id"] = iid
-
-                accepted = False
-                status = database.findAcceptedEvent(session['uid'], iid)
-                print("status",status)
-                if len(status)>0:
-                    accepted=True
-
-                event["accepted"] = accepted
+                event["id"] = int(tmp[0])
                 results.append(event)
-       
+        # ids = json.loads(database.findUser("invitations", session['uid'])[0][0])
+        # print(ids)
+        # flag = False
+        # results = []
+        # for iid in ids:
+        #     t = database.findInvById("id,title,state,count,creator",iid)
+        #     if len(t)==0:
+        #         ids.remove(iid)
+        #         flag = True
+        #     else:
+        #         results.append(t[0])
+        # if flag:
+        #     database.updateUser('invitations',json.dumps(ids),session['uid'])
         print("events:", results)
         return json.dumps(results)
 
@@ -320,11 +322,7 @@ def joinInv():
     category = ''
     description = event[6]
 
-    status = database.findAcceptedEvent(session['uid'], invId)
-    print("status",status)
-    if len(status)==0:
-        database.acceptEvent(session['uid'], invId, "accepted")
-        database.addActivity(session['uid'], title, start, end, willingness, category, description)
+    database.addActivity(session['uid'], title, start, end, willingness, category, description)
     result={"iid":invId}
     return json.dumps(result)
     # database.invAddMember(invId,uid)
@@ -417,9 +415,6 @@ def update_activity():
 
 @app.route("/invitation/<inv_id>")
 def invitation(inv_id):
-    username = ''
-    if 'username' in session:
-        username = session['username']
     tmp = database.getEvent(inv_id)[0]
     event={}
     hostID = int(tmp[1])
@@ -437,23 +432,7 @@ def invitation(inv_id):
     event["state"] = tmp[7]
     event["id"] = int(tmp[0])
 
-    # Get feedback
-    iid = inv_id
-    uid = session['uid']
-    res = database.findFeedback(uid, iid)
-    print("find feedback", res)
-    if len(res)==0:
-        event['attendance']=1
-        event['attitude']=1
-        event["review"]=""
-    else:
-        fid=int(res[0][0])
-        fb = database.getFeedback(fid)[0]
-        event['attendance'] = fb[3]
-        event['attitude'] = fb[4]
-        event['review'] = fb[6]
-
-    return render_template("invitation.html", uname=username, event=event, on_create = True)
+    return render_template("invitation.html", event=event, on_create = True)
     # if not signed-in:
     #     return redirect(url_for('hello'))
     # else:
@@ -532,6 +511,7 @@ def reportpage():
     print("eveList", eveList)
     # print(actList)
     return render_template("reportpage.html", uname=username, actList=actList, eveList=eveList)
+
 
 
 @app.route("/about/")
