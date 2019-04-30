@@ -513,7 +513,7 @@ def reportpage():
     print("actList", actList)
     print("eveList", eveList)
     # print(actList)
-    return render_template("reportpage.html", uname=username, actList=actList, eveList=eveList)
+    return render_template("suggestion.html", uname=username, actList=actList, eveList=eveList)
 
 
 @app.route("/about/")

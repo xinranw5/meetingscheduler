@@ -12,6 +12,7 @@
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 	<script type="text/javascript">
 		var table_data0 = '{{actList|tojson}}'
+		var table_data1 = '{{eveList|tojson}}'
 	</script>
 	<style type="text/css">
 		.back-btn{
@@ -64,7 +65,7 @@
 	<div id="suggestion_area" class="container">
 		<div class="row justify-content-md-center mb-4">
 			<div class="col-md-9 align-self-center">
-				<h1>Here is your report!</h1>
+				<h1>Here is your last week's report!</h1>
 			</div>
 		</div>
 		<div class="row justify-content-md-center mb-4">
@@ -88,21 +89,32 @@
 		<div class="row justify-content-md-center mb-4">
 			<div class="col-md-9 align-self-center">
 				<h2> Total unwilling time for meetings</h2>
-				<canvas id="lineChart4"></canvas>
+				<canvas id="pieChart1"></canvas>
 			</div>
 		</div>
 		<div class="row justify-content-md-center mb-4">
 			<div class="col-md-9 align-self-center">
 				<h2> Total unwilling time for meetings with positive feedback</h2>
-				<canvas id="lineChart5"></canvas>
+				<canvas id="pieChart2"></canvas>
 			</div>
 		</div>
 		<div class="row justify-content-md-center mb-4">
 			<div class="col-md-9 align-self-center">
 				<h1>Here is your suggestion!</h1>
-				<p id="suggestion1"></p>
-				<p id="suggestion2"></p>
-				<p id="suggestion3"></p>
+				<div class="card mb-4">
+				  <h5 class="card-header">Suggestion 1</h5>
+				  <div class="card-body">
+				    <h5 id="suggestion1-title" class="card-title"></h5>
+				    <p id="suggestion1" class="card-text"></p>
+				  </div>
+				</div>
+				<div class="card">
+				  <h5 class="card-header">Suggestion 2</h5>
+				  <div class="card-body">
+				    <h5 id="suggestion2-title" class="card-title">Try more social events</h5>
+				    <p id="suggestion2" class="card-text"></p>
+				  </div>
+				</div>	
 			</div>
 		</div>
 	</div>
