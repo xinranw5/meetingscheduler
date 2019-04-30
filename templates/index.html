@@ -159,16 +159,7 @@ function delcon(fid,fname){
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         
           <a href="/index" class="navbar-brand mb-0 h1"> Meeting Scheduler </a>
-          <!-- <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Search friend
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <input type="text" id="searchFriendText" placeholder="Search for friends.." name="search">
-                <button type="button" id="searchFriendBtn">search</button>
-                <ul id="searchResult"></ul>
-            </div>
-          </div> -->
+          
 
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -201,7 +192,7 @@ function delcon(fid,fname){
     <li class="active"><a data-toggle="tab" href="#myCalendar">Calendar</a></li>
     <!--li><a data-toggle="tab" href="#invitations" onclick="getInv()">Invitations</a></li-->
     <li><a data-toggle="tab" href="#events" onclick="getEve()">Events</a></li>
-    <li><a href="/reportpage" >Check your suggestions</a></li>
+	<li><a href="/reportpage" >Check your suggestions</a></li>    
     <!--li><a data-toggle="tab" href="#goose" onclick="getCon()">Start an event</a></li-->
     <li><a href="/supCalendarPage">Start an event</a></li>
   </ul>
@@ -250,7 +241,6 @@ function delcon(fid,fname){
     <div id="suggestions" class="tab-pane fade">
       <h3>Here is your report!</h3>
       <!--p>to be filled.</p-->
-      {% include 'suggestion.html' %}
      
     </div>
 
@@ -610,7 +600,7 @@ function delcon(fid,fname){
 		});
 	}
 	</script>
-  <script src="../static/script/suggestion.js"></script>
+ 
 
 </body>
 

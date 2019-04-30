@@ -1,12 +1,112 @@
-<!-- Material Design Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.4/css/mdb.min.css" rel="stylesheet">
-<!-- MDB core JavaScript -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.4/js/mdb.min.js"></script>
-<div id="suggestion_area">
-	<h2> Total Unwillingness Number</h1>
-	<canvas id="lineChart"></canvas>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<!-- Material Design Bootstrap -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.4/css/mdb.min.css" rel="stylesheet">
+	<!-- MDB core JavaScript -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.4/js/mdb.min.js"></script>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+	<script type="text/javascript">
+		var table_data0 = '{{actList|tojson}}'
+	</script>
+	<style type="text/css">
+		.back-btn{
+			position: relative;
+			color: black;
+			left: 60px;
+			top: 60px;
+		}
+		body {
+		  background: url(../static/img/background_login.jpg);
+		  background-repeat: no-repeat;
+		  background-size: cover;
+		  background-attachment: fixed;
+		}
+		
+	</style>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        
+          <a href="/index" class="navbar-brand mb-0 h1"> Meeting Scheduler </a>
+          
 
-	<h2> Total Unwillingness for Mood Section</h1>
-	<canvas id="lineChart2"></canvas>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
 
-</div>
+          <div class="navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav ml-auto user-info-nav">
+              {% if uname|length >0 %}
+              <li class="nav-item active">
+                <a class="nav-link" href="{{ url_for('logout') }}">Log Out</a>
+              </li>
+              <li class="nav-item active"> 
+                <a class="nav-link" href="#"> {{uname}}</a>
+              </li>
+              {% else %}
+              <li class="nav-item active">
+                <a class="nav-link" href="{{ url_for('login') }}">Log in </a>
+              </li>
+              <li class="nav-item active">
+                <a  class="nav-link" href="{{ url_for('signup') }}">Sign up </a>
+              </li>
+              {% endif %}
+            </ul>
+            
+          </div>
+      </nav>
+    <a href="/index"><i class="fas fa-arrow-circle-left back-btn fa-2x"></i></a>
+	<div id="suggestion_area" class="container">
+		<div class="row justify-content-md-center mb-4">
+			<div class="col-md-9 align-self-center">
+				<h1>Here is your report!</h1>
+			</div>
+		</div>
+		<div class="row justify-content-md-center mb-4">
+			<div class="col-md-9 align-self-center">
+				<h2> Total Unwillingness Number</h2>
+				<canvas id="lineChart"></canvas>
+			</div>
+		</div>
+		<div class="row justify-content-md-center mb-4">
+			<div class="col-md-9 align-self-center">
+				<h2> Total Unwillingness for Mood Section</h2>
+				<canvas id="lineChart2"></canvas>	
+			</div>
+		</div>
+		<div class="row justify-content-md-center mb-4">
+			<div class="col-md-9 align-self-center">
+				<h2> Total attendance meeting time</h2>
+				<canvas id="lineChart3"></canvas>
+			</div>
+		</div>
+		<div class="row justify-content-md-center mb-4">
+			<div class="col-md-9 align-self-center">
+				<h2> Total unwilling time for meetings</h2>
+				<canvas id="lineChart4"></canvas>
+			</div>
+		</div>
+		<div class="row justify-content-md-center mb-4">
+			<div class="col-md-9 align-self-center">
+				<h2> Total unwilling time for meetings with positive feedback</h2>
+				<canvas id="lineChart5"></canvas>
+			</div>
+		</div>
+		<div class="row justify-content-md-center mb-4">
+			<div class="col-md-9 align-self-center">
+				<h1>Here is your suggestion!</h1>
+				<p id="suggestion1"></p>
+				<p id="suggestion2"></p>
+				<p id="suggestion3"></p>
+			</div>
+		</div>
+	</div>
+ 
+ <script src="../static/script/suggestion.js"></script>
+</body>
+</html>

@@ -443,6 +443,12 @@ def invitation(inv_id):
     return render_template("invitation.html", uname=username, event=event, on_create = True)
     
 
+<<<<<<< HEAD
+@app.route("/reportpage", methods=['POST', 'GET'])
+def reportpage():
+
+    if 'username' not in session:
+=======
 @app.route("/save_feedback", methods=['POST','GET'])
 def save_feedback():
     if 'username' not in session:
@@ -476,6 +482,7 @@ def save_feedback():
 @app.route("/reportpage", methods=['POST', 'GET'])
 def reportpage():
     if "username" not in session:
+>>>>>>> a520aebd25ea8069de1171fe9517ee3be1e4077d
         return redirect(url_for('login'))
     actList = []
     username = session['username']
@@ -490,6 +497,12 @@ def reportpage():
         act["willingness"] = activity[5]
         act["category"] = activity[6]
         act["description"] = activity[7]
+<<<<<<< HEAD
+        actList.append(act)
+    print("actList", actList)
+    # print(actList)
+    return render_template("suggestion.html", uname=username, actList=actList)
+=======
         
 
     eveList = getEventsByUser(uid)
@@ -513,6 +526,7 @@ def reportpage():
     # print(actList)
     return render_template("reportpage.html", uname=username, actList=actList, eveList=eveList)
 
+>>>>>>> a520aebd25ea8069de1171fe9517ee3be1e4077d
 
 
 @app.route("/about/")
