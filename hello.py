@@ -229,6 +229,43 @@ def getinv():
     if request.method == 'POST':
         return json.dumps(database.findInvByCreator("iid,ititle,istate,icount",session['uid']))
 
+def getEventsByUser(uid):
+    results=[]
+    eids = database.getUserEvents(session['uid'])[0][0]
+    print("eids",eids)
+    if len(eids)>0:
+        eve_id = eids.split(';')
+        for eid in eve_id:
+            tmp = database.getEvent(eid)[0]
+            print(tmp)
+            event={}
+            iid = int(tmp[0])
+            hostID = int(tmp[1])
+            event["host"] = database.getUsernameByUid(hostID)[0][0]
+            partIDs = tmp[2].split(';')
+            participants=[]
+            for par in partIDs:
+                parName = database.getUsernameByUid(int(par))[0][0]
+                participants.append(parName)
+            event["participants"] = ','.join(participants)
+            event["start"] = int(tmp[3])
+            event["end"] = int(tmp[4])
+            event["title"] = tmp[5]
+            event["description"] = tmp[6]
+            event["state"] = tmp[7]
+            event["id"] = iid
+
+            accepted = False
+            status = database.findAcceptedEvent(session['uid'], iid)
+            print("status",status)
+            if len(status)>0:
+                accepted=True
+
+            event["accepted"] = accepted
+            results.append(event)
+            return results
+       
+
 
 @app.route("/geteve/",methods=['GET','POST'])
 def geteve():
@@ -405,10 +442,46 @@ def invitation(inv_id):
     #     else:
     #         return "Invitation does not exist!"
 
+<<<<<<< HEAD
 @app.route("/reportpage", methods=['POST', 'GET'])
 def reportpage():
 
     if 'username' not in session:
+=======
+@app.route("/save_feedback", methods=['POST','GET'])
+def save_feedback():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        # save feedback into database
+        data = request.get_json()
+        print("get feedback",data)
+        uid = session['uid']
+        iid = int(data['iid'])
+        attendance=int(data['attendance'])
+        attitude=int(data['attitude'])
+        score=int(data['score'])
+        review=data['review']
+        # Find if there is a feedback
+        res = database.findFeedback(uid, iid)
+        print("res", res)
+        if len(res)==0:
+            database.saveFeedback(uid, iid, attendance, attitude, score, review)
+            # print("save")
+        else:
+            fid = res[0][0]
+            database.updateFeedbackNum(fid, "attendance", attendance) 
+            database.updateFeedbackNum(fid, "attitude", attitude)
+            database.updateFeedbackNum(fid, "score", score)
+            database.updateFeedbackReview(fid, review) 
+
+        return "success"
+
+@app.route("/reportpage", methods=['POST', 'GET'])
+def reportpage():
+    if "username" not in session:
+>>>>>>> a520aebd25ea8069de1171fe9517ee3be1e4077d
         return redirect(url_for('login'))
     actList = []
     username = session['username']
@@ -423,10 +496,36 @@ def reportpage():
         act["willingness"] = activity[5]
         act["category"] = activity[6]
         act["description"] = activity[7]
+<<<<<<< HEAD
         actList.append(act)
     print("actList", actList)
     # print(actList)
     return render_template("suggestion.html", uname=username, actList=actList)
+=======
+        
+
+    eveList = getEventsByUser(uid)
+    for event in eveList:
+        iid = event['iid']
+        res = database.findFeedback(uid, iid)
+        print("find feedback", res)
+        if len(res)==0:
+            event['attendance']=1
+            event['attitude']=1
+            event["review"]=""
+        else:
+            fid=int(res[0][0])
+            fb = database.getFeedback(fid)[0]
+            event['attendance'] = fb[3]
+            event['attitude'] = fb[4]
+            event['review'] = fb[6]
+            actList.append(act)
+    print("actList", actList)
+    print("eveList", eveList)
+    # print(actList)
+    return render_template("reportpage.html", uname=username, actList=actList, eveList=eveList)
+
+>>>>>>> a520aebd25ea8069de1171fe9517ee3be1e4077d
 
 
 @app.route("/about/")
