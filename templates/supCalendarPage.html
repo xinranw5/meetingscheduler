@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
   {% include 'header.html' %}
+  <style type="text/css">
+    .back-btn{
+      color:black;
+    }
+  </style>
   <script src="../static/script/newCalendar2.js"></script>
   <script>
     var data_list = '{{actList|tojson}}';
