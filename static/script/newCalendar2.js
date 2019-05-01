@@ -210,7 +210,7 @@ $(document).ready(function(){
         save: function(event) {
           
          var friend_id_list = []
-         var checkboxes = $('input[name="usercheckbox"]:checked')
+         var checkboxes = $('input:checked')
          console.log("checked checkbox", checkboxes)
          for(var i=0;i<checkboxes.length;i++){
             console.log("checkbox i ", checkboxes[i])
