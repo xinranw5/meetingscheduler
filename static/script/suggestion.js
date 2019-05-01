@@ -194,7 +194,7 @@ $(document).ready(function(){
       labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
       datasets: [
         {
-          label: "Total attendance meeting time (hours)",
+          label: "Total meeting time (hours) with attendance",
           data: week_meeting_time,
           backgroundColor: [
             'rgba(0, 137, 132, .2)',
@@ -228,7 +228,7 @@ $(document).ready(function(){
   var myPieChart2 = new Chart(ctxL5, {
     type: 'pie',
     data: {
-      labels: ["Unwilling mood time with meeting", "Unwilling mood time with meeting that has positive feedback"],
+      labels: ["Unwilling mood time with meeting that has negative feedback", "Unwilling mood time with meeting that has positive feedback"],
       datasets: [{
         data: pie2,
         backgroundColor: ["#FDB45C", "#46BFBD"],
