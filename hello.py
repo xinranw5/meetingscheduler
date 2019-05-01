@@ -306,7 +306,7 @@ def joinInv():
     start =event[3]
     end = event[4]
     willingness = 0.8
-    category = ''
+    category = 'event'
     description = event[6]
 
     status = database.findAcceptedEvent(session['uid'], invId)
