@@ -45,7 +45,7 @@ $(document).ready(function(){
   var willingness = 0;
   var tag = false,ox = 0,left = 0,bgleft = 0,bar_length = 200,clickable = true;
   var total_events = [];
-  var category_color = {activity:"#FF8F00",mood:"#AD1457"};
+  var category_color = {activity:"#FF8F00",mood:"#AD1457",event: "FDB45C"};
   console.log("js",table_data0)
   var data_json = JSON.parse(table_data0)
   var events = []

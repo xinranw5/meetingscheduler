@@ -63,8 +63,8 @@ $(document).ready(function(){
       // console.log("events",events[i])
       var duration_hour = 0;
       var meeting_unwill = 0;
-      if(events[i]["category"]=='activity')
-        continue;
+      if(events[i]["category"]=='activity' || events[i]["category"]== "event")
+        continue; 
       for(var j=0;j<meetings_events.length;j++){
         if(meetings_events[j]["accepted"] == false)
           continue;
@@ -99,6 +99,8 @@ $(document).ready(function(){
           if(meetings_events[j]["feedback"] == 1){
               week_unwill_positive[day] += duration_hour
           }
+          console.log("duration_hour",duration_hour)
+
         }
         console.log("week_unwill_meeting",i,j,week_unwill_meeting)
       }
