@@ -124,6 +124,7 @@ def supCalendarPage():
         for sup in supList:
             if friend['id'] == sup['id']:
                 friend['isChecked']=1
+                friend["weight"]=sup["weight"]
     supList.append({'id':session['uid'], 'name':session['username'], "weight":1.0})
     for friend in supList:
         activities = database.findActivitiesByUser(friend['id'])
