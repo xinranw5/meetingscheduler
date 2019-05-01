@@ -44,7 +44,7 @@ def getUserByUname(username):
     return exe(sql)
 
 def updateUser(goal,val,uid):
-    sql = "update %s set %s=\"%s\" where id='%s'" % (userPage,goal,val,uid)
+    sql = "update %s set %s=\"%s\" where id=%s" % (userPage,goal,val,uid)
     return exe(sql)
 
 def getUserEvents(uid):

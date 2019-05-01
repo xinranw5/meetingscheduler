@@ -496,9 +496,11 @@ def reportpage():
 
         actList.append(act)
 
-    eveList = getEventsByUser(uid)
-    for event in eveList:
+    eList = getEventsByUser(uid)
+    eveList=[]
+    for event in eList:
         iid = event['id']
+        # feedback
         res = database.findFeedback(uid, iid)
         print("find feedback", res)
         if len(res)==0:
@@ -511,7 +513,7 @@ def reportpage():
             event['attendance'] = fb[3]
             event['attitude'] = fb[4]
             event['review'] = fb[6]
-            actList.append(act)
+            eveList.append(event)
     print("actList", actList)
     print("eveList", eveList)
     # print(actList)
