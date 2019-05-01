@@ -382,7 +382,7 @@ $(document).ready(function(){
 
     const select_bar = ` <div class="dropdown select-category">
 
-                  <button class="btn btn-secondary dropdown-toggle btn-dropdown" data-category="" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button class="btn btn-secondary dropdown-toggle btn-dropdown" data-category="mood" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-square select-color"> </i><span></span>
                   </button>
 

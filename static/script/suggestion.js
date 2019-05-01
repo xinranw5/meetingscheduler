@@ -41,6 +41,7 @@ $(document).ready(function(){
         meetings_events.push(data);
     }
   }
+  console.log("meeting events",meetings_events)
   
   for(var i=0;i<meetings_events.length;i++){
       var meeting_day = meetings_events[i]["startDate"].getDay();
@@ -60,43 +61,48 @@ $(document).ready(function(){
       var startTime = events[i]["startDate"];
       var endTime = events[i]["endDate"];
       // console.log("events",events[i])
+      var duration_hour = 0;
+      var meeting_unwill = 0;
       if(events[i]["category"]=='activity')
         continue;
       for(var j=0;j<meetings_events.length;j++){
+        if(meetings_events[j]["accepted"] == false)
+          continue;
         if(meetings_events[j]["attendance"] == 1 && meetings_events[j]["startDate"] >= startTime && meetings_events[j]["startDate"] < endTime){
           if(meetings_events[j]["endDate"] <= endTime){
-            var duration_hour = Math.abs(meetings_events[j]["endDate"] - meetings_events[j]["startDate"]) /36e5
-            var meeting_unwill = unwill * duration_hour
-            week_unwill_meeting[day] += meeting_unwill;
+            duration_hour = Math.abs(meetings_events[j]["endDate"] - meetings_events[j]["startDate"]) /36e5
+            meeting_unwill = unwill * duration_hour
+            week_unwill_meeting[day] += duration_hour;
             total_unwill_with_meeting_duration+=duration_hour
           }else{
-            var duration_hour = Math.abs(events[i]["endDate"] - meetings_events[j]["startDate"]) /36e5
-            var meeting_unwill = unwill * duration_hour
-            week_unwill_meeting[day] += meeting_unwill;
+            duration_hour = Math.abs(events[i]["endDate"] - meetings_events[j]["startDate"]) /36e5
+            meeting_unwill = unwill * duration_hour
+            week_unwill_meeting[day] += duration_hour;
             total_unwill_with_meeting_duration+=duration_hour
 
           }
           if(meetings_events[j]["feedback"] == 1){
-              week_unwill_positive[day] += meeting_unwill
+              week_unwill_positive[day] += duration_hour
           }
         }else if(meetings_events[j]["attendance"] == 1 && meetings_events[j]["startDate"]<startTime && meetings_events[j]["endDate"] > startTime){
           if(meetings_events[j]["endDate"] <= endTime){
-            var duration_hour = Math.abs(meetings_events[j]["endDate"] - events[i]["startDate"]) /36e5
-            var meeting_unwill = unwill * duration_hour
-            week_unwill_meeting[day] += meeting_unwill;
+            duration_hour = Math.abs(meetings_events[j]["endDate"] - events[i]["startDate"]) /36e5
+            meeting_unwill = unwill * duration_hour
+            week_unwill_meeting[day] += duration_hour;
             total_unwill_with_meeting_duration+=duration_hour
           }else{
-            var duration_hour = Math.abs(events[i]["endDate"] - events[i]["startDate"]) /36e5
-            var meeting_unwill = unwill * duration_hour
-            week_unwill_meeting[day] += meeting_unwill;
+            duration_hour = Math.abs(events[i]["endDate"] - events[i]["startDate"]) /36e5
+            meeting_unwill = unwill * duration_hour
+            week_unwill_meeting[day] += duration_hour;
             total_unwill_with_meeting_duration+=duration_hour
           }
           if(meetings_events[j]["feedback"] == 1){
-              week_unwill_positive[day] += meeting_unwill
+              week_unwill_positive[day] += duration_hour
           }
         }
+        console.log("week_unwill_meeting",i,j,week_unwill_meeting)
       }
-      console.log("week_unwill_meeting",week_unwill_meeting)
+      
 
     }
     var total_week_mood_unwill_time = 0;
@@ -109,7 +115,7 @@ $(document).ready(function(){
     }
     var pie1 = [total_week_mood_unwill_time-total_week_unwill_with_meeting,total_week_unwill_with_meeting]
     var pie2 = [total_week_unwill_with_meeting - total_week_postive_meeting,total_week_postive_meeting]
-    
+    console.log(pie1)
     // suggestion part
     var sug1 = $("#suggestion1")  
     var sug2 = $("#suggestion2")  
