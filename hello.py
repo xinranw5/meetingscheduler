@@ -203,6 +203,7 @@ def setnickname():
 def startevent():
     if request.method == 'POST':
         newevent = request.get_json()
+        print("newevent", newevent)
         friendList = newevent["friend_list"]
         title = newevent["title"]
         start = int(newevent["start"])
