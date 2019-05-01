@@ -53,14 +53,14 @@ $(document).ready(function(){
       var unwill = events[i]["willingness"]
       var day = events[i]["startDate"].getDay()
       week_unwill_data[day] += (unwill*hour);
-      if(events[i]["category"] == 'mood'){
+      if(events[i]["category"] != 'activity'){
         week_unwill_mood_data[day]+= (unwill*hour);
       }
       // find out meeting 
       var startTime = events[i]["startDate"];
       var endTime = events[i]["endDate"];
       // console.log("events",events[i])
-      if(events[i]["category"]!='mood')
+      if(events[i]["category"]=='activity')
         continue;
       for(var j=0;j<meetings_events.length;j++){
         if(meetings_events[j]["attendance"] == 1 && meetings_events[j]["startDate"] >= startTime && meetings_events[j]["startDate"] < endTime){
@@ -117,7 +117,8 @@ $(document).ready(function(){
     var sug2_title = $("#suggestion2-title")  
     if(total_week_mood_unwill_time > 30){
       sug1_title.html("Reduce setting your unwilling mood time")
-      sug1.html("Spending more time for social events would make you happy!")
+      sug1.html("Spending more time for social events would make you happy! \
+        Going out and attending events offers new knowledge and information by introducing us to different cultures, thought patterns and ideas.")
     }else{
       sug1_title.html("Keep up with your style")
       sug1.html("Keep up with the patient to meet with others!")
@@ -127,7 +128,8 @@ $(document).ready(function(){
       sug2.html("You find the meetings to be more fun than you expected! Why not try walking out of your comfort zone!")
     }else{
       sug2_title.html("Explore more other events")
-      sug2.html("You can also try other kinds of events if you want, there are many other types of events you can explore")
+      sug2.html("You can also try other kinds of events if you want, there are many other types of events you can explore Having a social network can get you out and about,\
+       and introduce new fun ways to exercise!")
     }
   
   
@@ -138,7 +140,7 @@ $(document).ready(function(){
       labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
       datasets: [
         {
-          label: "Total Unwillingness number",
+          label: "Total Unwillingness number: the sum of each time range multiplying corresponding willingness.",
           data: week_unwill_data,
           backgroundColor: [
             'rgba(0, 137, 132, .2)',
@@ -161,7 +163,7 @@ $(document).ready(function(){
       labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
       datasets: [
         {
-          label: "Total Unwillingness number",
+          label: "Total Unwillingness number of mood: the sum of each time range (with category 'mood') multiplying corresponding willingness",
           data: week_unwill_mood_data,
           backgroundColor: [
             'rgba(0, 137, 132, .2)',
@@ -184,7 +186,7 @@ $(document).ready(function(){
       labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
       datasets: [
         {
-          label: "Total attendance meeting time",
+          label: "Total attendance meeting time (hours)",
           data: week_meeting_time,
           backgroundColor: [
             'rgba(0, 137, 132, .2)',
@@ -204,7 +206,7 @@ $(document).ready(function(){
   var myPieChart = new Chart(ctxL4, {
     type: 'pie',
     data: {
-      labels: ["unwilling mood time with no meeting", "unwilling mood time with meeting"],
+      labels: ["Unwilling mood time with no meeting", "Unwilling mood time with meeting"],
       datasets: [{
         data: pie1,
         backgroundColor: ["#FDB45C", "#46BFBD"],
@@ -218,7 +220,7 @@ $(document).ready(function(){
   var myPieChart2 = new Chart(ctxL5, {
     type: 'pie',
     data: {
-      labels: ["unwilling mood time with meeting", "unwilling mood time with meeting that has positive feedback"],
+      labels: ["Unwilling mood time with meeting", "Unwilling mood time with meeting that has positive feedback"],
       datasets: [{
         data: pie2,
         backgroundColor: ["#FDB45C", "#46BFBD"],
