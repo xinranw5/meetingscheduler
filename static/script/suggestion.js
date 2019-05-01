@@ -107,7 +107,7 @@ $(document).ready(function(){
        total_week_unwill_with_meeting+= week_unwill_meeting[i]
        total_week_postive_meeting+= week_unwill_positive[i]
     }
-    var pie1 = [total_week_mood_unwill_time-total_week_unwill_with_meeting,total_week_unwill_with_meeting]
+    var pie1 = [total_week_mood_unwill_time-total_week_mood_unwill_time,total_week_unwill_with_meeting]
     var pie2 = [total_week_unwill_with_meeting,total_week_postive_meeting]
     
     // suggestion part
